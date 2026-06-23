@@ -33,36 +33,38 @@ export default function SellerTestimonials() {
 
   return (
     <section className="w-full bg-white">
-      <div className="flex w-full flex-col items-center gap-16 px-20 py-25">
-        <div className="flex flex-col items-center gap-6 text-center not-italic">
-          <h2 className="font-[Arial] text-[48px] leading-[1.1] font-bold tracking-[-0.96px] text-black">
+      <div className="mx-auto flex w-full max-w-[1760px] flex-col items-center gap-10 px-4 py-12 sm:px-6 md:px-8 lg:gap-12 lg:px-10 lg:py-18 xl:gap-16 xl:px-16 xl:py-25 2xl:px-20">
+        <div className="flex flex-col items-center gap-4 text-center not-italic sm:gap-5 xl:gap-6">
+          <h2 className="font-[Arial] text-[32px] leading-[1.1] font-bold tracking-[-0.6px] text-black sm:text-[40px] md:text-[44px] xl:text-[48px] xl:tracking-[-0.96px]">
             What Other Sellers Say
           </h2>
-          <p className="font-[Arial] text-[24px] leading-[1.2] text-[#4a5565]">
+          <p className="max-w-225 font-[Arial] text-[18px] leading-[1.35] text-[#4a5565] sm:text-[20px] md:text-[22px] xl:text-[24px] xl:leading-[1.2]">
             See how businesses are increasing sales and reaching more customers.
           </p>
         </div>
 
-        <div className="flex w-[1760px] flex-col items-center gap-12 overflow-hidden">
+        <div className="flex w-full flex-col items-center gap-8 overflow-hidden xl:gap-12">
           <div
             className="w-full overflow-hidden"
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
           >
             <div
-              className="testimonial-carousel-track flex w-max items-center gap-6"
+              className="testimonial-carousel-track flex w-max items-stretch gap-4 sm:gap-5 xl:gap-6"
               style={{ animationPlayState: isPaused ? "paused" : "running" }}
             >
               {carouselTestimonials.map((testimonial, index) => (
                 <article
                   key={`${testimonial.author}-${index}`}
-                  className="w-195.75 shrink-0 rounded-md border border-[#e5e5e6] bg-[#f2f2f3] px-6 py-12 shadow-[0px_2px_7.5px_rgba(0,0,0,0.1)]"
+                  className="w-70 shrink-0 rounded-md border border-[#e5e5e6] bg-[#f2f2f3] px-5 py-8 shadow-[0px_2px_7.5px_rgba(0,0,0,0.1)] sm:w-90 sm:px-6 sm:py-10 lg:w-110 xl:w-140 xl:py-12 2xl:w-195.75"
                 >
-                  <div className="flex flex-col items-start gap-6">
+                  <div className="flex flex-col items-start gap-5 xl:gap-6">
                     <QuoteIcon />
                     <div className="flex w-full flex-col items-start gap-4 font-sans leading-[1.2]">
-                      <p className="w-full text-[22px] text-black">{testimonial.quote}</p>
-                      <p className="w-full text-[16px] text-[#848995]">-{testimonial.author}</p>
+                      <p className="w-full text-[18px] leading-[1.45] text-black sm:text-[20px] xl:text-[22px] xl:leading-[1.2]">
+                        {testimonial.quote}
+                      </p>
+                      <p className="w-full text-[15px] text-[#848995] sm:text-[16px]">-{testimonial.author}</p>
                     </div>
                   </div>
                 </article>
@@ -89,7 +91,31 @@ export default function SellerTestimonials() {
           }
 
           to {
-            transform: translate3d(calc(-50% - 12px), 0, 0);
+            transform: translate3d(calc(-50% - 8px), 0, 0);
+          }
+        }
+
+        @media (min-width: 640px) {
+          @keyframes seller-testimonials-marquee {
+            from {
+              transform: translate3d(0, 0, 0);
+            }
+
+            to {
+              transform: translate3d(calc(-50% - 10px), 0, 0);
+            }
+          }
+        }
+
+        @media (min-width: 1280px) {
+          @keyframes seller-testimonials-marquee {
+            from {
+              transform: translate3d(0, 0, 0);
+            }
+
+            to {
+              transform: translate3d(calc(-50% - 12px), 0, 0);
+            }
           }
         }
       `}</style>

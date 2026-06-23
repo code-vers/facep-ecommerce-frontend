@@ -40,9 +40,9 @@ function CartIcon() {
 
 function AccountBlock() {
   return (
-    <button type="button" className="flex w-34.75 shrink-0 flex-col items-start gap-1 text-left">
-      <span className="text-[14px] leading-[1.3] text-[#a9acb2]">Hello, sign in</span>
-      <span className="flex items-center gap-1 text-[16px] leading-[1.2] font-bold text-white">
+    <button type="button" className="flex shrink-0 flex-col items-start gap-1 text-left">
+      <span className="text-[13px] leading-[1.3] text-[#a9acb2] xl:text-[14px]">Hello, sign in</span>
+      <span className="flex items-center gap-1 text-[15px] leading-[1.2] font-bold text-white xl:text-[16px]">
         Account
         <ChevronDownIcon />
       </span>
@@ -53,69 +53,15 @@ function AccountBlock() {
 export default function Navbar() {
   return (
     <header className="w-full bg-black text-white">
-      <div className="flex min-h-20.75 w-full items-center gap-9 px-5 py-5 2xl:px-20">
-        <button type="button" className="shrink-0 text-left" aria-label="Facep home">
-          <span className="font-[Arial] text-[36px] leading-[1.2] font-bold text-white">Logo</span>
-        </button>
+      <div className="mx-auto flex w-full max-w-[1760px] flex-col gap-4 px-4 py-4 sm:px-6 md:px-8 lg:flex-row lg:items-center lg:gap-6 lg:px-10 xl:px-16 2xl:px-20">
+        <div className="flex items-center justify-between gap-4 lg:shrink-0">
+          <button type="button" className="shrink-0 text-left" aria-label="Facep home">
+            <span className="font-[Arial] text-[28px] leading-[1.2] font-bold text-white sm:text-[32px] xl:text-[36px]">
+              Logo
+            </span>
+          </button>
 
-        <div className="hidden shrink-0 items-end gap-1 self-end lg:flex">
-          <span className="mb-0.5 text-[#f2f2f3]">
-            <MapPinIcon />
-          </span>
-          <span className="flex w-18 flex-col gap-1 text-left">
-            <span className="text-[14px] leading-[1.3] text-[#a9acb2]">Deliver to</span>
-            <span className="text-[16px] leading-[1.2] font-bold text-white">Canada</span>
-          </span>
-        </div>
-
-        <div className="flex min-w-0 flex-1 items-center justify-end gap-4 xl:gap-9">
-          <form className="flex min-w-0 flex-1 items-start">
-            <button
-              type="button"
-              className="flex h-10 shrink-0 items-center gap-0.5 rounded-l-sm bg-[#cacace] px-3 text-[14px] leading-[1.2] text-[#42454d]"
-            >
-              <span>All</span>
-              <ChevronDownIcon />
-            </button>
-            <div className="flex h-10 min-w-0 flex-1 items-center border-b border-[#e5e5e6] bg-white px-3">
-              <input
-                type="search"
-                placeholder="Search Amazon"
-                className="h-5 min-w-0 flex-1 bg-transparent text-[14px] leading-[1.2] text-[#42454d] opacity-100 outline-none placeholder:text-[#42454d]/50"
-              />
-            </div>
-            <button
-              type="submit"
-              className="flex h-10 shrink-0 items-center justify-center rounded-r-sm bg-[#dec33a] px-3 text-black"
-              aria-label="Search"
-            >
-              <SearchIcon />
-            </button>
-          </form>
-
-          <div className="hidden shrink-0 flex-col items-start justify-end gap-2 lg:flex">
-            <Image src={canadaFlag} alt="Canada flag" width={24} height={16} unoptimized className="h-4 w-6" />
-            <button type="button" className="flex items-center gap-1 text-[14px] leading-[1.2] font-bold text-white">
-              CA
-              <ChevronDownIcon />
-            </button>
-          </div>
-
-          <div className="hidden items-center gap-6 lg:flex xl:gap-9">
-            <AccountBlock />
-            <button type="button" className="shrink-0 text-[16px] leading-[1.2] font-bold text-white">
-              Returns &amp; Orders
-            </button>
-            <button type="button" className="flex shrink-0 items-center justify-center gap-1 text-white">
-              <CartIcon />
-              <span className="text-[16px] leading-[1.2] font-bold">Cart</span>
-              <span className="flex h-5 w-5 items-center justify-center rounded-[10px] bg-[#dec33a] px-1.5 py-0.75 text-[12px] leading-[1.3] font-normal text-black">
-                0
-              </span>
-            </button>
-          </div>
-
-          <div className="flex shrink-0 items-center gap-3 lg:hidden">
+          <div className="flex items-center gap-3 lg:hidden">
             <button type="button" className="flex items-center gap-1 text-[14px] leading-[1.2] font-bold text-white">
               CA
               <ChevronDownIcon />
@@ -123,6 +69,67 @@ export default function Navbar() {
             <button type="button" className="flex items-center gap-1 text-white">
               <CartIcon />
               <span className="flex h-5 w-5 items-center justify-center rounded-[10px] bg-[#dec33a] text-[12px] leading-[1.3] font-normal text-black">
+                0
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <div className="hidden shrink-0 items-end gap-1 self-end lg:flex">
+          <span className="mb-0.5 text-[#f2f2f3]">
+            <MapPinIcon />
+          </span>
+          <span className="flex w-18 flex-col gap-1 text-left xl:w-19">
+            <span className="text-[13px] leading-[1.3] text-[#a9acb2] xl:text-[14px]">Deliver to</span>
+            <span className="text-[15px] leading-[1.2] font-bold text-white xl:text-[16px]">Canada</span>
+          </span>
+        </div>
+
+        <div className="flex min-w-0 flex-1 flex-col gap-4 lg:flex-row lg:items-center lg:justify-end lg:gap-4 xl:gap-7">
+          <form className="order-2 flex min-w-0 w-full items-start lg:order-1 lg:max-w-190 lg:flex-1 xl:max-w-none">
+            <button
+              type="button"
+              className="hidden h-11 shrink-0 items-center gap-0.5 rounded-l-sm bg-[#cacace] px-3 text-[14px] leading-[1.2] text-[#42454d] sm:flex"
+            >
+              <span>All</span>
+              <ChevronDownIcon />
+            </button>
+            <div className="flex h-11 min-w-0 flex-1 items-center rounded-l-sm bg-white px-3 sm:rounded-none">
+              <input
+                type="search"
+                placeholder="Search Amazon"
+                className="h-5 min-w-0 flex-1 bg-transparent text-[14px] leading-[1.2] text-[#42454d] outline-none placeholder:text-[#42454d]/50"
+              />
+            </div>
+            <button
+              type="submit"
+              className="flex h-11 shrink-0 items-center justify-center rounded-r-sm bg-[#dec33a] px-4 text-black"
+              aria-label="Search"
+            >
+              <SearchIcon />
+            </button>
+          </form>
+
+          <div className="order-1 hidden shrink-0 items-end gap-4 lg:order-2 lg:flex xl:gap-7">
+            <div className="flex flex-col items-start justify-end gap-2">
+              <Image src={canadaFlag} alt="Canada flag" width={24} height={16} unoptimized className="h-4 w-6" />
+              <button type="button" className="flex items-center gap-1 text-[14px] leading-[1.2] font-bold text-white">
+                CA
+                <ChevronDownIcon />
+              </button>
+            </div>
+
+            <div className="hidden items-center gap-5 xl:flex xl:gap-7">
+              <AccountBlock />
+              <button type="button" className="shrink-0 text-[15px] leading-[1.2] font-bold text-white xl:text-[16px]">
+                Returns &amp; Orders
+              </button>
+            </div>
+
+            <button type="button" className="flex shrink-0 items-center justify-center gap-1 text-white">
+              <CartIcon />
+              <span className="hidden text-[15px] leading-[1.2] font-bold xl:inline xl:text-[16px]">Cart</span>
+              <span className="flex h-5 w-5 items-center justify-center rounded-[10px] bg-[#dec33a] px-1.5 py-0.75 text-[12px] leading-[1.3] font-normal text-black">
                 0
               </span>
             </button>

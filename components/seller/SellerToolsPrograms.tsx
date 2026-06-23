@@ -104,44 +104,31 @@ function ToolIcon({ icon }: { icon: (typeof tools)[number]["icon"] }) {
 export default function SellerToolsPrograms() {
   return (
     <section className="w-full bg-white">
-      <div className="flex w-full flex-col items-center gap-16 px-20 py-25">
-        <div className="flex flex-col items-center gap-6 text-center not-italic">
-          <h2 className="font-[Arial] text-[48px] leading-[1.1] font-bold tracking-[-0.96px] text-black">
+      <div className="mx-auto flex w-full max-w-[1760px] flex-col items-center gap-10 px-4 py-12 sm:px-6 md:px-8 lg:gap-12 lg:px-10 lg:py-18 xl:gap-16 xl:px-16 xl:py-25 2xl:px-20">
+        <div className="flex flex-col items-center gap-4 text-center not-italic sm:gap-5 xl:gap-6">
+          <h2 className="font-[Arial] text-[32px] leading-[1.1] font-bold tracking-[-0.6px] text-black sm:text-[40px] md:text-[44px] xl:text-[48px] xl:tracking-[-0.96px]">
             Selling Tools And Programs
           </h2>
-          <p className="font-[Arial] text-[24px] leading-[1.2] text-[#555765]">Everything you need to succeed</p>
+          <p className="font-[Arial] text-[18px] leading-[1.35] text-[#555765] sm:text-[20px] md:text-[22px] xl:text-[24px] xl:leading-[1.2]">
+            Everything you need to succeed
+          </p>
         </div>
 
-        <div className="flex w-full flex-col items-center justify-center gap-6">
-          <div className="flex w-full items-center justify-center gap-6">
-            {tools.slice(0, 3).map((tool) => (
-              <article
-                key={tool.title}
-                className="flex min-h-43.25 min-w-0 flex-1 flex-col items-center gap-4 rounded-sm border border-[#e5e5e6] bg-[#f2f2f3] px-6 py-6 text-center"
-              >
-                <ToolIcon icon={tool.icon} />
-                <div className="flex w-full flex-col items-center gap-3 leading-[1.2]">
-                  <h3 className="w-full font-[Arial] text-[24px] text-[#0a0a0a]">{tool.title}</h3>
-                  <p className="w-full font-sans text-[18px] text-[#555765]">{tool.description}</p>
-                </div>
-              </article>
-            ))}
-          </div>
-
-          <div className="flex w-full items-center justify-center gap-6">
-            {tools.slice(3).map((tool) => (
-              <article
-                key={tool.title}
-                className="flex min-h-43.25 min-w-0 flex-1 flex-col items-center gap-4 rounded-sm border border-[#e5e5e6] bg-[#f2f2f3] px-6 py-6 text-center"
-              >
-                <ToolIcon icon={tool.icon} />
-                <div className="flex w-full flex-col items-center gap-3 leading-[1.2]">
-                  <h3 className="w-full font-[Arial] text-[24px] text-[#0a0a0a]">{tool.title}</h3>
-                  <p className="w-full font-sans text-[18px] text-[#555765]">{tool.description}</p>
-                </div>
-              </article>
-            ))}
-          </div>
+        <div className="grid w-full grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3 xl:gap-6">
+          {tools.map((tool) => (
+            <article
+              key={tool.title}
+              className="flex min-h-55 min-w-0 flex-col items-center gap-4 rounded-sm border border-[#e5e5e6] bg-[#f2f2f3] px-5 py-6 text-center sm:px-6"
+            >
+              <ToolIcon icon={tool.icon} />
+              <div className="flex w-full flex-col items-center gap-3 leading-[1.2]">
+                <h3 className="w-full font-[Arial] text-[22px] text-[#0a0a0a] sm:text-[24px]">{tool.title}</h3>
+                <p className="w-full font-sans text-[16px] leading-[1.45] text-[#555765] sm:text-[18px] sm:leading-[1.35]">
+                  {tool.description}
+                </p>
+              </div>
+            </article>
+          ))}
         </div>
       </div>
     </section>

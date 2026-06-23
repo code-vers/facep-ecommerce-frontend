@@ -59,15 +59,17 @@ export default function SellerFaq() {
 
   return (
     <section className="w-full bg-white">
-      <div className="flex w-full flex-col items-center gap-16 px-20 py-25">
-        <div className="flex flex-col items-center gap-6 text-center not-italic">
-          <h2 className="font-[Arial] text-[48px] leading-[1.1] font-bold tracking-[-0.96px] text-black">
+      <div className="mx-auto flex w-full max-w-[1760px] flex-col items-center gap-10 px-4 py-12 sm:px-6 md:px-8 lg:gap-12 lg:px-10 lg:py-18 xl:gap-16 xl:px-16 xl:py-25 2xl:px-20">
+        <div className="flex flex-col items-center gap-4 text-center not-italic sm:gap-5 xl:gap-6">
+          <h2 className="font-[Arial] text-[32px] leading-[1.1] font-bold tracking-[-0.6px] text-black sm:text-[40px] md:text-[44px] xl:text-[48px] xl:tracking-[-0.96px]">
             Frequently Asked Questions
           </h2>
-          <p className="font-[Arial] text-[24px] leading-[1.2] text-[#42454d]">Everything you need to know</p>
+          <p className="font-[Arial] text-[18px] leading-[1.35] text-[#42454d] sm:text-[20px] md:text-[22px] xl:text-[24px] xl:leading-[1.2]">
+            Everything you need to know
+          </p>
         </div>
 
-        <div className="flex w-full flex-col items-start">
+        <div className="w-full max-w-7xl">
           {faqs.map((faq) => {
             const isOpen = openQuestion === faq.question;
 
@@ -76,15 +78,19 @@ export default function SellerFaq() {
                 <button
                   type="button"
                   onClick={() => handleToggle(faq.question)}
-                  className="flex w-full items-center justify-between gap-6 px-6 py-6 text-left"
+                  className="flex w-full items-center justify-between gap-4 px-4 py-5 text-left sm:gap-6 sm:px-6 sm:py-6"
                 >
-                  <p className="font-sans text-[22px] leading-[1.2] text-black">{faq.question}</p>
+                  <p className="font-sans text-[18px] leading-[1.35] text-black sm:text-[20px] md:text-[22px] md:leading-[1.2]">
+                    {faq.question}
+                  </p>
                   <ChevronDownIcon isOpen={isOpen} />
                 </button>
 
                 {isOpen ? (
-                  <div className="px-6 pb-6">
-                    <p className="max-w-300 font-sans text-[18px] leading-normal text-[#42454d]">{faq.answer}</p>
+                  <div className="px-4 pb-5 sm:px-6 sm:pb-6">
+                    <p className="max-w-245 font-sans text-[16px] leading-[1.6] text-[#42454d] sm:text-[17px] md:text-[18px] md:leading-normal">
+                      {faq.answer}
+                    </p>
                   </div>
                 ) : null}
               </div>

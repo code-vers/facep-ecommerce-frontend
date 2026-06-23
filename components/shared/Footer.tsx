@@ -21,7 +21,7 @@ const footerColumns = [
 
 function ArrowUpIcon() {
   return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4.5 w-4.5" fill="none" stroke="white" strokeWidth="1.8">
+    <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 sm:h-4.5 sm:w-4.5" fill="none" stroke="white" strokeWidth="1.8">
       <path d="M12 19V5" />
       <path d="m6 11 6-6 6 6" />
     </svg>
@@ -86,7 +86,7 @@ function FooterPill({
   return (
     <button
       type="button"
-      className="flex min-w-20 items-center justify-center gap-1.5 rounded-xs border border-[#cacbce] px-3 py-2 text-[14px] leading-[1.2] text-[#f2f2f3]"
+      className="flex min-w-27.5 items-center justify-center gap-1.5 rounded-xs border border-[#cacbce] px-3 py-2 text-[13px] leading-[1.2] text-[#f2f2f3] sm:text-[14px]"
     >
       <span>{label}</span>
       {trailing}
@@ -104,19 +104,19 @@ export default function Footer() {
       <button
         type="button"
         onClick={handleBackToTop}
-        className="flex w-full items-center justify-center gap-1 bg-[#2b323b] px-20 py-5 text-[16px] leading-[1.2] font-bold text-white"
+        className="flex w-full items-center justify-center gap-1 bg-[#2b323b] px-4 py-4 text-[14px] leading-[1.2] font-bold text-white sm:px-6 sm:text-[15px] lg:px-10 xl:px-16 xl:py-5 xl:text-[16px] 2xl:px-20"
       >
         <span>Back to top</span>
         <ArrowUpIcon />
       </button>
 
       <div className="flex w-full flex-col bg-black">
-        <div className="flex w-full items-start justify-center gap-24 py-15 text-white">
+        <div className="mx-auto grid w-full max-w-[1760px] grid-cols-1 gap-10 px-4 py-12 text-white sm:grid-cols-2 sm:px-6 md:px-8 lg:grid-cols-4 lg:px-10 xl:px-16 xl:py-15 2xl:px-20">
           {footerColumns.map((column) => (
             <div key={column.title} className="flex flex-col items-start gap-2">
-              <p className="text-[18px] leading-[1.2]">{column.title}</p>
+              <p className="text-[17px] leading-[1.2] sm:text-[18px]">{column.title}</p>
               {column.links.map((link) => (
-                <p key={link} className="text-[14px] leading-[1.3]">
+                <p key={link} className="text-[14px] leading-[1.4]">
                   {link}
                 </p>
               ))}
@@ -124,7 +124,7 @@ export default function Footer() {
           ))}
 
           <div className="flex flex-col items-start gap-2">
-            <p className="text-[18px] leading-[1.2] text-white">Connect with Us</p>
+            <p className="text-[17px] leading-[1.2] text-white sm:text-[18px]">Connect with Us</p>
             <div className="flex items-center gap-6">
               <FacebookIcon />
               <XIcon />
@@ -133,16 +133,18 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="flex w-full items-center justify-center gap-16 border-t border-[#686f7d] px-20 py-9">
-          <p className="font-[Arial] text-[36px] leading-[1.2] font-bold text-white">Logo</p>
+        <div className="border-t border-[#686f7d]">
+          <div className="mx-auto flex w-full max-w-[1760px] flex-col items-center justify-center gap-6 px-4 py-8 sm:px-6 md:px-8 lg:px-10 xl:flex-row xl:gap-16 xl:px-16 xl:py-9 2xl:px-20">
+            <p className="font-[Arial] text-[30px] leading-[1.2] font-bold text-white sm:text-[34px] xl:text-[36px]">Logo</p>
 
-          <div className="flex items-center gap-4">
-            <FooterPill
-              label="Canada"
-              trailing={<Image src={canadaFlag} alt="Canada flag" width={24} height={16} unoptimized className="h-4 w-6" />}
-            />
-            <FooterPill label="English" trailing={<GlobeIcon />} />
-            <FooterPill label="USD" trailing={<DollarIcon />} />
+            <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+              <FooterPill
+                label="Canada"
+                trailing={<Image src={canadaFlag} alt="Canada flag" width={24} height={16} unoptimized className="h-4 w-6" />}
+              />
+              <FooterPill label="English" trailing={<GlobeIcon />} />
+              <FooterPill label="USD" trailing={<DollarIcon />} />
+            </div>
           </div>
         </div>
       </div>
