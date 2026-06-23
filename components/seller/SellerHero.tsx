@@ -1,7 +1,5 @@
 import Image from "next/image";
 
-const sellerHeroImage = "https://www.figma.com/api/mcp/asset/9e615867-1c33-4c76-9307-d7d355537ac0";
-
 export default function SellerHero() {
   return (
     <section className="w-full bg-[linear-gradient(180deg,#ff9900_0%,#ffcc80_36.84%,#ffffff_100%)]">
@@ -30,10 +28,9 @@ export default function SellerHero() {
 
         <div className="relative h-191 min-w-0 flex-1 overflow-hidden rounded-xl shadow-[115px_110px_45px_0px_rgba(0,0,0,0),74px_70px_41px_0px_rgba(0,0,0,0.01),41px_40px_34px_0px_rgba(0,0,0,0.05),18px_18px_25px_0px_rgba(0,0,0,0.09),5px_4px_14px_0px_rgba(0,0,0,0.1)]">
           <Image
-            src={sellerHeroImage}
+            src={"/public/seller/hero.svg"}
             alt="Seller packing products while using a phone beside a laptop"
             fill
-            unoptimized
             className="object-cover"
             priority
           />
