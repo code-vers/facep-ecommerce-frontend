@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const navItems = ["Today’s Deal", "Sell", "Customer Service"];
 
 function MenuIcon() {
@@ -19,11 +21,17 @@ export default function TopNavLinks() {
             <MenuIcon />
             <span>All</span>
           </button>
-          {navItems.map((item) => (
-            <button key={item} type="button" className="text-white">
-              {item}
-            </button>
-          ))}
+          {navItems.map((item) =>
+            item === "Sell" ? (
+              <Link key={item} href="/seller" className="text-white">
+                {item}
+              </Link>
+            ) : (
+              <button key={item} type="button" className="text-white">
+                {item}
+              </button>
+            ),
+          )}
         </nav>
       </div>
     </section>

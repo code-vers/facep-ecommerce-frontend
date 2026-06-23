@@ -32,8 +32,10 @@ export default function RootLayout({
     >
       <body className="min-h-full bg-background text-foreground">
         <div className="flex min-h-full flex-col">
-          <Navbar />
-          <TopNavLinks />
+          <div className="sticky top-0 z-50">
+            <Navbar />
+            <TopNavLinks />
+          </div>
           <main className="flex-1">{children}</main>
           <Footer />
         </div>
