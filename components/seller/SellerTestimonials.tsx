@@ -1,8 +1,23 @@
+"use client";
+
+import { useState } from "react";
+
 const testimonials = [
-  "The dashboard is extremely easy to use and helped us scale our online sales quickly.",
-  "The dashboard is extremely easy to use and helped us scale our online sales quickly.",
-  "The dashboard is extremely easy to use and helped us scale our online sales quickly.",
+  {
+    quote: "The dashboard is extremely easy to use and helped us scale our online sales quickly.",
+    author: "Lauren W.",
+  },
+  {
+    quote: "The dashboard is extremely easy to use and helped us scale our online sales quickly.",
+    author: "Lauren W.",
+  },
+  {
+    quote: "The dashboard is extremely easy to use and helped us scale our online sales quickly.",
+    author: "Lauren W.",
+  },
 ];
+
+const carouselTestimonials = [...testimonials, ...testimonials];
 
 function QuoteIcon() {
   return (
@@ -14,6 +29,8 @@ function QuoteIcon() {
 }
 
 export default function SellerTestimonials() {
+  const [isPaused, setIsPaused] = useState(false);
+
   return (
     <section className="w-full bg-white">
       <div className="flex w-full flex-col items-center gap-16 px-20 py-25">
@@ -27,23 +44,30 @@ export default function SellerTestimonials() {
         </div>
 
         <div className="flex w-[1760px] flex-col items-center gap-12 overflow-hidden">
-          <div className="flex w-full items-center gap-6">
-            {testimonials.map((testimonial, index) => (
-              <article
-                key={index}
-                className={`shrink-0 rounded-md border border-[#e5e5e6] bg-[#f2f2f3] px-6 py-12 shadow-[0px_2px_7.5px_rgba(0,0,0,0.1)] ${
-                  index < 2 ? "w-195.75" : "w-195.75"
-                }`}
-              >
-                <div className="flex flex-col items-start gap-6">
-                  <QuoteIcon />
-                  <div className="flex w-full flex-col items-start gap-4 font-sans leading-[1.2]">
-                    <p className="w-full text-[22px] text-black">{testimonial}</p>
-                    <p className="w-full text-[16px] text-[#848995]">-Lauren W.</p>
+          <div
+            className="w-full overflow-hidden"
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+          >
+            <div
+              className="testimonial-carousel-track flex w-max items-center gap-6"
+              style={{ animationPlayState: isPaused ? "paused" : "running" }}
+            >
+              {carouselTestimonials.map((testimonial, index) => (
+                <article
+                  key={`${testimonial.author}-${index}`}
+                  className="w-195.75 shrink-0 rounded-md border border-[#e5e5e6] bg-[#f2f2f3] px-6 py-12 shadow-[0px_2px_7.5px_rgba(0,0,0,0.1)]"
+                >
+                  <div className="flex flex-col items-start gap-6">
+                    <QuoteIcon />
+                    <div className="flex w-full flex-col items-start gap-4 font-sans leading-[1.2]">
+                      <p className="w-full text-[22px] text-black">{testimonial.quote}</p>
+                      <p className="w-full text-[16px] text-[#848995]">-{testimonial.author}</p>
+                    </div>
                   </div>
-                </div>
-              </article>
-            ))}
+                </article>
+              ))}
+            </div>
           </div>
 
           <div className="flex h-2.5 w-11.5 items-center justify-between">
@@ -53,6 +77,22 @@ export default function SellerTestimonials() {
           </div>
         </div>
       </div>
+
+      <style jsx>{`
+        .testimonial-carousel-track {
+          animation: seller-testimonials-marquee 24s linear infinite;
+        }
+
+        @keyframes seller-testimonials-marquee {
+          from {
+            transform: translate3d(0, 0, 0);
+          }
+
+          to {
+            transform: translate3d(calc(-50% - 12px), 0, 0);
+          }
+        }
+      `}</style>
     </section>
   );
 }
