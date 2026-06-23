@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 
 const canadaFlag = "https://www.figma.com/api/mcp/asset/0859158b-4418-4d80-b7d7-f869e43f0c98";
@@ -93,10 +95,15 @@ function FooterPill({
 }
 
 export default function Footer() {
+  const handleBackToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <footer className="flex w-full flex-col items-start">
       <button
         type="button"
+        onClick={handleBackToTop}
         className="flex w-full items-center justify-center gap-1 bg-[#2b323b] px-20 py-5 text-[16px] leading-[1.2] font-bold text-white"
       >
         <span>Back to top</span>
