@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist_Mono, Open_Sans } from "next/font/google";
 import Navbar from "@/components/shared/Navbar";
+import TopNavLinks from "@/components/shared/TopNavLinks";
 import "./globals.css";
 
 const openSans = Open_Sans({
@@ -31,6 +32,7 @@ export default function RootLayout({
       <body className="min-h-full bg-background text-foreground">
         <div className="flex min-h-full flex-col">
           <Navbar />
+          <TopNavLinks />
           <main className="flex-1">{children}</main>
         </div>
       </body>
