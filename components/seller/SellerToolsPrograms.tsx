@@ -103,7 +103,7 @@ function ToolIcon({ icon }: { icon: (typeof tools)[number]["icon"] }) {
 
 export default function SellerToolsPrograms() {
   return (
-    <section className="w-full bg-[#a86464]">
+    <section className="w-full bg-white">
       <div className="flex w-full flex-col items-center gap-16 px-20 py-25">
         <div className="flex flex-col items-center gap-6 text-center not-italic">
           <h2 className="font-[Arial] text-[48px] leading-[1.1] font-bold tracking-[-0.96px] text-black">
