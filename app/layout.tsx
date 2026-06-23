@@ -1,3 +1,4 @@
+import Footer from "@/components/shared/Footer";
 import type { Metadata } from "next";
 import { Geist_Mono, Open_Sans } from "next/font/google";
 import Navbar from "@/components/shared/Navbar";
@@ -34,6 +35,7 @@ export default function RootLayout({
           <Navbar />
           <TopNavLinks />
           <main className="flex-1">{children}</main>
+          <Footer />
         </div>
       </body>
     </html>
