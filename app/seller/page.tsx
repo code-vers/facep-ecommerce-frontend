@@ -1,3 +1,4 @@
+import SellerCta from "@/components/seller/SellerCta";
 import SellerFaq from "@/components/seller/SellerFaq";
 import SellerGettingStarted from "@/components/seller/SellerGettingStarted";
 import SellerHero from "@/components/seller/SellerHero";
@@ -18,6 +19,7 @@ export default function SellerPage() {
       <SellerStats />
       <SellerTestimonials />
       <SellerFaq />
+      <SellerCta />
     </>
   );
 }
