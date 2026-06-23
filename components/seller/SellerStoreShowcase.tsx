@@ -1,15 +1,5 @@
 import Image from "next/image";
 
-const showcaseImages = {
-  leftTop: "https://www.figma.com/api/mcp/asset/a3c5ed63-be0b-4aed-b90c-1484d137e4e6",
-  leftBottom: "https://www.figma.com/api/mcp/asset/55895fef-82ec-4e38-b04c-6d6863d66e63",
-  middleTop: "https://www.figma.com/api/mcp/asset/dd7e1b54-3298-4f8f-bdbc-50dcefcdfd30",
-  middleCenter: "https://www.figma.com/api/mcp/asset/94c303ea-43cc-4f20-b3c8-22debdbfc18c",
-  middleBottom: "https://www.figma.com/api/mcp/asset/74be8842-5e9a-41a5-96bd-47fa7ad6a289",
-  rightTop: "https://www.figma.com/api/mcp/asset/18872991-8ce2-4e06-8a55-b3548cf9f515",
-  rightBottom: "https://www.figma.com/api/mcp/asset/be03a6f6-537c-43e3-80a7-20c91776c217",
-};
-
 function Tile({
   src,
   alt,
@@ -44,13 +34,13 @@ export default function SellerStoreShowcase() {
         <div className="flex w-[1760px] items-center gap-4">
           <div className="flex w-xl shrink-0 flex-col gap-4">
             <Tile
-              src={showcaseImages.leftTop}
+              src={"/public/seller/showcase1.svg"}
               alt="Laptop showing storefront interface"
               className="h-195"
               imageClassName="object-cover object-[54%_50%]"
             />
             <Tile
-              src={showcaseImages.leftBottom}
+              src={"/public/seller/showcase5.svg"}
               alt="Courier with yellow delivery backpack"
               className="h-195"
               imageClassName="object-cover"
@@ -59,19 +49,19 @@ export default function SellerStoreShowcase() {
 
           <div className="grid h-[1576px] w-xl shrink-0 grid-rows-3 gap-4">
             <Tile
-              src={showcaseImages.middleTop}
+              src={"/public/seller/showcase2.svg"}
               alt="Desktop analytics dashboard"
               className="h-full"
               imageClassName="object-cover object-left"
             />
             <Tile
-              src={showcaseImages.middleCenter}
+              src={"/public/seller/showcase4.svg"}
               alt="Tablet commerce management screen"
               className="h-full"
               imageClassName="object-cover object-center"
             />
             <Tile
-              src={showcaseImages.middleBottom}
+              src={"/public/seller/showcase6.svg"}
               alt="Stacked shipping boxes"
               className="h-full"
               imageClassName="object-cover"
@@ -80,13 +70,13 @@ export default function SellerStoreShowcase() {
 
           <div className="flex w-xl shrink-0 flex-col gap-4">
             <Tile
-              src={showcaseImages.rightTop}
+              src={"/public/seller/showcase3.svg"}
               alt="Customer receiving package"
               className="h-195"
               imageClassName="object-cover object-[36%_50%]"
             />
             <Tile
-              src={showcaseImages.rightBottom}
+              src={"/public/seller/showcase7.svg"}
               alt="Tablet with seller management dashboard"
               className="h-195"
               imageClassName="object-cover"

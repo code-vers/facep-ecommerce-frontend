@@ -1,7 +1,5 @@
 import Image from "next/image";
 
-const gettingStartedImage = "https://www.figma.com/api/mcp/asset/80bff942-ca54-4e02-a299-ae7d17c19b40";
-
 const steps = [
   {
     number: "1",
@@ -47,7 +45,7 @@ export default function SellerGettingStarted() {
         <div className="relative h-175 min-w-0 flex-1 overflow-hidden rounded-xl">
           <div className="absolute inset-0 rounded-xl bg-white" />
           <Image
-            src={gettingStartedImage}
+            src={"/public/seller/selling.svg"}
             alt="Seller working on a laptop at a wooden table"
             fill
             unoptimized

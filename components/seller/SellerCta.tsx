@@ -1,14 +1,12 @@
 import Image from "next/image";
 
-const ctaImage = "https://www.figma.com/api/mcp/asset/4c7dc21e-94c3-4bf1-90d5-c246f12b6c9b";
-
 export default function SellerCta() {
   return (
     <section className="w-full bg-[#ede7de]">
       <div className="flex w-full items-center gap-24 px-20 py-25">
         <div className="relative h-175 min-w-0 flex-1 overflow-hidden rounded-xl shadow-[0px_24.552px_30.691px_-6.138px_rgba(0,0,0,0.1),0px_9.821px_12.276px_-7.366px_rgba(0,0,0,0.1)]">
           <Image
-            src={ctaImage}
+            src={"/public/seller/cta.svg"}
             alt="Seller preparing packages beside a laptop"
             fill
             unoptimized
