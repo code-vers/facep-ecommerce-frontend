@@ -406,7 +406,7 @@ export default function ProductCard({
     <article
       className={cn(
         // ── Structure ─────────────────────────────────────────────────
-        "group relative flex w-full flex-col items-start overflow-hidden",
+        "group relative flex h-full w-full flex-col items-start overflow-hidden",
         // ── Border & Background — Figma: border #E5E5E6, radius 4px ──
         "rounded-[4px] border border-[#E5E5E6] bg-white",
         // ── Hover: subtle lift, border emphasis, shadow ────────────── 
@@ -456,10 +456,8 @@ export default function ProductCard({
        */}
       <div
         className={cn(
-          "flex w-full shrink-0 flex-col items-start px-2 py-3",
-          hasFullButton
-            ? "h-[188px] justify-between"
-            : "h-auto justify-start gap-1",
+          "flex w-full flex-1 flex-col items-start px-2 py-3",
+          hasFullButton ? "justify-between" : "justify-start gap-1",
         )}
       >
         {/* ── Content Block ──────────────────────────────────────────────
@@ -640,18 +638,11 @@ export default function ProductCard({
             className={cn(
               "flex w-full items-center justify-center",
               // Figma: h 32px, radius 2px
-              "h-8 rounded-[2px]",
-              // Figma: bg #DEC33A, border 1px #DEC33A
-              "border border-[#DEC33A] bg-[#DEC33A]",
-              // Figma: 12px Regular, black
-              "text-[12px] font-normal leading-[1.3] text-black",
-              // Hover / active states darken brand yellow slightly
-              "transition-colors duration-150",
-              "hover:bg-[#C9B034] hover:border-[#C9B034]",
-              "active:bg-[#B49A2E] active:border-[#B49A2E]",
-              // Accessibility
-              "focus-visible:outline-none focus-visible:ring-2",
-              "focus-visible:ring-[#DEC33A] focus-visible:ring-offset-1",
+              "h-8 rounded-[2px] border text-[12px] font-normal leading-[1.3] text-black",
+              // Variant specific styles
+              buttonVariant === "add-to-cart"
+                ? "border-[#DEC33A] bg-[#DEC33A] transition-colors duration-150 hover:bg-[#C9B034] hover:border-[#C9B034] active:bg-[#B49A2E] active:border-[#B49A2E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#DEC33A] focus-visible:ring-offset-1"
+                : "border-[#E5E5E6] bg-white transition-colors duration-150 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E5E5E6] focus-visible:ring-offset-1"
             )}
             aria-label={
               buttonVariant === "add-to-cart"
