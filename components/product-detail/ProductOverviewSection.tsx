@@ -258,6 +258,43 @@ function PurchaseCard() {
   );
 }
 
+function SellerDescription() {
+  return (
+    <div className='flex w-full flex-col gap-4'>
+      <div className='flex w-full items-center justify-center pb-2.5'>
+        <h2 className='w-full text-[22px] leading-[1.2] text-[#171717]'>
+          Item description from the seller
+        </h2>
+      </div>
+
+      <p className='w-full text-[14px] leading-[1.3] text-[#171717]'>
+        Immerse yourself in sound with the AuraBuds Pro. Enjoy crystal-clear audio and deep bass,
+        perfect for music, podcasts, and calls. With a comfortable and secure fit, these earbuds are
+        designed for all-day wear. The AuraBuds Pro are also IPX7 rated for sweat and water
+        resistance, making them ideal for workouts and outdoor activities. Stay connected with
+        Bluetooth 5.3 for a stable and reliable connection. Plus, the charging case provides up to
+        24 hours of playtime, so you can keep the music going all day long.
+        <br />
+        <br />
+        Immerse yourself in sound with the AuraBuds Pro. Enjoy crystal-clear audio and deep bass,
+        perfect for music, podcasts, and calls. With a comfortable and secure fit, these earbuds are
+        designed for all-day wear. The AuraBuds Pro are also IPX7 rated for sweat and water
+        resistance, making them ideal for workouts and outdoor activities. Stay connected with
+        Bluetooth 5.3 for a stable and reliable connection. Plus, the charging case provides up to
+        24 hours of playtime, so you can keep the music going all day long.
+        <br />
+        <br />
+        Immerse yourself in sound with the AuraBuds Pro. Enjoy crystal-clear audio and deep bass,
+        perfect for music, podcasts, and calls. With a comfortable and secure fit, these earbuds are
+        designed for all-day wear. The AuraBuds Pro are also IPX7 rated for sweat and water
+        resistance, making them ideal for workouts and outdoor activities. Stay connected with
+        Bluetooth 5.3 for a stable and reliable connection. Plus, the charging case provides up to
+        24 hours of playtime, so you can keep the music going all day long.
+      </p>
+    </div>
+  );
+}
+
 export default function ProductOverviewSection() {
   return (
     <section className='w-full'>
@@ -287,6 +324,8 @@ export default function ProductOverviewSection() {
 
           <PurchaseCard />
         </div>
+
+        <SellerDescription />
       </div>
     </section>
   );
