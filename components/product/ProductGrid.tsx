@@ -1,12 +1,25 @@
 import React from 'react';
-import ProductCard from '@/components/shared/ProductCard';
+import ProductCard, { type ProductCardButtonVariant } from '@/components/shared/ProductCard';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
 
 const IMG1 = '/ImageWithFallback.png';
 const IMG2 = '/ImageWithFallback2.png';
 
+interface GridProduct {
+  id: string;
+  title: string;
+  rating: number;
+  reviewCount: string;
+  price: string;
+  originalPrice?: string;
+  offerText: string;
+  shippingText: string;
+  imageSrc: string;
+  buttonVariant: Extract<ProductCardButtonVariant, 'add-to-cart' | 'see-options'>;
+}
+
 // Mock data generation for results based on Figma
-const generateProducts = (count: number) => {
+const generateProducts = (count: number): GridProduct[] => {
   return Array.from({ length: count }).map((_, i) => ({
     id: `prod-${i}`,
     title: i % 2 === 0 ? "Gaming Setup" : "Office Chair",
@@ -39,7 +52,7 @@ export default function ProductGrid() {
             key={product.id}
             {...product}
             imageAlt={product.title}
-            buttonVariant={product.buttonVariant as any}
+            buttonVariant={product.buttonVariant}
           />
         ))}
       </div>
