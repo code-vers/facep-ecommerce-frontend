@@ -39,8 +39,8 @@ const products = generateProducts(28); // 4 rows of 7
 export default function ProductGrid() {
   return (
     <div className="flex-1 space-y-6">
-      <div className="flex flex-col gap-[8px]">
-        <h2 className="text-[21px] font-bold leading-[1] text-black">Results</h2>
+      <div className="flex flex-col gap-2">
+        <h2 className="text-[21px] font-bold leading-none text-black">Results</h2>
         <p className="text-[14px] leading-[1.3] text-[#42454D]">
           Check each product page for other buying options. Price and other details may vary based on product size and color
         </p>
