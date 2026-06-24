@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import ProductCard, { type ProductCardButtonVariant } from '@/components/shared/ProductCard';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
 
@@ -48,12 +49,13 @@ export default function ProductGrid() {
 
       <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7">
         {products.map((product) => (
-          <ProductCard
-            key={product.id}
-            {...product}
-            imageAlt={product.title}
-            buttonVariant={product.buttonVariant}
-          />
+          <Link key={product.id} href={`/product/home/${product.id}`} className="block h-full">
+            <ProductCard
+              {...product}
+              imageAlt={product.title}
+              buttonVariant={product.buttonVariant}
+            />
+          </Link>
         ))}
       </div>
 
