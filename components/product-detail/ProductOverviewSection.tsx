@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { ExternalLink, MapPin, Star } from 'lucide-react';
+import RelatedProductsSection from './RelatedProductsSection';
 
 const productImages = [
   {
@@ -297,36 +298,40 @@ function SellerDescription() {
 
 export default function ProductOverviewSection() {
   return (
-    <section className='w-full'>
-      <div className='mx-auto flex max-w-[1920px] flex-col gap-9 px-5 py-8 lg:px-10 xl:px-20 xl:py-12.5'>
-        <div className='flex flex-col gap-10 xl:flex-row xl:items-start xl:gap-14'>
-          <div className='flex min-w-0 flex-1 flex-col gap-12 xl:flex-row xl:items-start xl:gap-12'>
-            <ProductGallery />
+    <>
+      <section className='w-full'>
+        <div className='mx-auto flex max-w-[1920px] flex-col gap-9 px-5 py-8 lg:px-10 xl:px-20 xl:py-12.5'>
+          <div className='flex flex-col gap-10 xl:flex-row xl:items-start xl:gap-14'>
+            <div className='flex min-w-0 flex-1 flex-col gap-12 xl:flex-row xl:items-start xl:gap-12'>
+              <ProductGallery />
 
-            <div className='flex min-w-0 flex-1 flex-col gap-4'>
-              <ProductMeta />
+              <div className='flex min-w-0 flex-1 flex-col gap-4'>
+                <ProductMeta />
 
-              <div className='flex flex-col gap-3'>
-                <PriceBlock />
+                <div className='flex flex-col gap-3'>
+                  <PriceBlock />
 
-                <div className='flex items-center gap-[4.831px] text-[16px] text-black'>
-                  <p className='font-semibold leading-[1.3]'>Size:</p>
-                  <p className='leading-[1.2]'>-</p>
+                  <div className='flex items-center gap-[4.831px] text-[16px] text-black'>
+                    <p className='font-semibold leading-[1.3]'>Size:</p>
+                    <p className='leading-[1.2]'>-</p>
+                  </div>
+
+                  <ColorPalette />
                 </div>
 
-                <ColorPalette />
+                <DetailList />
+                <AboutSection />
               </div>
-
-              <DetailList />
-              <AboutSection />
             </div>
+
+            <PurchaseCard />
           </div>
 
-          <PurchaseCard />
+          <SellerDescription />
         </div>
+      </section>
 
-        <SellerDescription />
-      </div>
-    </section>
+      <RelatedProductsSection />
+    </>
   );
 }
