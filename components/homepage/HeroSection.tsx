@@ -30,7 +30,7 @@ export default function HeroSection() {
       <div className="mx-auto flex h-full max-w-[1760px] flex-col items-center justify-between px-4 sm:px-6 lg:px-10 md:flex-row relative">
         
         {/* Text Area */}
-        <div className="mt-8 flex flex-col items-start gap-2 md:mt-0 md:w-[45%] md:gap-6 z-10">
+        <div className="mt-8 flex flex-col items-start gap-2 md:mt-0 md:w-[45%] md:gap-6 z-10 md:mb-16 lg:mb-24 xl:mb-32">
           <p className="font-sans text-[20px] sm:text-[32px] md:text-[40px] lg:text-[48px] font-bold leading-[1.1] tracking-tight text-black capitalize">
             {slide.title}
           </p>
@@ -58,7 +58,7 @@ export default function HeroSection() {
       <button 
         type="button"
         onClick={prevSlide}
-        className="absolute left-4 top-[65%] sm:top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-[#dec33a] text-black shadow-md cursor-pointer hover:bg-[#c9b034] active:bg-[#b49a2e] z-20 transition-all"
+        className="absolute left-4 top-1/2 -translate-y-1/2 hidden sm:flex h-10 w-10 items-center justify-center rounded-full bg-[#dec33a] text-black shadow-md cursor-pointer hover:bg-[#c9b034] active:bg-[#b49a2e] z-20 transition-all"
         aria-label="Previous slide"
       >
         <ChevronLeft size={20} />
@@ -67,7 +67,7 @@ export default function HeroSection() {
       <button 
         type="button"
         onClick={nextSlide}
-        className="absolute right-4 top-[65%] sm:top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-[#dec33a] text-black shadow-md cursor-pointer hover:bg-[#c9b034] active:bg-[#b49a2e] z-20 transition-all"
+        className="absolute right-4 top-1/2 -translate-y-1/2 hidden sm:flex h-10 w-10 items-center justify-center rounded-full bg-[#dec33a] text-black shadow-md cursor-pointer hover:bg-[#c9b034] active:bg-[#b49a2e] z-20 transition-all"
         aria-label="Next slide"
       >
         <ChevronRight size={20} />

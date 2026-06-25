@@ -1,4 +1,6 @@
-import React from 'react';
+"use client";
+
+import React, { useRef } from 'react';
 import ProductCard from '@/components/shared/ProductCard';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
 
@@ -17,6 +19,18 @@ const products = Array.from({ length: 16 }).map((_, i) => ({
 }));
 
 export default function BrowsingHistory() {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollRef.current) {
+      const scrollAmount = 300;
+      scrollRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth',
+      });
+    }
+  };
+
   return (
     <section className="w-full border-t border-[#E5E5E6] bg-white py-12">
       <div className="mx-auto max-w-[1760px] px-4 sm:px-6 lg:px-10">
@@ -25,42 +39,53 @@ export default function BrowsingHistory() {
           <div className="text-[14px] text-[#42454D]">Page 1/5</div>
         </div>
 
-        <div className="relative">
+        <div className="relative group/bh">
           {/* Scrollable Container */}
-          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-            <div className="flex w-full">
-              <div className="grid w-full grid-flow-row grid-cols-2 gap-6 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8">
-                {products.map((product, idx) => (
-                   <div key={idx} className="h-full w-full max-w-[199px]">
-                      <ProductCard
-                        imageSrc={product.imageSrc}
-                        imageAlt={product.title}
-                        title={product.title}
-                        rating={product.rating}
-                        reviewCount={product.reviewCount}
-                        price={product.price}
-                        offerText={product.offerText}
-                        shippingText={product.shippingText}
-                        buttonVariant="none"
-                      />
-                   </div>
-                ))}
+          <div
+            ref={scrollRef}
+            className="flex gap-4 overflow-x-auto pb-4 scroll-smooth scrollbar-hide"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
+            {products.map((product, idx) => (
+              <div key={idx} className="h-full w-[176px] sm:w-[199px] shrink-0">
+                <ProductCard
+                  imageSrc={product.imageSrc}
+                  imageAlt={product.title}
+                  title={product.title}
+                  rating={product.rating}
+                  reviewCount={product.reviewCount}
+                  price={product.price}
+                  offerText={product.offerText}
+                  shippingText={product.shippingText}
+                  buttonVariant="none"
+                />
               </div>
-            </div>
+            ))}
           </div>
 
-          {/* Nav arrows - absolute positioning over the carousel in Figma */}
-          <button className="absolute -left-5 top-[162px] flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[#E5E5E6] bg-white shadow-md transition-colors hover:bg-gray-50 z-10">
+          {/* Nav arrows - visible only on desktop hover */}
+          <button 
+            onClick={() => scroll('left')}
+            type="button"
+            className="absolute -left-3 top-[100px] sm:top-[90px] md:top-[90px] lg:top-[90px] xl:top-[90px] hidden md:flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[#E5E5E6] bg-white shadow-md transition-all hover:bg-gray-50 active:scale-95 z-20 opacity-0 group-hover/bh:opacity-100 cursor-pointer"
+            aria-label="Scroll left"
+          >
             <ChevronLeft size={20} className="text-black" />
           </button>
-          <button className="absolute -right-5 top-[162px] flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[#E5E5E6] bg-white shadow-md transition-colors hover:bg-gray-50 z-10">
+          
+          <button 
+            onClick={() => scroll('right')}
+            type="button"
+            className="absolute -right-3 top-[100px] sm:top-[90px] md:top-[90px] lg:top-[90px] xl:top-[90px] hidden md:flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[#E5E5E6] bg-white shadow-md transition-all hover:bg-gray-50 active:scale-95 z-20 opacity-0 group-hover/bh:opacity-100 cursor-pointer"
+            aria-label="Scroll right"
+          >
             <ChevronRight size={20} className="text-black" />
           </button>
         </div>
 
         {/* Explore More Button */}
         <div className="mt-[36px] flex justify-center">
-          <button className="flex h-[43px] w-[211px] items-center justify-center rounded-[2px] border border-[#DEC33A] bg-[#DEC33A] transition-colors hover:bg-[#C9B034] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#DEC33A] focus-visible:ring-offset-1">
+          <button className="flex h-[43px] w-[211px] items-center justify-center rounded-[2px] border border-[#DEC33A] bg-[#DEC33A] transition-colors hover:bg-[#C9B034] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#DEC33A] focus-visible:ring-offset-1 cursor-pointer">
             <span className="text-[16px] font-normal text-black">Explore More</span>
           </button>
         </div>

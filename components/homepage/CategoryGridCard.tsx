@@ -32,7 +32,7 @@ export default function CategoryGridCard({ data, className }: CategoryGridCardPr
               className="group flex flex-col items-start focus-visible:outline-none"
             >
               {/* Image Container with precise 179:200 aspect ratio */}
-              <div className="relative aspect-[179/200] w-full overflow-hidden rounded-[4px] bg-gray-100">
+              <div className="relative w-full overflow-hidden rounded-[4px] bg-gray-100" style={{ aspectRatio: "179/200" }}>
                 <Image
                   src={item.imageSrc}
                   alt={item.label}
@@ -44,9 +44,9 @@ export default function CategoryGridCard({ data, className }: CategoryGridCardPr
               </div>
               
               {/* Label */}
-              <span className="mt-2 text-[14px] font-normal leading-[1.3] text-[#1e293b] group-hover:text-[#165DD0] transition-colors truncate w-full">
+              <div className="block mt-2 text-[14px] font-normal leading-[1.3] text-[#1e293b] group-hover:text-[#165DD0] transition-colors truncate w-full">
                 {item.label}
-              </span>
+              </div>
             </Link>
           ))}
         </div>

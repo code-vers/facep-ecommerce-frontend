@@ -33,10 +33,10 @@ export default function Home() {
       <HeroSection />
 
       {/* Main Content Layout Container */}
-      <div className="mx-auto w-full max-w-[1760px] px-4 py-8 sm:px-6 lg:px-10 space-y-12 md:space-y-16 pb-16">
+      <div className="mx-auto w-full max-w-[1760px] px-4 sm:px-6 lg:px-10 space-y-12 md:space-y-16 pb-16">
         
         {/* ── 2. Category Grid 1 ── */}
-        <section aria-label="Home and Decor Categories">
+        <section aria-label="Home and Decor Categories" className="-mt-16 sm:-mt-32 md:-mt-48 lg:-mt-64 xl:-mt-80 relative z-20">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {CATEGORY_GRIDS_1.map((grid) => (
               <CategoryGridCard key={grid.id} data={grid} />

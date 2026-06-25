@@ -50,7 +50,7 @@ export default function ProductCarousel({
         <button
           type="button"
           onClick={() => scroll("left")}
-          className="absolute -left-3 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full border border-[#E5E5E6] bg-white shadow-md transition-all hover:bg-gray-50 active:scale-95 z-20 opacity-0 group-hover/carousel:opacity-100 cursor-pointer"
+          className="absolute -left-3 top-1/2 -translate-y-1/2 hidden md:flex h-10 w-10 items-center justify-center rounded-full border border-[#E5E5E6] bg-white shadow-md transition-all hover:bg-gray-50 active:scale-95 z-20 opacity-0 group-hover/carousel:opacity-100 cursor-pointer"
           aria-label="Scroll left"
         >
           <ChevronLeft size={20} className="text-black" />
@@ -86,7 +86,7 @@ export default function ProductCarousel({
         <button
           type="button"
           onClick={() => scroll("right")}
-          className="absolute -right-3 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full border border-[#E5E5E6] bg-white shadow-md transition-all hover:bg-gray-50 active:scale-95 z-20 opacity-0 group-hover/carousel:opacity-100 cursor-pointer"
+          className="absolute -right-3 top-1/2 -translate-y-1/2 hidden md:flex h-10 w-10 items-center justify-center rounded-full border border-[#E5E5E6] bg-white shadow-md transition-all hover:bg-gray-50 active:scale-95 z-20 opacity-0 group-hover/carousel:opacity-100 cursor-pointer"
           aria-label="Scroll right"
         >
           <ChevronRight size={20} className="text-black" />
