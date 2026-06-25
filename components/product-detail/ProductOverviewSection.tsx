@@ -63,7 +63,7 @@ const aboutItems = [
 
 function ProductGallery() {
   return (
-    <div className='flex w-full max-w-175 flex-col gap-6 xl:shrink-0'>
+    <div className='flex w-full flex-col gap-4 sm:gap-5 lg:gap-6 xl:max-w-[700px] xl:shrink-0'>
       <div className='relative aspect-square w-full overflow-hidden bg-white'>
         <Image
           src={productImages[0].src}
@@ -75,7 +75,7 @@ function ProductGallery() {
         />
       </div>
 
-      <div className='grid w-full grid-cols-4 gap-3'>
+      <div className='grid w-full grid-cols-4 gap-2 sm:gap-3'>
         {productImages.slice(1).map((image) => (
           <div key={image.src} className='relative aspect-square overflow-hidden bg-white'>
             <Image
@@ -95,17 +95,17 @@ function ProductGallery() {
 
 function ProductMeta() {
   return (
-    <div className='flex w-full flex-col gap-4 border-b border-[#E5E5E6] pb-4.5'>
-      <div className='flex items-center gap-1.75'>
+    <div className='flex w-full flex-col gap-4 border-b border-[#E5E5E6] pb-[18px]'>
+      <div className='flex flex-wrap items-center gap-[7px]'>
         <p className='text-[16px] leading-[1.2] text-[#165DD0]'>Brand: Oraimo</p>
         <ExternalLink size={18} strokeWidth={1.8} className='text-black' />
       </div>
 
-      <h1 className='font-[Arial] text-[28px] leading-[1.2] font-normal text-[#42454D]'>
+      <h1 className='font-[Arial] text-[24px] leading-[1.2] font-normal text-[#42454D] sm:text-[26px] xl:text-[28px]'>
         Oraimo AirBuds Pro 2 Earphones
       </h1>
 
-      <div className='flex items-center gap-1.5'>
+      <div className='flex flex-wrap items-center gap-1.5'>
         <div className='flex items-center gap-px'>
           {Array.from({ length: 5 }, (_, index) => (
             <Star
@@ -177,7 +177,7 @@ function ColorPalette() {
 
 function DetailList() {
   return (
-    <div className='flex w-full max-w-[186.831px] flex-col gap-4 text-black'>
+    <div className='flex w-full max-w-full flex-col gap-4 text-black sm:max-w-[186.831px]'>
       <h2 className='text-[22px] leading-[1.2]'>Product details</h2>
 
       <div className='flex flex-col gap-2 text-[16px]'>
@@ -198,7 +198,7 @@ function AboutSection() {
       <h2 className='text-[22px] leading-[1.2] text-black'>About this item</h2>
 
       <div className='flex flex-col gap-1.5'>
-        <ul className='list-disc pl-5.25 text-[14px] leading-[1.3] text-black'>
+        <ul className='list-disc pl-[21px] text-[14px] leading-[1.3] text-black'>
           {aboutItems.map((item) => (
             <li key={item}>{item}</li>
           ))}
@@ -213,18 +213,20 @@ function AboutSection() {
 
 function PurchaseCard() {
   return (
-    <aside className='flex w-full max-w-[453.75px] flex-col gap-6 border border-[#E5E5E6] bg-[#F2F2F3] p-6 xl:shrink-0'>
-      <p className='font-[Arial] text-[28px] leading-[1.2] text-[#42454D]'>
+    <aside className='flex w-full flex-col gap-5 border border-[#E5E5E6] bg-[#F2F2F3] p-5 sm:p-6 xl:max-w-[453.75px] xl:shrink-0'>
+      <p className='font-[Arial] text-[24px] leading-[1.2] text-[#42454D] sm:text-[28px]'>
         <span className='text-[18.06px]'>$</span>
         <span>26</span>
       </p>
 
       <div className='flex flex-col gap-3'>
-        <p className='text-[18px] leading-[1.2] text-black'>Expected delivery : 6-9 October.</p>
+        <p className='text-[16px] leading-[1.2] text-black sm:text-[18px]'>
+          Expected delivery : 6-9 October.
+        </p>
 
-        <div className='flex items-center gap-2'>
+        <div className='flex flex-wrap items-center gap-2'>
           <MapPin size={24} strokeWidth={1.75} className='text-black' />
-          <p className='text-[18px] leading-[1.2] text-black'>Delivery to Canada</p>
+          <p className='text-[16px] leading-[1.2] text-black sm:text-[18px]'>Delivery to Canada</p>
           <button type='button' className='text-[16px] leading-[1.2] text-[#165DD0]'>
             Change location
           </button>
@@ -232,27 +234,27 @@ function PurchaseCard() {
       </div>
 
       <div className='flex w-full flex-col gap-6'>
-        <div className='flex flex-col gap-3 text-[18px] leading-[1.2]'>
+        <div className='flex flex-col gap-3 text-[16px] leading-[1.2] sm:text-[18px]'>
           <div className='flex items-center justify-between gap-4'>
             <p className='text-black'>Ships from</p>
-            <p className='text-[#42454D]'>Monatik LLC</p>
+            <p className='text-right text-[#42454D]'>Monatik LLC</p>
           </div>
           <div className='flex items-center justify-between gap-4'>
             <p className='text-black'>Sold by</p>
-            <p className='text-[#165DD0]'>Monatik LLC</p>
+            <p className='text-right text-[#165DD0]'>Monatik LLC</p>
           </div>
         </div>
 
-        <div className='flex flex-col gap-4'>
+        <div className='flex flex-col gap-3 sm:gap-4'>
           <button
             type='button'
-            className='h-12 rounded-xs border border-[#DEC33A] bg-[#DEC33A] text-[16px] leading-[1.2] text-black'
+            className='h-12 rounded-[2px] border border-[#DEC33A] bg-[#DEC33A] text-[16px] leading-[1.2] text-black'
           >
             Buy Now
           </button>
           <button
             type='button'
-            className='h-12 rounded-xs border border-[#686F7D] bg-transparent text-[16px] leading-[1.2] text-black'
+            className='h-12 rounded-[2px] border border-[#686F7D] bg-transparent text-[16px] leading-[1.2] text-black'
           >
             Add to Cart
           </button>
@@ -303,9 +305,9 @@ export default function ProductOverviewSection() {
   return (
     <>
       <section className='w-full'>
-        <div className='mx-auto flex max-w-[1920px] flex-col gap-9 px-5 py-8 lg:px-10 xl:px-20 xl:py-12.5'>
-          <div className='flex flex-col gap-10 xl:flex-row xl:items-start xl:gap-14'>
-            <div className='flex min-w-0 flex-1 flex-col gap-12 xl:flex-row xl:items-start xl:gap-12'>
+        <div className='mx-auto flex max-w-[1920px] flex-col gap-8 px-4 py-6 sm:px-5 sm:py-8 lg:px-10 xl:px-20 xl:py-[50px]'>
+          <div className='flex flex-col gap-8 xl:flex-row xl:items-start xl:gap-14'>
+            <div className='flex min-w-0 flex-1 flex-col gap-8 lg:gap-10 xl:flex-row xl:items-start xl:gap-12'>
               <ProductGallery />
 
               <div className='flex min-w-0 flex-1 flex-col gap-4'>

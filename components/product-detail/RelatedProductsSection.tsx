@@ -111,7 +111,7 @@ function RelatedProductCard({ product }: { product: RelatedProduct }) {
           type='button'
           className={
             isPrimary
-              ? 'h-8 w-full rounded-xsrder border-[#DEC33A] bg-[#DEC33A] text-[12px] leading-[1.3] text-black'
+              ? 'h-8 w-full rounded-xs border border-[#DEC33A] bg-[#DEC33A] text-[12px] leading-[1.3] text-black'
               : 'h-8 w-full rounded-xs border-[0.75px] border-[#686F7D] bg-white text-[12px] leading-[1.3] text-[#42454D]'
           }
         >
@@ -140,7 +140,7 @@ export default function RelatedProductsSection() {
   };
 
   return (
-    <section className='w-full border-t border-[#E5E5E6] px-5 py-8 lg:px-10 xl:px-20 xl:py-12.5'>
+    <section className='w-full border-t border-[#E5E5E6] px-4 py-6 sm:px-5 sm:py-8 lg:px-10 xl:px-20 xl:py-12.5'>
       <div className='mx-auto flex max-w-[1920px] flex-col gap-6'>
         <div className='flex w-full items-center'>
           <h2 className='text-[22px] leading-[1.2] text-black'>Deals On Related Products</h2>
@@ -149,9 +149,9 @@ export default function RelatedProductsSection() {
         <div className='relative w-full'>
           <div
             ref={scrollRef}
-            className='overflow-x-auto scroll-smooth [-ms-overflow-style:none] scrollbar-nonebkit-scrollbar]:hidden'
+            className='overflow-x-auto scroll-smooth [-ms-overflow-style:none] scrollbar-none [&::-webkit-scrollbar]:hidden'
           >
-            <div className='grid min-w-[1784px] grid-cols-8 gap-6'>
+            <div className='grid min-w-max grid-flow-col gap-4 sm:gap-5 xl:min-w-[1784px] xl:grid-cols-8 xl:gap-6'>
               {relatedProducts.map((product) => (
                 <RelatedProductCard key={product.id} product={product} />
               ))}

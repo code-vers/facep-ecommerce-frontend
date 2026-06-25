@@ -8,10 +8,7 @@ type ReviewProductModalProps = {
   onClose: () => void;
 };
 
-export default function ReviewProductModal({
-  isOpen,
-  onClose,
-}: ReviewProductModalProps) {
+export default function ReviewProductModal({ isOpen, onClose }: ReviewProductModalProps) {
   const [rating, setRating] = useState(0);
   const [reviewText, setReviewText] = useState('');
 
@@ -21,11 +18,11 @@ export default function ReviewProductModal({
 
   return (
     <div
-      className='fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-[rgba(155,155,155,0.72)] px-4 py-8 xl:px-10'
+      className='fixed inset-0 z-100 flex items-center justify-center overflow-y-auto bg-[rgba(155,155,155,0.72)] px-4 py-6 sm:py-8 xl:px-10'
       onClick={onClose}
     >
       <div
-        className='relative w-full max-w-[1272px] rounded-[6px] border border-[#E5E5E6] bg-white p-10'
+        className='relative w-full max-w-318 rounded-[6px] border border-[#E5E5E6] bg-white p-4 sm:p-6 lg:p-8 xl:p-10'
         onClick={(event) => event.stopPropagation()}
       >
         <div className='flex w-full flex-col gap-6'>
@@ -41,7 +38,7 @@ export default function ReviewProductModal({
                 <p className='flex-1 text-[16px] leading-[1.2] text-black'>Rate the product</p>
               </div>
 
-              <div className='flex items-center gap-px'>
+              <div className='flex flex-wrap items-center gap-px'>
                 {Array.from({ length: 5 }, (_, index) => {
                   const filled = index < rating;
 
@@ -50,14 +47,18 @@ export default function ReviewProductModal({
                       key={index}
                       type='button'
                       onClick={() => setRating(index + 1)}
-                      className='flex h-10 w-10 items-center justify-center'
+                      className='flex h-8 w-8 items-center justify-center sm:h-10 sm:w-10'
                       aria-label={`Rate ${index + 1} out of 5`}
                     >
                       <Star
-                        size={40}
+                        size={32}
                         strokeWidth={1.5}
                         fill={filled ? '#DEC33A' : 'none'}
                         className='text-[#DEC33A]'
+                        style={{
+                          width: 'clamp(32px, 4vw, 40px)',
+                          height: 'clamp(32px, 4vw, 40px)',
+                        }}
                       />
                     </button>
                   );
@@ -78,7 +79,7 @@ export default function ReviewProductModal({
                 value={reviewText}
                 onChange={(event) => setReviewText(event.target.value)}
                 placeholder='Write your review'
-                className='h-[154px] w-full resize-none overflow-hidden rounded-[2px] border border-[#E5E5E6] bg-white px-3 py-2.5 text-[14px] leading-[1.3] text-black outline-none placeholder:text-[#848995]'
+                className='h-38.5 w-full resize-none overflow-hidden rounded-xs border border-[#E5E5E6] bg-white px-3 py-2.5 text-[14px] leading-[1.3] text-black outline-none placeholder:text-[#848995]'
               />
             </div>
           </div>
@@ -88,11 +89,11 @@ export default function ReviewProductModal({
               <p className='flex-1 text-[16px] leading-[1.2] text-black'>Add image</p>
             </div>
 
-            <div className='flex h-[154px] w-full flex-col items-center gap-3 rounded-[6px] border border-dashed border-[#CACBCE] p-6'>
+            <div className='flex h-38.5 w-full flex-col items-center justify-center gap-3 rounded-[6px] border border-dashed border-[#CACBCE] p-4 sm:p-6'>
               <ImageUp size={36} strokeWidth={1.6} className='text-[#848995]' />
 
               <div
-                className='flex flex-col items-center gap-0.5 text-[14px] leading-[1.25]'
+                className='flex flex-col items-center gap-0.5 text-[14px] leading-tight'
                 style={{ fontFamily: 'Aptos, Arial, sans-serif' }}
               >
                 <p className='text-[#42454D]'>Drag and drop your Logo here</p>
@@ -110,7 +111,7 @@ export default function ReviewProductModal({
           <div className='flex w-full justify-end'>
             <button
               type='button'
-              className='h-12 min-w-[211px] rounded-[2px] border border-[#DEC33A] bg-[#DEC33A] px-4 text-[16px] leading-[1.2] text-black'
+              className='h-12 w-full rounded-xs border border-[#DEC33A] bg-[#DEC33A] px-4 text-[16px] leading-[1.2] text-black sm:min-w-52.75 sm:w-auto'
             >
               Submit Review
             </button>

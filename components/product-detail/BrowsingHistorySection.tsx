@@ -243,9 +243,9 @@ export default function BrowsingHistorySection() {
   };
 
   return (
-    <section className='w-full px-5 py-8 lg:px-10 xl:px-20 xl:py-12.5'>
+    <section className='w-full px-4 py-6 sm:px-5 sm:py-8 lg:px-10 xl:px-20 xl:py-12.5'>
       <div className='mx-auto flex max-w-[1920px] flex-col gap-6'>
-        <div className='flex w-full items-center justify-between'>
+        <div className='flex w-full flex-col gap-2 sm:flex-row sm:items-center sm:justify-between'>
           <h2 className='text-[22px] leading-[1.2] text-black'>
             Inspired by your browsing history
           </h2>
@@ -258,7 +258,7 @@ export default function BrowsingHistorySection() {
               ref={scrollRef}
               className='overflow-x-auto scroll-smooth [-ms-overflow-style:none] scrollbar-none [&::-webkit-scrollbar]:hidden'
             >
-              <div className='grid min-w-[1784px] grid-cols-8 gap-6'>
+              <div className='grid min-w-max grid-flow-col gap-4 sm:gap-5 xl:min-w-[1784px] xl:grid-cols-8 xl:gap-6'>
                 {historyProducts.map((product) => (
                   <BrowsingHistoryCard key={product.id} product={product} />
                 ))}
@@ -286,7 +286,7 @@ export default function BrowsingHistorySection() {
 
           <button
             type='button'
-            className='h-12 min-w-52.75 rounded-xs border-[0.75px] border-black bg-transparent px-4 text-[16px] leading-[1.2] text-black'
+            className='h-12 w-full rounded-xs border-[0.75px] border-black bg-transparent px-4 text-[16px] leading-[1.2] text-black sm:w-auto sm:min-w-52.75'
           >
             Explore More
           </button>

@@ -71,25 +71,22 @@ const reviews: Review[] = [
   },
 ];
 
-function RatingSummaryCard({
-  onOpenReviewModal,
-}: {
-  onOpenReviewModal: () => void;
-}) {
+function RatingSummaryCard({ onOpenReviewModal }: { onOpenReviewModal: () => void }) {
   return (
-    <div className='flex w-full max-w-89.75 flex-col gap-4 xl:shrink-0'>
-      <div className='flex w-full flex-col gap-6 border border-[#E5E5E6] bg-[#F2F2F3] p-6'>
+    <div className='flex w-full flex-col gap-4 xl:max-w-89.75 xl:shrink-0'>
+      <div className='flex w-full flex-col gap-6 border border-[#E5E5E6] bg-[#F2F2F3] p-5 sm:p-6'>
         <div className='flex flex-col gap-3'>
           <h3 className='text-[22px] leading-[1.2] text-black'>Customer Rating</h3>
 
-          <div className='flex items-center gap-px'>
+          <div className='flex flex-wrap items-center gap-px'>
             {Array.from({ length: 5 }, (_, index) => (
               <Star
                 key={index}
-                size={40}
+                size={32}
                 strokeWidth={1.5}
                 fill='#DEC33A'
                 className='text-[#DEC33A]'
+                style={{ width: 'clamp(32px, 4vw, 40px)', height: 'clamp(32px, 4vw, 40px)' }}
               />
             ))}
           </div>
@@ -100,14 +97,18 @@ function RatingSummaryCard({
         <div className='flex w-full flex-col gap-4'>
           {ratingBreakdown.map((item) => (
             <div key={item.label} className='flex w-full items-center gap-3'>
-              <p className='w-13ink-0 text-[18px] leading-[1.2] text-black'>{item.label}</p>
-              <div className='relative h-2 w-50.75 shrink-0 rounded-xs bg-[#EDE7DE]'>
+              <p className='w-13 shrink-0 text-[16px] leading-[1.2] text-black sm:text-[18px]'>
+                {item.label}
+              </p>
+              <div className='relative h-2 min-w-0 flex-1 rounded-xs bg-[#EDE7DE] xl:max-w-50.75'>
                 <div
                   className='absolute inset-y-0 left-0 rounded-xs bg-[#DEC33A]'
-                  style={{ width: `${item.width}px` }}
+                  style={{ width: `${(item.width / 203) * 100}%` }}
                 />
               </div>
-              <p className='text-[18px] leading-[1.2] text-black'>{item.percentage}</p>
+              <p className='shrink-0 text-[16px] leading-[1.2] text-black sm:text-[18px]'>
+                {item.percentage}
+              </p>
             </div>
           ))}
         </div>
@@ -126,7 +127,7 @@ function RatingSummaryCard({
 
 function ReviewAttachments({ count }: { count: number }) {
   return (
-    <div className='flex items-center gap-3'>
+    <div className='flex flex-wrap items-center gap-3'>
       {Array.from({ length: count }, (_, index) => (
         <div key={index} className='h-15 w-15 shrink-0 bg-white' />
       ))}
@@ -136,8 +137,8 @@ function ReviewAttachments({ count }: { count: number }) {
 
 function ReviewRow({ review }: { review: Review }) {
   return (
-    <article className='flex w-full flex-col border-b border-[#E5E5E6] p-5'>
-      <div className='flex w-full items-start gap-4'>
+    <article className='flex w-full flex-col border-b border-[#E5E5E6] p-4 sm:p-5'>
+      <div className='flex w-full items-start gap-3 sm:gap-4'>
         <div className='relative h-10 w-10 shrink-0 overflow-hidden rounded-full'>
           <Image
             src={reviewerAvatar}
@@ -150,8 +151,10 @@ function ReviewRow({ review }: { review: Review }) {
         </div>
 
         <div className='flex min-w-0 flex-1 flex-col gap-2'>
-          <div className='flex w-full items-center justify-between gap-4'>
-            <p className='w-34 text-[16px] font-semibold leading-[1.3] text-black'>{review.name}</p>
+          <div className='flex w-full flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4'>
+            <p className='text-[16px] font-semibold leading-[1.3] text-black sm:w-34'>
+              {review.name}
+            </p>
 
             <div className='flex items-center gap-px'>
               {Array.from({ length: 5 }, (_, index) => (
@@ -166,10 +169,10 @@ function ReviewRow({ review }: { review: Review }) {
             </div>
           </div>
 
-          <div className='flex w-full items-center justify-between gap-4'>
+          <div className='flex w-full flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4'>
             <p className='text-[14px] leading-[1.3] text-[#42454D]'>{review.text}</p>
             <p
-              className='shrink-0 text-right text-[12px] leading-[1.3] text-[#42454D]'
+              className='shrink-0 text-left text-[12px] leading-[1.3] text-[#42454D] sm:text-right'
               style={{ fontFamily: 'Roboto, Arial, sans-serif' }}
             >
               {review.date}
@@ -188,13 +191,13 @@ export default function CustomerReviewsSection() {
 
   return (
     <>
-      <section className='w-full px-5 py-8 lg:px-10 xl:px-20 xl:py-12.5'>
-        <div className='mx-auto flex max-w-[1920px] flex-col gap-4 rounded-lg border border-[#E5E5E6] bg-white px-5 py-8 lg:px-10 xl:px-20 xl:py-12.5'>
+      <section className='w-full px-4 py-6 sm:px-5 sm:py-8 lg:px-10 xl:px-20 xl:py-12.5'>
+        <div className='mx-auto flex max-w-[1920px] flex-col gap-4 rounded-lg border border-[#E5E5E6] bg-white px-4 py-6 sm:px-5 sm:py-8 lg:px-10 xl:px-20 xl:py-12.5'>
           <div className='flex w-full items-center justify-center pb-2.5'>
             <h2 className='w-full text-[22px] leading-[1.2] text-black'>Customer Reviews</h2>
           </div>
 
-          <div className='flex flex-col gap-9 xl:flex-row xl:items-start'>
+          <div className='flex flex-col gap-8 xl:flex-row xl:items-start xl:gap-9'>
             <RatingSummaryCard onOpenReviewModal={() => setIsReviewModalOpen(true)} />
 
             <div className='flex min-w-0 flex-1 flex-col'>
@@ -206,10 +209,7 @@ export default function CustomerReviewsSection() {
         </div>
       </section>
 
-      <ReviewProductModal
-        isOpen={isReviewModalOpen}
-        onClose={() => setIsReviewModalOpen(false)}
-      />
+      <ReviewProductModal isOpen={isReviewModalOpen} onClose={() => setIsReviewModalOpen(false)} />
     </>
   );
 }
