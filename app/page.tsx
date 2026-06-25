@@ -125,7 +125,7 @@ export default function Home() {
       <BrowsingHistory />
 
       {/* ── 14. Sign In Section ── */}
-      <div className="mt-8">
+      <div className="">
         <SignUpBanner />
       </div>
     </main>

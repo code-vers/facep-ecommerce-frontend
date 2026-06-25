@@ -1,3 +1,5 @@
+import { StaticImageData } from 'next/image';
+import img from './../public/banner.png'
 export interface CategoryItem {
   label: string;
   imageSrc: string;
@@ -30,22 +32,25 @@ export interface CarouselProduct {
 export interface HeroSlide {
   title: string;
   subtitle: string;
-  imageSrc: string;
+  imageSrc: StaticImageData | string;
   bgColor: string;
+  imageFit?: 'cover' | 'contain';
 }
 
 export const HERO_SLIDES: HeroSlide[] = [
   {
     title: "Get the best deals in",
     subtitle: "Home, Kitchen & outdoor Appliances",
-    imageSrc: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?q=80&w=1200&auto=format&fit=crop",
+    imageSrc: img,
     bgColor: "bg-gradient-to-b from-[#ebaf0a] to-[#F4F4F5] via-[#f5d784] via-[38.46%]",
+    imageFit: "contain",
   },
   {
     title: "Upgrade your lifestyle with",
     subtitle: "Premium Living Room Furniture",
     imageSrc: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?q=80&w=1200&auto=format&fit=crop",
     bgColor: "bg-gradient-to-b from-[#3a8bde] to-[#F4F4F5] via-[#8ec3f5] via-[38.46%]",
+    imageFit: "cover",
   },
 ];
 
