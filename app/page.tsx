@@ -7,23 +7,23 @@
 
 "use client";
 
-import HeroSection from "@/components/homepage/HeroSection";
 import CategoryGridCard from "@/components/homepage/CategoryGridCard";
+import HeroSection from "@/components/homepage/HeroSection";
 import ProductCarousel from "@/components/homepage/ProductCarousel";
 import BrowsingHistory from "@/components/product/BrowsingHistory";
 import SignUpBanner from "@/components/product/SignUpBanner";
 import {
-  CATEGORY_GRIDS_1,
-  CATEGORY_GRIDS_2,
-  CATEGORY_GRIDS_3,
-  CATEGORY_GRIDS_4,
-  CAROUSEL_VIEWED_ITEMS,
   CAROUSEL_BEAUTY_ITEMS,
   CAROUSEL_BEST_CLOTHING_ITEMS,
   CAROUSEL_CANADA_ITEMS,
   CAROUSEL_CLOTHES_SHOES_ITEMS,
   CAROUSEL_HOME_ITEMS,
+  CAROUSEL_VIEWED_ITEMS,
   CAROUSEL_WIRELESS_ITEMS,
+  CATEGORY_GRIDS_1,
+  CATEGORY_GRIDS_2,
+  CATEGORY_GRIDS_3,
+  CATEGORY_GRIDS_4,
 } from "@/lib/homepage-data";
 
 export default function Home() {
@@ -34,7 +34,7 @@ export default function Home() {
 
       {/* Main Content Layout Container */}
       <div className="mx-auto w-full max-w-[1760px] px-4 sm:px-6 lg:px-10 space-y-12 md:space-y-16 pb-16">
-        
+
         {/* ── 2. Category Grid 1 ── */}
         <section aria-label="Home and Decor Categories" className="-mt-16 sm:-mt-32 md:-mt-48 lg:-mt-64 xl:-mt-80 relative z-20">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">

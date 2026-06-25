@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useRef } from 'react';
 import ProductCard from '@/components/shared/ProductCard';
-import { ChevronRight, ChevronLeft } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useRef } from 'react';
 
 const IMG1 = '/ImageWithFallback.png';
 const IMG2 = '/ImageWithFallback2.png';
@@ -64,7 +64,7 @@ export default function BrowsingHistory() {
           </div>
 
           {/* Nav arrows - visible only on desktop hover */}
-          <button 
+          <button
             onClick={() => scroll('left')}
             type="button"
             className="absolute -left-3 top-[100px] sm:top-[90px] md:top-[90px] lg:top-[90px] xl:top-[90px] hidden md:flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[#E5E5E6] bg-white shadow-md transition-all hover:bg-gray-50 active:scale-95 z-20 opacity-0 group-hover/bh:opacity-100 cursor-pointer"
@@ -72,8 +72,8 @@ export default function BrowsingHistory() {
           >
             <ChevronLeft size={20} className="text-black" />
           </button>
-          
-          <button 
+
+          <button
             onClick={() => scroll('right')}
             type="button"
             className="absolute -right-3 top-[100px] sm:top-[90px] md:top-[90px] lg:top-[90px] xl:top-[90px] hidden md:flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[#E5E5E6] bg-white shadow-md transition-all hover:bg-gray-50 active:scale-95 z-20 opacity-0 group-hover/bh:opacity-100 cursor-pointer"
