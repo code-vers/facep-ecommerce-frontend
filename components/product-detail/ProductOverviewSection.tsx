@@ -1,7 +1,9 @@
 import Image from 'next/image';
+import BrowsingHistorySection from './BrowsingHistorySection';
 import { ExternalLink, MapPin, Star } from 'lucide-react';
 import CustomerReviewsSection from './CustomerReviewsSection';
 import RelatedProductsSection from './RelatedProductsSection';
+import SignUpBanner from '@/components/product/SignUpBanner';
 
 const productImages = [
   {
@@ -334,6 +336,8 @@ export default function ProductOverviewSection() {
 
       <RelatedProductsSection />
       <CustomerReviewsSection />
+      <BrowsingHistorySection />
+      <SignUpBanner />
     </>
   );
 }

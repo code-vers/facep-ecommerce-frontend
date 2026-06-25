@@ -161,7 +161,7 @@ export default function RelatedProductsSection() {
           <button
             type='button'
             onClick={() => scrollCards('left')}
-            className='absolute -left-3.25 top-1/2 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-[#CACACE] xl:flex'
+            className='absolute -left-10 top-1/2 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-[#CACACE] xl:flex'
             aria-label='Previous related products'
           >
             <ChevronLeft size={16} className='text-[#42454D]' />
@@ -170,7 +170,7 @@ export default function RelatedProductsSection() {
           <button
             type='button'
             onClick={() => scrollCards('right')}
-            className='absolute -right-3.25 top-1/2 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-[#CACACE] xl:flex'
+            className='absolute -right-10 top-1/2 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-[#CACACE] xl:flex'
             aria-label='Next related products'
           >
             <ChevronRight size={16} className='text-[#42454D]' />
