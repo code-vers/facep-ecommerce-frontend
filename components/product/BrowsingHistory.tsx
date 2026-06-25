@@ -29,7 +29,7 @@ export default function BrowsingHistory() {
           {/* Scrollable Container */}
           <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
             <div className="flex w-full">
-              <div className="grid w-full grid-flow-row grid-cols-2 gap-6 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8">
+              <div className="grid w-full grid-flow-row grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8">
                 {products.map((product, idx) => (
                    <div key={idx} className="h-full w-full max-w-[199px]">
                       <ProductCard
@@ -50,10 +50,10 @@ export default function BrowsingHistory() {
           </div>
 
           {/* Nav arrows - absolute positioning over the carousel in Figma */}
-          <button className="absolute -left-5 top-[162px] flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[#E5E5E6] bg-white shadow-md transition-colors hover:bg-gray-50 z-10">
+          <button className="absolute -left-5 top-[162px] z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[#E5E5E6] bg-white shadow-md transition-colors hover:bg-gray-50 md:flex">
             <ChevronLeft size={20} className="text-black" />
           </button>
-          <button className="absolute -right-5 top-[162px] flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[#E5E5E6] bg-white shadow-md transition-colors hover:bg-gray-50 z-10">
+          <button className="absolute -right-5 top-[162px] z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[#E5E5E6] bg-white shadow-md transition-colors hover:bg-gray-50 md:flex">
             <ChevronRight size={20} className="text-black" />
           </button>
         </div>
