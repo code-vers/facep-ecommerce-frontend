@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { ExternalLink, MapPin, Star } from 'lucide-react';
+import CustomerReviewsSection from './CustomerReviewsSection';
 import RelatedProductsSection from './RelatedProductsSection';
 
 const productImages = [
@@ -332,6 +333,7 @@ export default function ProductOverviewSection() {
       </section>
 
       <RelatedProductsSection />
+      <CustomerReviewsSection />
     </>
   );
 }
