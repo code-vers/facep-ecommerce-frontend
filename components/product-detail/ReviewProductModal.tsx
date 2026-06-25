@@ -21,7 +21,7 @@ export default function ReviewProductModal({
 
   return (
     <div
-      className='fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-[#9B9B9B] px-4 py-8 xl:px-10'
+      className='fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-[rgba(155,155,155,0.72)] px-4 py-8 xl:px-10'
       onClick={onClose}
     >
       <div
@@ -105,6 +105,15 @@ export default function ReviewProductModal({
                 </button>
               </div>
             </div>
+          </div>
+
+          <div className='flex w-full justify-end'>
+            <button
+              type='button'
+              className='h-12 min-w-[211px] rounded-[2px] border border-[#DEC33A] bg-[#DEC33A] px-4 text-[16px] leading-[1.2] text-black'
+            >
+              Submit Review
+            </button>
           </div>
         </div>
       </div>
