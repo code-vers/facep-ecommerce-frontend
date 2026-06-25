@@ -68,13 +68,14 @@ function RadioOption({ id, label, defaultChecked }: { id: string; label: string;
 
 export default function FilterSidebar() {
   return (
-    <aside className="w-[203px] shrink-0 space-y-8 pb-10">
+    <aside className="w-full shrink-0 space-y-8 pb-10 lg:w-[203px]">
       <div className="flex items-center justify-between">
         <h3 className="text-[16px] font-bold text-black">Filter by</h3>
         <button className="text-[14px] text-[#165DD0]">Clear</button>
       </div>
 
-      {/* Deals & Discounts */}
+      <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:flex lg:flex-col lg:gap-8">
+        {/* Deals & Discounts */}
       <div>
         <h4 className="mb-2 text-[14px] font-bold text-black">Deals & Discounts</h4>
         <div className="flex flex-col gap-1">
@@ -164,16 +165,17 @@ export default function FilterSidebar() {
         </div>
       </div>
 
-      {/* Category */}
-      <div>
-        <h4 className="mb-2 text-[14px] font-bold text-black">Category</h4>
-        <div className="flex flex-col gap-1">
-          {CATEGORIES.map((cat, idx) => (
-            <RadioOption key={cat.id} {...cat} defaultChecked={idx === 0} />
-          ))}
-          <button className="flex items-center gap-1 py-1 text-[14px] text-[#165DD0]">
-            See more <ChevronDown size={14} />
-          </button>
+        {/* Category */}
+        <div>
+          <h4 className="mb-2 text-[14px] font-bold text-black">Category</h4>
+          <div className="flex flex-col gap-1">
+            {CATEGORIES.map((cat, idx) => (
+              <RadioOption key={cat.id} {...cat} defaultChecked={idx === 0} />
+            ))}
+            <button className="flex items-center gap-1 py-1 text-[14px] text-[#165DD0]">
+              See more <ChevronDown size={14} />
+            </button>
+          </div>
         </div>
       </div>
     </aside>
