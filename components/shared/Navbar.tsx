@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 const canadaFlag = "https://www.figma.com/api/mcp/asset/b672379d-0c27-4040-a593-1da330971f36";
 
@@ -121,9 +122,9 @@ export default function Navbar() {
 
             <div className="hidden items-center gap-5 xl:flex xl:gap-7">
               <AccountBlock />
-              <button type="button" className="shrink-0 text-[15px] leading-[1.2] font-bold text-white xl:text-[16px]">
+              <Link href="/orders" className="shrink-0 text-[15px] leading-[1.2] font-bold text-white xl:text-[16px] hover:text-[#dec33a] transition-all">
                 Returns &amp; Orders
-              </button>
+              </Link>
             </div>
 
             <button type="button" className="flex shrink-0 items-center justify-center gap-1 text-white">
