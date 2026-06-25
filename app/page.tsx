@@ -29,7 +29,7 @@ export default function Home() {
             ProductCard — Universal Component Showcase
           </h1>
           <p className='text-[14px] text-[#42454D]'>
-            All variants from Figma nodes 2093:4415 (Product Page) and 2064:148 (Today's Deals
+            All variants from Figma nodes 2093:4415 (Product Page) and 2064:148 (Today&apos;s Deals
             Page).
           </p>
         </div>
@@ -328,7 +328,7 @@ export default function Home() {
             id='v5'
             className='mb-4 text-[12px] font-bold uppercase tracking-widest text-[#42454D]'
           >
-            Variant 5 — Product Listing (Badge + Dual Price + "Explore More →")
+            Variant 5 — Product Listing (Badge + Dual Price + &quot;Explore More →&quot;)
           </h2>
           <div className='grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7'>
             {Array.from({ length: 7 }, (_, i) => (
