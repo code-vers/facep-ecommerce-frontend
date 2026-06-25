@@ -9,9 +9,9 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
-import { ChevronDown, ChevronUp, Star, Trash2, MapPin, Loader2 } from "lucide-react";
+import { ChevronDown, ChevronUp, Star, Trash2, MapPin, Loader2, X, FileText, Package, Truck, PackageCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ProductCarousel from "@/components/homepage/ProductCarousel";
 import BrowsingHistory from "@/components/product/BrowsingHistory";
@@ -196,10 +196,104 @@ const RECENTLY_VIEWED_ITEMS: CarouselProduct[] = [
 
 const FILTER_TABS = ["All Orders", "Ordered", "Packed", "Shipped", "Delivered", "Returned"] as const;
 
+const STATUS_ORDER = ["Ordered", "Packed", "Shipped", "Delivered"] as const;
+
+const TRACKING_STEPS = [
+  {
+    key: "Ordered" as const,
+    label: "Ordered",
+    detail: "Order Received",
+    icon: FileText,
+  },
+  {
+    key: "Packed" as const,
+    label: "Packed",
+    detail: "Order Packed",
+    icon: Package,
+  },
+  {
+    key: "Shipped" as const,
+    label: "Shipped",
+    detail: "Out For Delivery",
+    icon: Truck,
+  },
+  {
+    key: "Delivered" as const,
+    label: "Delivered",
+    detail: "Order Delivered",
+    icon: PackageCheck,
+  },
+];
+
+const getStatusTitle = (status: string) => {
+  switch (status) {
+    case "Ordered":
+      return "Placed";
+    case "Packed":
+      return "Packed";
+    case "Shipped":
+      return "Shipped";
+    case "Delivered":
+      return "Delivered";
+    case "Returned":
+      return "Returned";
+    default:
+      return status;
+  }
+};
+
+const isStepActive = (orderStatus: string, stepKey: typeof STATUS_ORDER[number]) => {
+  if (orderStatus === "Returned") return true;
+  const orderStatusIndex = STATUS_ORDER.indexOf(orderStatus as any);
+  const stepIndex = STATUS_ORDER.indexOf(stepKey);
+  if (orderStatusIndex === -1) return false;
+  return stepIndex <= orderStatusIndex;
+};
+
+const getStepDateTime = (placedDateStr: string, stepIndex: number) => {
+  const date = new Date(placedDateStr);
+  if (isNaN(date.getTime())) {
+    return { date: "03/04/2026", time: "At 2.30 am" };
+  }
+  date.setDate(date.getDate() + stepIndex);
+  
+  const dd = String(date.getDate()).padStart(2, "0");
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const yyyy = date.getFullYear();
+  
+  const times = ["At 2.30 am", "At 10:15 am", "At 3:45 pm", "At 11:00 am"];
+  return {
+    date: `${dd}/${mm}/${yyyy}`,
+    time: times[stepIndex % times.length],
+  };
+};
+
 export default function ReturnsAndOrdersPage() {
   const [activeTab, setActiveTab] = useState<typeof FILTER_TABS[number]>("All Orders");
   const [expandedOrders, setExpandedOrders] = useState<Record<string, boolean>>({ "123456": true });
   const [currentPage, setCurrentPage] = useState(1);
+  const [activeTrackOrder, setActiveTrackOrder] = useState<Order | null>(null);
+
+  // Handle ESC key press and body scroll lock
+  useEffect(() => {
+    if (activeTrackOrder) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setActiveTrackOrder(null);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [activeTrackOrder]);
 
   // Toggle order expansion
   const toggleOrder = (orderId: string) => {
@@ -343,6 +437,7 @@ export default function ReturnsAndOrdersPage() {
                         </button>
                         <button
                           type="button"
+                          onClick={() => setActiveTrackOrder(order)}
                           className="px-6 py-2.5 text-[15px] font-semibold bg-[#dec33a] text-black hover:bg-[#c9b034] active:bg-[#b49a2e] rounded-xs transition-all cursor-pointer text-center"
                         >
                           Track Order
@@ -411,6 +506,100 @@ export default function ReturnsAndOrdersPage() {
         {/* ── 5. Inspired Browsing History Section ── */}
         <BrowsingHistory />
       </div>
+
+      {/* ── 6. Track Order Modal Overlay ── */}
+      {activeTrackOrder && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-[2px] transition-opacity duration-300"
+          onClick={() => setActiveTrackOrder(null)}
+        >
+          {/* Modal Container */}
+          <div
+            className="bg-white w-full max-w-[800px] rounded-[4px] shadow-2xl relative p-8 sm:p-10 flex flex-col max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => setActiveTrackOrder(null)}
+              className="absolute top-6 right-6 text-gray-400 hover:text-gray-600 transition-colors p-1.5 hover:bg-gray-100 rounded-full cursor-pointer"
+              aria-label="Close modal"
+            >
+              <X size={20} />
+            </button>
+
+            {/* Modal Header */}
+            <div className="flex flex-col gap-1 pb-6 border-b border-gray-100">
+              <span className="text-[18px] text-gray-500 font-sans select-none">
+                Your Order is
+              </span>
+              <h2 className="text-[32px] sm:text-[36px] font-bold text-gray-955 leading-tight">
+                {getStatusTitle(activeTrackOrder.status)}
+              </h2>
+            </div>
+
+            {/* Modal Content / Timeline */}
+            <div className="py-10">
+              <div className="flex flex-col gap-8 relative max-w-[600px] mx-auto">
+                {TRACKING_STEPS.map((step, index) => {
+                  const active = isStepActive(activeTrackOrder.status, step.key);
+                  const { date, time } = getStepDateTime(activeTrackOrder.placedDate, index);
+                  const StepIcon = step.icon;
+
+                  return (
+                    <div
+                      key={step.key}
+                      className="grid grid-cols-[100px_60px_1fr] sm:grid-cols-[160px_60px_1fr] gap-4 sm:gap-8 items-start relative"
+                    >
+                      {/* Left Column: Date & Time */}
+                      <div className="flex flex-col items-end pt-3.5 select-none">
+                        <span className="text-[14px] sm:text-[16px] font-bold text-gray-900 whitespace-nowrap">
+                          {date}
+                        </span>
+                        <span className="text-[12px] sm:text-[14px] text-gray-400 mt-0.5 whitespace-nowrap">
+                          {time}
+                        </span>
+                      </div>
+
+                      {/* Center Column: Icon & Label */}
+                      <div className="flex flex-col items-center relative">
+                        {/* Connecting line */}
+                        {index < TRACKING_STEPS.length - 1 && (
+                          <div
+                            className={cn(
+                              "absolute top-[60px] bottom-[-48px] w-[1px] left-1/2 -translate-x-1/2 bg-gray-200 z-0"
+                            )}
+                          />
+                        )}
+
+                        <div
+                          className={cn(
+                            "w-[60px] h-[60px] rounded-full flex items-center justify-center transition-all duration-300 relative z-10",
+                            active
+                              ? "bg-[#dec33a] text-black shadow-sm"
+                              : "border border-[#5a6573] bg-white text-[#5a6573]"
+                          )}
+                        >
+                          <StepIcon size={28} />
+                        </div>
+                        <span className="text-[13px] sm:text-[14px] font-bold text-gray-955 mt-2 bg-white px-2 relative z-10 select-none text-center">
+                          {step.label}
+                        </span>
+                      </div>
+
+                      {/* Right Column: Detail Status */}
+                      <div className="h-[60px] flex items-center pt-1.5 pl-2 sm:pl-4">
+                        <span className="text-[16px] sm:text-[18px] font-bold text-gray-900 select-none">
+                          {step.detail}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
