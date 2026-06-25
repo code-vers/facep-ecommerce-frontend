@@ -105,9 +105,9 @@ export default function CustomerServicePage() {
         {/* Modern dark gradient overlay for visual depth and text readability */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/60 to-transparent" />
 
-        <div className="relative mx-auto w-full max-w-[1760px] px-6 sm:px-10 md:px-16 lg:px-20 z-10">
-          <h1 className="font-sans text-[36px] sm:text-[48px] md:text-[56px] lg:text-[64px] font-bold leading-none tracking-tight text-white capitalize max-w-[650px] drop-shadow-md">
-            How can we <span className="text-[#dec33a] drop-shadow-[0_0_10px_rgba(222,195,58,0.3)]">help you</span>
+        <div className="relative mx-auto w-full max-w-[1760px] px-8 sm:px-12 md:px-16 lg:px-[99px] z-10">
+          <h1 className="font-[Arial] text-[36px] sm:text-[48px] md:text-[56px] lg:text-[64px] font-bold leading-[1.05] tracking-[-1.92px] text-white capitalize max-w-[378px]">
+            How can we help you
           </h1>
         </div>
       </section>
@@ -120,7 +120,7 @@ export default function CustomerServicePage() {
             Welcome to our customer service
           </h2>
           <p className="text-[#4a5565] font-sans text-[16px] sm:text-[18px] md:text-[20px] lg:text-[24px] leading-relaxed">
-            We can help you figure out most of the things here, just sign in and get started
+            we can help you figure out most of the things here, just sign in and get started
           </p>
         </div>
 
@@ -135,7 +135,7 @@ export default function CustomerServicePage() {
               <div className="bg-[#dec33a] group-hover:scale-105 group-hover:shadow-[0_0_15px_rgba(222,195,58,0.4)] rounded shrink-0 w-[50px] h-[50px] flex items-center justify-center transition-all duration-300">
                 <CategoryIcon name={category.iconName} />
               </div>
-              <span className="text-[#0a0a0a] font-sans text-[18px] sm:text-[20px] md:text-[22px] lg:text-[24px] font-bold leading-[1.2] transition-colors group-hover:text-black">
+              <span className="text-[#0a0a0a] font-[Arial] text-[18px] sm:text-[20px] md:text-[22px] lg:text-[24px] font-normal leading-[1.2] transition-colors group-hover:text-black">
                 {category.label}
               </span>
             </button>
@@ -182,7 +182,7 @@ export default function CustomerServicePage() {
               <form onSubmit={handleSubmit} className="flex flex-col gap-6 w-full">
                 {/* Full Name */}
                 <div className="flex flex-col gap-2">
-                  <label htmlFor="fullName" className="text-black text-[15px] sm:text-[16px] font-bold">
+                  <label htmlFor="fullName" className="text-black text-[15px] sm:text-[16px] font-normal">
                     Full Name
                   </label>
                   <input
@@ -198,7 +198,7 @@ export default function CustomerServicePage() {
 
                 {/* Email */}
                 <div className="flex flex-col gap-2">
-                  <label htmlFor="email" className="text-black text-[15px] sm:text-[16px] font-bold">
+                  <label htmlFor="email" className="text-black text-[15px] sm:text-[16px] font-normal">
                     Email
                   </label>
                   <input
@@ -214,7 +214,7 @@ export default function CustomerServicePage() {
 
                 {/* Contact Number */}
                 <div className="flex flex-col gap-2">
-                  <label htmlFor="contactNumber" className="text-black text-[15px] sm:text-[16px] font-bold">
+                  <label htmlFor="contactNumber" className="text-black text-[15px] sm:text-[16px] font-normal">
                     Contact Number
                   </label>
                   <input
@@ -229,7 +229,7 @@ export default function CustomerServicePage() {
 
                 {/* Message */}
                 <div className="flex flex-col gap-2">
-                  <label htmlFor="message" className="text-black text-[15px] sm:text-[16px] font-bold">
+                  <label htmlFor="message" className="text-black text-[15px] sm:text-[16px] font-normal">
                     Message
                   </label>
                   <textarea
@@ -247,7 +247,7 @@ export default function CustomerServicePage() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="bg-[#dec33a] hover:bg-[#c9b034] active:bg-[#b49a2e] disabled:opacity-50 text-black font-bold text-[16px] px-8 py-3 rounded transition-all w-full sm:w-[211px] h-12 flex items-center justify-center gap-2 cursor-pointer shadow-sm hover:shadow active:shadow-none"
+                  className="bg-[#dec33a] hover:bg-[#c9b034] active:bg-[#b49a2e] disabled:opacity-50 text-black font-normal text-[16px] px-8 py-3 rounded transition-all w-full sm:w-[211px] h-12 flex items-center justify-center gap-2 cursor-pointer shadow-sm hover:shadow active:shadow-none"
                 >
                   <Send className="w-4 h-4 shrink-0" />
                   {isSubmitting ? "Submitting..." : "Submit Inquiry"}
