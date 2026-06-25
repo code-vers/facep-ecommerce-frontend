@@ -22,17 +22,27 @@ export default function TopNavLinks() {
             <span>All</span>
           </button>
 
-          {navItems.map((item) =>
-            item === "Sell" ? (
-              <Link key={item} href="/seller" className="shrink-0 text-white">
-                {item}
-              </Link>
-            ) : (
-              <button key={item} type="button" className="shrink-0 text-white">
+          {navItems.map((item) => {
+            if (item === "Sell") {
+              return (
+                <Link key={item} href="/seller" className="shrink-0 text-white hover:text-[#dec33a] transition-all">
+                  {item}
+                </Link>
+              );
+            }
+            if (item === "Customer Service") {
+              return (
+                <Link key={item} href="/customer-service" className="shrink-0 text-white hover:text-[#dec33a] transition-all">
+                  {item}
+                </Link>
+              );
+            }
+            return (
+              <button key={item} type="button" className="shrink-0 text-white hover:text-[#dec33a] transition-all">
                 {item}
               </button>
-            ),
-          )}
+            );
+          })}
         </nav>
       </div>
     </section>
