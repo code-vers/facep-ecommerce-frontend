@@ -1,5 +1,9 @@
+'use client';
+
 import Image from 'next/image';
 import { Star } from 'lucide-react';
+import { useState } from 'react';
+import ReviewProductModal from './ReviewProductModal';
 
 const reviewerAvatar = 'https://www.figma.com/api/mcp/asset/c3e9cc45-a921-44b6-939a-41a022f3aedc';
 
@@ -67,7 +71,11 @@ const reviews: Review[] = [
   },
 ];
 
-function RatingSummaryCard() {
+function RatingSummaryCard({
+  onOpenReviewModal,
+}: {
+  onOpenReviewModal: () => void;
+}) {
   return (
     <div className='flex w-full max-w-89.75 flex-col gap-4 xl:shrink-0'>
       <div className='flex w-full flex-col gap-6 border border-[#E5E5E6] bg-[#F2F2F3] p-6'>
@@ -107,6 +115,7 @@ function RatingSummaryCard() {
 
       <button
         type='button'
+        onClick={onOpenReviewModal}
         className='h-12 w-full rounded-xs border border-[#DEC33A] bg-[#DEC33A] text-[16px] leading-[1.2] text-black'
       >
         Review This Product
@@ -175,23 +184,32 @@ function ReviewRow({ review }: { review: Review }) {
 }
 
 export default function CustomerReviewsSection() {
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+
   return (
-    <section className='w-full px-5 py-8 lg:px-10 xl:px-20 xl:py-12.5'>
-      <div className='mx-auto flex max-w-[1920px] flex-col gap-4 rounded-lg border border-[#E5E5E6] bg-white px-5 py-8 lg:px-10 xl:px-20 xl:py-12.5'>
-        <div className='flex w-full items-center justify-center pb-2.5'>
-          <h2 className='w-full text-[22px] leading-[1.2] text-black'>Customer Reviews</h2>
-        </div>
+    <>
+      <section className='w-full px-5 py-8 lg:px-10 xl:px-20 xl:py-12.5'>
+        <div className='mx-auto flex max-w-[1920px] flex-col gap-4 rounded-lg border border-[#E5E5E6] bg-white px-5 py-8 lg:px-10 xl:px-20 xl:py-12.5'>
+          <div className='flex w-full items-center justify-center pb-2.5'>
+            <h2 className='w-full text-[22px] leading-[1.2] text-black'>Customer Reviews</h2>
+          </div>
 
-        <div className='flex flex-col gap-9 xl:flex-row xl:items-start'>
-          <RatingSummaryCard />
+          <div className='flex flex-col gap-9 xl:flex-row xl:items-start'>
+            <RatingSummaryCard onOpenReviewModal={() => setIsReviewModalOpen(true)} />
 
-          <div className='flex min-w-0 flex-1 flex-col'>
-            {reviews.map((review) => (
-              <ReviewRow key={review.id} review={review} />
-            ))}
+            <div className='flex min-w-0 flex-1 flex-col'>
+              {reviews.map((review) => (
+                <ReviewRow key={review.id} review={review} />
+              ))}
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      <ReviewProductModal
+        isOpen={isReviewModalOpen}
+        onClose={() => setIsReviewModalOpen(false)}
+      />
+    </>
   );
 }
