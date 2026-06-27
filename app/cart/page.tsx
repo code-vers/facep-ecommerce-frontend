@@ -1,5 +1,6 @@
 import React from 'react';
 import CartItemList from '@/components/cart/CartItemList';
+import OrderSummary from '@/components/cart/OrderSummary';
 import BrowsingHistory from '@/components/product/BrowsingHistory';
 import SignUpBanner from '@/components/shared/SignUpBanner';
 
@@ -24,12 +25,9 @@ export default function CartPage() {
               <CartItemList />
             </div>
             
-            {/* Right Column (Placeholder for Checkout Summary) */}
+            {/* Right Column (Order Summary) */}
             <div className='hidden w-[400px] shrink-0 lg:block'>
-              {/* This is a placeholder. A future design will fill this. */}
-              <div className='w-full h-[300px] rounded-[4px] border border-dashed border-[#E5E5E6] bg-gray-50 flex items-center justify-center'>
-                <span className='text-gray-400 text-sm'>Order Summary Placeholder</span>
-              </div>
+              <OrderSummary />
             </div>
           </div>
         </div>
