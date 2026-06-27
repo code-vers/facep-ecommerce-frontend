@@ -4,6 +4,7 @@
 import BrowsingHistory from '@/components/product/BrowsingHistory';
 import FilterSidebar from '@/components/product/FilterSidebar';
 import ProductGrid from '@/components/product/ProductGrid';
+import CartSidebar from '@/components/product/CartSidebar';
 import SignUpBanner from '@/components/shared/SignUpBanner';
 import { ListFilter } from 'lucide-react';
 
@@ -23,10 +24,11 @@ export default function ProductPage() {
             </button>
           </div>
 
-          {/* Grid Layout: Sidebar + Results */}
+          {/* Grid Layout: Sidebar + Results + Cart Sidebar */}
           <div className='mt-[36px] flex flex-col gap-6 lg:flex-row'>
             <FilterSidebar />
             <ProductGrid />
+            <CartSidebar />
           </div>
         </div>
       </section>
