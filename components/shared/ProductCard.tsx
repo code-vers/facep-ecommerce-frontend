@@ -28,9 +28,9 @@
 
 'use client';
 
-import Image from 'next/image';
-import { Star, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { ArrowRight, Star } from 'lucide-react';
+import Image from 'next/image';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types & Interfaces
@@ -220,7 +220,7 @@ interface StarRatingProps {
 function StarRating({ rating, totalStars = 5 }: StarRatingProps) {
   return (
     <div
-      className='flex items-center gap-0.5'
+      className='flex items-center gap-[2px]'
       role='img'
       aria-label={`${rating} out of ${totalStars} stars`}
     >
@@ -403,8 +403,8 @@ export default function ProductCard({
         // ── Structure ─────────────────────────────────────────────────
         'group relative flex h-full w-full flex-col items-start overflow-hidden',
         // ── Border & Background — Figma: border #E5E5E6, radius 4px ──
-        'rounded-lg border-[#E5E5E6] bg-white',
-        // ── Hover: subtle lift, emphasis, shadow ──────────────
+        'rounded-[4px] border border-[#E5E5E6] bg-white',
+        // ── Hover: subtle lift, border emphasis, shadow ──────────────
         'transition-all duration-200 ease-out',
         'hover:-translate-y-0.5 hover:border-[#CACACE]',
         'hover:shadow-[0_4px_20px_rgba(0,0,0,0.10)]',
@@ -423,7 +423,7 @@ export default function ProductCard({
        * `group-hover:scale-105` adds a subtle zoom animation on hover
        * via the `overflow-hidden` clipping on the parent container.
        */}
-      <div className='relative h-45 w-full shrink-0 overflow-hidden rounded-tl-lg rounded-tr-lg'>
+      <div className='relative h-[180px] w-full shrink-0 overflow-hidden rounded-tl-[4px] rounded-tr-[4px]'>
         <Image
           src={imageSrc}
           alt={imageAlt}
@@ -472,9 +472,9 @@ export default function ProductCard({
            *   - Row gap:    10px
            */}
           {hasFlashDeal && (
-            <div className='flex items-center gap-2.5'>
+            <div className='flex items-center gap-[10px]'>
               {/* Yellow badge chip */}
-              <span className='flex shrink-0 items-center justify-center overflow-clip rounded-xs bg-[#DEC33A] px-2.5 py-0.5'>
+              <span className='flex shrink-0 items-center justify-center overflow-clip rounded-[2px] bg-[#DEC33A] px-[10px] py-[2px]'>
                 <span className='whitespace-nowrap text-[12px] font-normal leading-[1.3] text-black'>
                   {badgeText}
                 </span>
@@ -534,7 +534,7 @@ export default function ProductCard({
            *    Both items sit on the same baseline row.
            */}
           {hasPrice && (
-            <div className='flex items-baseline gap-3'>
+            <div className='flex items-baseline gap-[12px]'>
               {/* Sale / current price */}
               <span className='text-[18px] font-normal leading-[1.2] text-black'>{price}</span>
 
@@ -618,11 +618,11 @@ export default function ProductCard({
             className={cn(
               'flex w-full items-center justify-center',
               // Figma: h 32px, radius 2px
-              'h-8 rounded-xs border text-[12px] font-normal leading-[1.3] text-black',
+              'h-8 rounded-[2px] border text-[12px] font-normal leading-[1.3] text-black',
               // Variant specific styles
               buttonVariant === 'add-to-cart'
                 ? 'border-[#DEC33A] bg-[#DEC33A] transition-colors duration-150 hover:bg-[#C9B034] hover:border-[#C9B034] active:bg-[#B49A2E] active:border-[#B49A2E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#DEC33A] focus-visible:ring-offset-1'
-                : 'border-[#E5E5E6] focus-visible:ring-offset-1',
+                : 'border-[#E5E5E6] bg-white transition-colors duration-150 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E5E5E6] focus-visible:ring-offset-1',
             )}
             aria-label={
               buttonVariant === 'add-to-cart' ? `Add ${title} to cart` : `See options for ${title}`
