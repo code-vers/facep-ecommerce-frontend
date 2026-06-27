@@ -29,7 +29,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { ArrowRight, Star } from 'lucide-react';
+import { ArrowRight, Star, Heart } from 'lucide-react';
 import Image from 'next/image';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -141,12 +141,19 @@ export interface ProductCardProps {
   // ── Offer / Promotion ─────────────────────────────────────────────────────
 
   /**
-   * Promotional text rendered in green (#229A4E) below the price row.
+   * Promotional text rendered below the price row.
+   * If `offerTextMuted` is true, it renders in gray (#848995) and forces a 2-line height.
+   * Otherwise, it renders in green (#229A4E).
    * Omit when `badgeText` is provided.
    *
    * @example "Up to 30% off" | "No offers Right now"
    */
   offerText?: string;
+
+  /**
+   * If true, renders the offerText in a muted gray color and forces it to take up 2 lines of height.
+   */
+  offerTextMuted?: boolean;
 
   // ── Shipping ──────────────────────────────────────────────────────────────
 
@@ -186,6 +193,11 @@ export interface ProductCardProps {
 
   /** Additional CSS class names merged into the card root element. */
   className?: string;
+
+  /**
+   * Whether to show a heart icon on the image (e.g. for wishlist).
+   */
+  showHeart?: boolean;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -360,12 +372,14 @@ export default function ProductCard({
   badgeText,
   badgeLabel,
   offerText,
+  offerTextMuted,
   shippingText,
   buttonVariant = 'add-to-cart',
   onAddToCart,
   onSeeOptions,
   onExploreMore,
   className,
+  showHeart = false,
 }: ProductCardProps) {
   /**
    * Whether this card has a full-width CTA button at the bottom.
@@ -435,6 +449,19 @@ export default function ProductCard({
           )}
           sizes='(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 20vw'
         />
+        {showHeart && (
+          <button
+            type='button'
+            className='absolute bottom-[8px] right-[6px] z-10 flex size-[30px] items-center justify-center rounded-[9999px] bg-[#DEC33A] hover:bg-[#cbb235] transition-colors focus-visible:outline-none'
+            aria-label='Add to wishlist'
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
+          >
+            <Heart size={16} className='text-black' />
+          </button>
+        )}
       </div>
 
       {/* ── Card Body ────────────────────────────────────────────────────
@@ -549,16 +576,20 @@ export default function ProductCard({
 
           {/* Offer / Promotion Text
            *
-           * Hidden when `badgeText` is present (both compete for the same
-           * visual slot in the card body hierarchy).
-           *
-           * Figma spec: 12px Regular, color #229A4E (success-strong green).
-           * Capped at 2 lines via `line-clamp-2` (matches Figma 32px height).
+           * Hidden when `badgeText` is present.
+           * If `offerTextMuted` is true, renders gray and forces 2 lines.
            */}
           {!hasFlashDeal && offerText && (
-            <p className='line-clamp-2 text-[12px] font-normal leading-[1.3] text-[#229A4E]'>
-              {offerText}
-            </p>
+            <div className={cn('text-[12px] font-normal leading-[1.3] w-full', offerTextMuted ? 'text-[#848995]' : 'text-[#229A4E] line-clamp-2')}>
+              {offerTextMuted ? (
+                <>
+                  <p className="mb-0">{offerText}</p>
+                  <p>&#8203;</p>
+                </>
+              ) : (
+                offerText
+              )}
+            </div>
           )}
 
           {/* Shipping Information
@@ -618,11 +649,11 @@ export default function ProductCard({
             className={cn(
               'flex w-full items-center justify-center',
               // Figma: h 32px, radius 2px
-              'h-8 rounded-[2px] border text-[12px] font-normal leading-[1.3] text-black',
+              'h-8 rounded-[2px] text-[12px] font-normal leading-[1.3] text-black',
               // Variant specific styles
               buttonVariant === 'add-to-cart'
-                ? 'border-[#DEC33A] bg-[#DEC33A] transition-colors duration-150 hover:bg-[#C9B034] hover:border-[#C9B034] active:bg-[#B49A2E] active:border-[#B49A2E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#DEC33A] focus-visible:ring-offset-1'
-                : 'border-[#E5E5E6] bg-white transition-colors duration-150 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E5E5E6] focus-visible:ring-offset-1',
+                ? 'border border-[#DEC33A] bg-[#DEC33A] transition-colors duration-150 hover:bg-[#C9B034] hover:border-[#C9B034] active:bg-[#B49A2E] active:border-[#B49A2E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#DEC33A] focus-visible:ring-offset-1'
+                : 'border-[0.75px] border-[#686F7D] bg-white transition-colors duration-150 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E5E5E6] focus-visible:ring-offset-1',
             )}
             aria-label={
               buttonVariant === 'add-to-cart' ? `Add ${title} to cart` : `See options for ${title}`

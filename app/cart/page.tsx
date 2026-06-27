@@ -1,6 +1,7 @@
 import React from 'react';
 import CartItemList from '@/components/cart/CartItemList';
 import OrderSummary from '@/components/cart/OrderSummary';
+import RecentlyViewedItems from '@/components/cart/RecentlyViewedItems';
 import BrowsingHistory from '@/components/product/BrowsingHistory';
 import SignUpBanner from '@/components/shared/SignUpBanner';
 
@@ -34,6 +35,7 @@ export default function CartPage() {
       </section>
 
       {/* Recommended/History Sections */}
+      <RecentlyViewedItems />
       <BrowsingHistory />
       <SignUpBanner />
     </div>
