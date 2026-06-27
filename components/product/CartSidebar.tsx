@@ -1,6 +1,7 @@
 import React from 'react';
 import { ShoppingCart, Trash2, Plus } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const mockCartItems = [
   {
@@ -37,12 +38,15 @@ export default function CartSidebar() {
           </p>
         </div>
 
-        <button className='flex w-full min-w-[80px] items-center justify-center gap-[6px] rounded-[2px] border-[0.75px] border-[#DEC33A] bg-[#DEC33A] px-3 py-1 hover:bg-[#cbb235] transition-colors'>
+        <Link 
+          href='/cart'
+          className='flex w-full min-w-[80px] items-center justify-center gap-[6px] rounded-[2px] border-[0.75px] border-[#DEC33A] bg-[#DEC33A] px-3 py-1 hover:bg-[#cbb235] transition-colors'
+        >
           <span className='text-[12px] text-black leading-[1.3]'>
             Go to Cart
           </span>
           <ShoppingCart size={18} className='text-black' />
-        </button>
+        </Link>
       </div>
 
       {/* Cart Items List */}
