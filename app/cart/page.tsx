@@ -11,7 +11,7 @@ export default function CartPage() {
       <section className='flex-1 pb-20'>
         {/* Header */}
         <div className='w-full border-b border-[#E5E5E6]'>
-          <div className='mx-auto max-w-[1760px] px-4 sm:px-6 lg:px-20 py-3'>
+          <div className='mx-auto max-w-[1760px] px-4 sm:px-6 lg:px-10 py-3'>
             <h1 className='text-[22px] leading-[1.2] text-[#42454D] font-normal'>
               Shopping cart
             </h1>
@@ -19,7 +19,7 @@ export default function CartPage() {
         </div>
 
         {/* Main Content */}
-        <div className='mx-auto mt-9 max-w-[1760px] px-4 sm:px-6 lg:px-20'>
+        <div className='mx-auto mt-9 max-w-[1760px] px-4 sm:px-6 lg:px-10'>
           <div className='flex flex-col gap-12 lg:flex-row lg:items-start'>
             {/* Left Column (Cart Items) */}
             <div className='flex w-full flex-[1_0_0]'>

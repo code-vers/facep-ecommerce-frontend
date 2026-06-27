@@ -49,10 +49,10 @@ export default function BrowsingHistory() {
           </div>
 
           {/* Nav arrows - absolute positioning over the carousel in Figma */}
-          <button className='absolute -left-5 top-[162px] flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[#E5E5E6] bg-white shadow-md transition-colors hover:bg-gray-50 z-10'>
+          <button className='absolute -left-10 top-[162px] flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[#E5E5E6] bg-white shadow-md transition-colors hover:bg-gray-50 z-10'>
             <ChevronLeft size={20} className='text-black' />
           </button>
-          <button className='absolute -right-5 top-[162px] flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[#E5E5E6] bg-white shadow-md transition-colors hover:bg-gray-50 z-10'>
+          <button className='absolute -right-10 top-[162px] flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[#E5E5E6] bg-white shadow-md transition-colors hover:bg-gray-50 z-10'>
             <ChevronRight size={20} className='text-black' />
           </button>
         </div>
