@@ -37,6 +37,13 @@ export default function TopNavLinks() {
                 </Link>
               );
             }
+            if (item === "Today’s Deal") {
+              return (
+                <Link key={item} href="/todays-deal" className="shrink-0 text-white hover:text-[#dec33a] transition-all">
+                  {item}
+                </Link>
+              );
+            }
             return (
               <button key={item} type="button" className="shrink-0 text-white hover:text-[#dec33a] transition-all">
                 {item}
