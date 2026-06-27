@@ -27,7 +27,7 @@ export default function CartPage() {
             </div>
             
             {/* Right Column (Order Summary) */}
-            <div className='hidden w-[400px] shrink-0 lg:block'>
+            <div className='w-full lg:w-[400px] shrink-0'>
               <OrderSummary />
             </div>
           </div>

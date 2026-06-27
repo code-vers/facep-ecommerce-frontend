@@ -61,7 +61,7 @@ export default function CartItemList() {
         {MOCK_ITEMS.map((item) => (
           <div
             key={item.id}
-            className='flex w-full items-center gap-3 border-b border-[#E5E5E6] p-6'
+            className='flex w-full items-center gap-2 sm:gap-3 border-b border-[#E5E5E6] p-4 sm:p-6'
           >
             <input
               type='checkbox'
@@ -83,8 +83,8 @@ export default function CartItemList() {
               <div className='flex w-full flex-col gap-4'>
                 <div className='flex w-full flex-col gap-1'>
                   {/* Title & Rating */}
-                  <div className='flex w-full items-start justify-between sm:items-center'>
-                    <h3 className='text-[18px] leading-[1.2] text-black'>
+                  <div className='flex w-full flex-col sm:flex-row items-start justify-between sm:items-center gap-2 sm:gap-0'>
+                    <h3 className='text-[16px] sm:text-[18px] leading-[1.2] text-black'>
                       {item.title}
                     </h3>
                     <div className='flex items-center gap-1.5 shrink-0'>
@@ -109,8 +109,8 @@ export default function CartItemList() {
                 </div>
 
                 {/* Price & Quantity */}
-                <div className='flex w-full items-center justify-between'>
-                  <p className='text-[22px] leading-[1.2] text-black'>
+                <div className='flex w-full flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0 mt-2 sm:mt-0'>
+                  <p className='text-[18px] sm:text-[22px] leading-[1.2] text-black'>
                     {item.price}
                   </p>
                   
