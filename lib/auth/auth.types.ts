@@ -18,7 +18,7 @@
  * - `buyer`  – Standard shopper. Redirected to `/products` on login.
  * - `vendor` – Seller / merchant. Redirected to `/seller` on login.
  */
-export type UserRole = 'buyer' | 'vendor';
+export type UserRole = 'buyer' | 'vendor' | 'admin';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // User

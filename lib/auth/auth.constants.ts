@@ -34,6 +34,7 @@ export const AUTH_KEYS = {
 export const ROLE_REDIRECT: Record<string, string> = {
   buyer: '/products',
   vendor: '/seller',
+  admin: '/profile',
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
