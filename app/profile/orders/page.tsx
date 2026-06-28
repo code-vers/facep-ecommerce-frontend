@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Ellipsis } from 'lucide-react';
 
 type OrderStatus = 'Ordered' | 'Packed' | 'Shipped' | 'Delivered' | 'Returned';
 
@@ -250,6 +250,39 @@ export default function ProfileOrdersPage() {
             </div>
           );
         })}
+
+        {/* Pagination */}
+        <div className="flex gap-[4px] items-center justify-center w-full pt-[16px] pb-[8px]">
+          <button type="button" disabled className="flex gap-[4px] items-center justify-center min-w-[80px] px-[12px] py-[8px] rounded-[6px] opacity-50 cursor-not-allowed">
+            <ChevronLeft className="w-4 h-4 text-black" />
+            <span className="font-['Open_Sans'] font-normal text-[14px] text-black leading-[1.2]">Previous</span>
+          </button>
+          
+          <button type="button" className="bg-[#cacace] border border-[#cacbce] flex items-center justify-center w-[40px] h-[40px] rounded-[2px] cursor-pointer">
+            <span className="font-['Open_Sans'] font-normal text-[14px] text-black leading-[1.2]">1</span>
+          </button>
+          
+          <button type="button" className="flex items-center justify-center w-[40px] h-[40px] rounded-[8px] hover:bg-gray-100 cursor-pointer transition-colors">
+            <span className="font-['Open_Sans'] font-normal text-[14px] text-black leading-[1.2]">2</span>
+          </button>
+          
+          <button type="button" className="flex items-center justify-center w-[40px] h-[40px] rounded-[8px] hover:bg-gray-100 cursor-pointer transition-colors">
+            <span className="font-['Open_Sans'] font-normal text-[14px] text-black leading-[1.2]">3</span>
+          </button>
+          
+          <button type="button" className="flex items-center justify-center w-[40px] h-[40px] rounded-[8px] hover:bg-gray-100 cursor-pointer transition-colors">
+            <span className="font-['Open_Sans'] font-normal text-[14px] text-black leading-[1.2]">4</span>
+          </button>
+
+          <div className="flex items-center justify-center w-[40px] h-[40px] rounded-[8px]">
+            <Ellipsis className="w-4 h-4 text-black" />
+          </div>
+
+          <button type="button" className="flex gap-[4px] items-center justify-center min-w-[80px] px-[12px] py-[8px] rounded-[6px] hover:bg-gray-100 cursor-pointer transition-colors">
+            <span className="font-['Open_Sans'] font-normal text-[14px] text-black leading-[1.2]">Next</span>
+            <ChevronRight className="w-4 h-4 text-black" />
+          </button>
+        </div>
       </div>
     </div>
   );
