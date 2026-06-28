@@ -6,10 +6,10 @@
 
 import React from 'react';
 import { User, ShoppingBag, Heart, RotateCcw, LogOut } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 interface ProfileSidebarProps {
-  activeTab: 'profile' | 'orders' | 'shops' | 'refunds';
-  onTabChange: (tab: 'profile' | 'orders' | 'shops' | 'refunds') => void;
   onLogout: () => void;
 }
 
@@ -17,15 +17,14 @@ interface ProfileSidebarProps {
  * ProfileSidebar component.
  */
 export default function ProfileSidebar({
-  activeTab,
-  onTabChange,
   onLogout,
 }: ProfileSidebarProps) {
+  const pathname = usePathname();
   const menuItems = [
-    { id: 'profile', label: 'Profile', icon: User },
-    { id: 'orders', label: 'Orders', icon: ShoppingBag },
-    { id: 'shops', label: 'Favourite Shops', icon: Heart },
-    { id: 'refunds', label: 'Returns & Refunds', icon: RotateCcw },
+    { href: '/profile', label: 'Profile', icon: User },
+    { href: '/profile/orders', label: 'Orders', icon: ShoppingBag },
+    { href: '/profile/shops', label: 'Favourite Shops', icon: Heart },
+    { href: '/profile/refunds', label: 'Returns & Refunds', icon: RotateCcw },
   ] as const;
 
   return (
@@ -40,12 +39,11 @@ export default function ProfileSidebar({
         <nav className="flex flex-col w-full">
           {menuItems.map((item) => {
             const Icon = item.icon;
-            const isActive = activeTab === item.id;
+            const isActive = pathname === item.href;
             return (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => onTabChange(item.id)}
+              <Link
+                key={item.href}
+                href={item.href}
                 className={`w-full flex gap-2 items-center p-3 rounded text-[14px] font-normal transition-all cursor-pointer ${
                   isActive
                     ? 'bg-[#dec33a] text-black font-semibold shadow-sm'
@@ -54,7 +52,7 @@ export default function ProfileSidebar({
               >
                 <Icon className="w-4 h-4 shrink-0" />
                 <span>{item.label}</span>
-              </button>
+              </Link>
             );
           })}
         </nav>
