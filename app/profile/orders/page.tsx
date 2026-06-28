@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Ellipsis } from 'lucide-react';
+import ReviewProductModal from '@/components/profile/ReviewProductModal';
 
 type OrderStatus = 'Ordered' | 'Packed' | 'Shipped' | 'Delivered' | 'Returned';
 
@@ -85,6 +86,7 @@ export default function ProfileOrdersPage() {
   const [expandedOrders, setExpandedOrders] = useState<Record<string, boolean>>({
     '123456': true, // Default expand the first one like Figma
   });
+  const [isReviewModalOpen, setReviewModalOpen] = useState(false);
 
   const toggleOrder = (orderId: string) => {
     setExpandedOrders(prev => ({
@@ -238,7 +240,11 @@ export default function ProfileOrdersPage() {
                     )}
                     
                     {order.status === 'Delivered' && (
-                      <button type="button" className="bg-[#dec33a] border border-[#dec33a] rounded-[2px] px-[16px] py-[12px] min-w-[80px] flex items-center justify-center hover:bg-[#c9b030] transition-colors cursor-pointer">
+                      <button 
+                        type="button" 
+                        onClick={() => setReviewModalOpen(true)}
+                        className="bg-[#dec33a] border border-[#dec33a] rounded-[2px] px-[16px] py-[12px] min-w-[80px] flex items-center justify-center hover:bg-[#c9b030] transition-colors cursor-pointer"
+                      >
                         <span className="font-['Open_Sans'] font-normal text-[16px] text-black leading-[1.2] whitespace-nowrap">
                           Leave a Review
                         </span>
@@ -284,6 +290,11 @@ export default function ProfileOrdersPage() {
           </button>
         </div>
       </div>
+
+      <ReviewProductModal 
+        isOpen={isReviewModalOpen} 
+        onClose={() => setReviewModalOpen(false)} 
+      />
     </div>
   );
 }
