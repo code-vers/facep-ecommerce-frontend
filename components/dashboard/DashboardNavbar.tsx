@@ -25,8 +25,8 @@ export default function DashboardNavbar({ onMenuClick }: { onMenuClick?: () => v
   const pageTitle = getPageTitle(pathname);
 
   return (
-    <header className='flex flex-wrap items-center justify-between gap-4 border-b border-[#E5E5E6] bg-[#F2F2F3] px-4 py-4 md:px-8 xl:px-[45px] xl:py-[20px]'>
-      <div className='flex items-center gap-3'>
+    <header className='flex flex-wrap md:flex-nowrap items-center justify-between gap-4 border-b border-[#E5E5E6] bg-[#F2F2F3] px-4 py-4 md:px-6 lg:px-8 xl:px-[45px] xl:py-[20px]'>
+      <div className='flex items-center gap-3 shrink-0'>
         <button 
           onClick={onMenuClick}
           className='flex lg:hidden p-1.5 bg-white border border-[#E5E5E6] rounded-sm text-black hover:bg-gray-50'
@@ -37,8 +37,8 @@ export default function DashboardNavbar({ onMenuClick }: { onMenuClick?: () => v
       </div>
 
       {/* Search Bar */}
-      <div className='flex items-stretch rounded-[4px] w-full md:w-auto order-last md:order-0'>
-        <div className='flex w-full md:w-[350px] lg:w-[450px] xl:w-[695px] items-center bg-white border border-[#E5E5E6] px-[12px] py-[10px] rounded-l-[4px] border-r-0'>
+      <div className='flex w-full md:flex-1 md:max-w-[350px] lg:max-w-[450px] xl:max-w-[695px] items-stretch rounded-[4px] order-last md:order-0'>
+        <div className='flex w-full items-center bg-white border border-[#E5E5E6] px-[12px] py-[10px] rounded-l-[4px] border-r-0'>
           <input
             type='text'
             placeholder='Search anything'
@@ -47,20 +47,20 @@ export default function DashboardNavbar({ onMenuClick }: { onMenuClick?: () => v
         </div>
         <button
           type='button'
-          className='flex items-center justify-center bg-[#F09000] px-[12px] py-[8px] rounded-r-[4px] transition-colors hover:bg-[#d88200]'
+          className='flex items-center justify-center bg-[#F09000] px-[16px] py-[8px] rounded-r-[4px] transition-colors hover:bg-[#d88200] shrink-0'
         >
           <Search size={16} className='text-black' />
         </button>
       </div>
 
       {/* User Info */}
-      <div className='flex shrink-0 items-center gap-[12px]'>
-        <div className='flex w-[168px] flex-col items-end gap-[6px] text-right'>
-          <p className='w-full text-[16px] font-normal leading-[1.2] text-[#232A39]'>
+      <div className='flex shrink-0 items-center gap-2 md:gap-[12px]'>
+        <div className='hidden sm:flex flex-col items-end justify-center gap-1 text-right min-w-0 max-w-[120px] md:max-w-[168px]'>
+          <p className='w-full text-[14px] md:text-[16px] font-normal leading-[1.2] text-[#232A39] truncate'>
             Seller Name
           </p>
-          <p className='w-full text-[12px] font-normal leading-[1.3] text-[#6B7280]'>
-            Seller Name@Resu.com
+          <p className='w-full text-[12px] font-normal leading-[1.3] text-[#6B7280] truncate'>
+            Seller Name
           </p>
         </div>
         <div className='relative h-[32px] w-[32px] shrink-0 overflow-hidden rounded-full'>

@@ -18,6 +18,7 @@ import {
   Wrench,
   User,
   LayoutTemplate,
+  MessageSquare,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -41,7 +42,18 @@ const navItems = [
 
 export default function DashboardSidebar({ isMobile }: { isMobile?: boolean }) {
   const pathname = usePathname();
-  const { logout } = useAuth();
+  const { session, logout } = useAuth();
+  const isAdmin = session?.role === 'admin';
+
+  const visibleNavItems = [...navItems];
+  if (isAdmin) {
+    // Insert "Support Inquiries" before "Profile Settings"
+    visibleNavItems.splice(visibleNavItems.length - 1, 0, {
+      name: 'Support Inquiries',
+      href: '/dashboard/support',
+      icon: MessageSquare,
+    });
+  }
 
   return (
     <aside className={`flex h-full flex-col border-r border-[#E5E5E6] bg-[#F2F2F3] ${isMobile ? 'w-full' : 'w-[280px]'}`}>
@@ -78,7 +90,7 @@ export default function DashboardSidebar({ isMobile }: { isMobile?: boolean }) {
       {/* Navigation */}
       <div className='flex flex-1 flex-col justify-between overflow-y-auto'>
         <nav className='flex flex-col gap-1 p-6'>
-          {navItems.map((item) => {
+          {visibleNavItems.map((item) => {
             const isActive = pathname === item.href;
             const Icon = item.icon;
             return (
