@@ -8,7 +8,7 @@ import MediaAndVariants from './MediaAndVariants';
 import PricingAndInventory from './PricingAndInventory';
 import ShippingStep from './ShippingStep';
 import ProductDetailsStep from './ProductDetailsStep';
-import PlaceholderStep from './PlaceholderStep';
+import ReviewAndSubmitStep from './ReviewAndSubmitStep';
 
 export default function AddNewProductFlow() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -35,7 +35,7 @@ export default function AddNewProductFlow() {
       case 5:
         return <ProductDetailsStep />;
       case 6:
-        return <PlaceholderStep stepName="Review & Submit" />;
+        return <ReviewAndSubmitStep />;
       default:
         return null;
     }
@@ -64,7 +64,11 @@ export default function AddNewProductFlow() {
           onClick={handleNext}
           className="bg-[#f09000] border border-[#f09000] flex items-center justify-center min-w-[80px] px-[16px] py-[12px] rounded-[2px]"
         >
-          <ArrowRight size={24} className="text-white" />
+          {currentStep === 6 ? (
+            <span className="font-normal text-[16px] text-white">Submit</span>
+          ) : (
+            <ArrowRight size={24} className="text-white" />
+          )}
         </button>
       </div>
     </div>
