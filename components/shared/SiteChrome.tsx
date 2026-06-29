@@ -18,12 +18,13 @@ import TopNavLinks from './TopNavLinks';
 import Footer from './Footer';
 
 /** Path prefixes that should NOT show the site Navbar/Footer. */
-const AUTH_PATHS = [
+const NO_CHROME_PATHS = [
   '/login',
   '/register',
   '/forgot-password',
   '/verify-otp',
   '/set-new-password',
+  '/dashboard',
 ];
 
 interface SiteChromeProps {
@@ -37,13 +38,13 @@ interface SiteChromeProps {
 export default function SiteChrome({ children }: SiteChromeProps) {
   const pathname = usePathname();
 
-  const isAuthPage = AUTH_PATHS.some(
+  const isNoChromePage = NO_CHROME_PATHS.some(
     (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
   );
 
-  if (isAuthPage) {
-    // Auth pages: just render children — the (auth)/layout.tsx provides
-    // the clean white wrapper.
+  if (isNoChromePage) {
+    // Pages without chrome: just render children — the respective layout provides
+    // the layout structure (e.g., dashboard layout or auth layout).
     return <>{children}</>;
   }
 
