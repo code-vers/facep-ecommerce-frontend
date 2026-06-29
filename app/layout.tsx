@@ -13,6 +13,7 @@
 import type { Metadata } from 'next';
 import { Geist_Mono, Open_Sans, Geist } from 'next/font/google';
 import { AuthProvider } from '@/contexts/AuthContext';
+import AuthGuard from '@/components/auth/AuthGuard';
 import SiteChrome from '@/components/shared/SiteChrome';
 import './globals.css';
 import { cn } from '@/lib/utils';
@@ -53,7 +54,9 @@ export default function RootLayout({
     >
       <body className="min-h-full bg-background text-foreground">
         <AuthProvider>
-          <SiteChrome>{children}</SiteChrome>
+          <AuthGuard>
+            <SiteChrome>{children}</SiteChrome>
+          </AuthGuard>
         </AuthProvider>
       </body>
     </html>

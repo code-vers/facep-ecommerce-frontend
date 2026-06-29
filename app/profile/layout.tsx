@@ -8,26 +8,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import ProfileSidebar from '@/components/profile/ProfileSidebar';
 
 export default function ProfileLayout({ children }: { children: React.ReactNode }) {
-  const { session, isLoading, logout } = useAuth();
+  const { session, logout } = useAuth();
   const router = useRouter();
-
-  // Redirect to login if user session is absent
-  useEffect(() => {
-    if (!isLoading && !session) {
-      router.push('/login');
-    }
-  }, [session, isLoading, router]);
-
-  if (isLoading || !session) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-white text-black font-sans">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 border-4 border-[#dec33a] border-t-transparent rounded-full animate-spin"></div>
-          <span className="text-[16px] font-medium">Loading account...</span>
-        </div>
-      </div>
-    );
-  }
 
   const handleLogout = () => {
     logout();
@@ -54,12 +36,14 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
           </div>
 
           {/* User Role Badge */}
-          <div className="flex items-center gap-2 border border-gray-200 bg-gray-50 rounded-full px-4 py-1.5 shadow-xs">
-            <User className="w-4 h-4 text-gray-500" />
-            <span className="text-[13px] font-medium text-gray-700 capitalize">
-              Role: <strong className="text-black">{session.role}</strong>
-            </span>
-          </div>
+          {session && (
+            <div className="flex items-center gap-2 border border-gray-200 bg-gray-50 rounded-full px-4 py-1.5 shadow-xs">
+              <User className="w-4 h-4 text-gray-500" />
+              <span className="text-[13px] font-medium text-gray-700 capitalize">
+                Role: <strong className="text-black">{session.role}</strong>
+              </span>
+            </div>
+          )}
         </div>
       </div>
 
