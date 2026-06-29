@@ -140,13 +140,13 @@ export default function RefundPickupMethod({ onNext, onBack }: RefundPickupMetho
       </div>
 
       {/* Navigation */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center justify-end gap-[16px] mt-8 w-full">
         <button
           type="button"
           onClick={onBack}
-          className="flex items-center justify-center p-3 rounded-[2px] border border-[#686f7d] text-[#686f7d] hover:bg-gray-50 transition-all cursor-pointer min-w-[48px]"
+          className="flex items-center justify-center py-[12px] px-[24px] rounded-[2px] border border-[#686f7d] text-black hover:bg-gray-50 transition-all cursor-pointer min-w-[80px] h-[48px]"
         >
-          <ArrowLeft className="w-6 h-6" />
+          <ArrowLeft className="w-5 h-5" />
         </button>
 
         <button
@@ -154,13 +154,12 @@ export default function RefundPickupMethod({ onNext, onBack }: RefundPickupMetho
           disabled={!isValid}
           onClick={() => isValid && onNext({ returnShipping, refundMethod })}
           className={cn(
-            'flex items-center gap-2 px-4 py-3 rounded-[2px] text-[16px] font-normal leading-[1.2] transition-all',
+            'flex items-center justify-center py-[12px] px-[24px] rounded-[2px] transition-all min-w-[80px] h-[48px]',
             isValid
               ? 'bg-[#dec33a] border border-[#dec33a] text-black hover:bg-[#c9b034] cursor-pointer'
               : 'bg-[#e5e5e6] border border-[#e5e5e6] text-[#848995] cursor-not-allowed'
           )}
         >
-          Next
           <ArrowRight className="w-5 h-5" />
         </button>
       </div>

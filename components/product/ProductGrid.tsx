@@ -49,11 +49,11 @@ export default function ProductGrid() {
 
       <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
         {products.map((product) => (
-          <Link key={product.id} href={`/product/home/${product.id}`} className="block h-full">
+          <Link key={product.id} href={`/product/home/${product.id}`} className="flex h-full">
             <ProductCard
               {...product}
               imageAlt={product.title}
-              buttonVariant={product.buttonVariant}
+              buttonVariant="none"
             />
           </Link>
         ))}

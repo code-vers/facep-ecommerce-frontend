@@ -52,7 +52,14 @@ export default function RefundStepper({ currentStep }: RefundStepperProps) {
           <div key={step.key} className="flex flex-col items-center flex-1 relative">
             {/* Step icon bubble */}
             <div className="relative z-10 flex flex-col items-center bg-white px-2">
-              <div className="w-10 h-10 rounded-full flex items-center justify-center border shadow-[0px_1px_1px_rgba(16,24,40,0.05)] transition-all duration-300 bg-[#dec33a] border-[#dec33a] text-[#42454d]">
+              <div
+                className={cn(
+                  'w-10 h-10 rounded-full flex items-center justify-center border shadow-[0px_1px_1px_rgba(16,24,40,0.05)] transition-all duration-300',
+                  isActive
+                    ? 'bg-[#dec33a] border-[#dec33a] text-[#42454d]'
+                    : 'bg-white border-[#e5e5e6] text-[#42454d]'
+                )}
+              >
                 <Icon className="w-5 h-5" strokeWidth={1.5} />
               </div>
             </div>

@@ -173,19 +173,19 @@ export default function RefundReviewSubmit({
       </div>
 
       {/* Navigation */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center justify-end gap-[16px] mt-8 w-full">
         <button
           type="button"
           onClick={onBack}
-          className="flex items-center justify-center p-3 rounded-[2px] border border-[#686f7d] text-[#686f7d] hover:bg-gray-50 transition-all cursor-pointer min-w-[48px]"
+          className="flex items-center justify-center py-[12px] px-[24px] rounded-[2px] border border-[#686f7d] text-black hover:bg-gray-50 transition-all cursor-pointer min-w-[80px] h-[48px]"
         >
-          <ArrowLeft className="w-6 h-6" />
+          <ArrowLeft className="w-5 h-5" />
         </button>
 
         <button
           type="button"
           onClick={onSubmit}
-          className="px-4 py-3 rounded-[2px] bg-[#dec33a] border border-[#dec33a] text-black text-[16px] font-normal leading-[1.2] hover:bg-[#c9b034] transition-all cursor-pointer"
+          className="flex items-center justify-center py-[12px] px-[24px] rounded-[2px] bg-[#dec33a] border border-[#dec33a] text-black text-[16px] font-normal leading-[1.2] hover:bg-[#c9b034] transition-all cursor-pointer h-[48px]"
         >
           Submit
         </button>
