@@ -100,3 +100,37 @@ export const VENDOR_PRODUCTS: VendorProduct[] = [
     imageSrc: 'https://images.unsplash.com/photo-1597055181300-e3633a207518?q=80&w=200&auto=format&fit=crop',
   },
 ];
+
+export interface VendorReturnRequest {
+  orderId: string;
+  customerName: string;
+  contactNo: string;
+  productName: string;
+  reason: string;
+  condition: string;
+  pickupDate: string;
+  status: 'pending' | 'approved' | 'declined';
+}
+
+export const VENDOR_RETURNS: VendorReturnRequest[] = [
+  {
+    orderId: '#12345',
+    customerName: 'Alice Johnson',
+    contactNo: '+1234567890',
+    productName: 'Aloe Vera',
+    reason: 'Damaged in transit',
+    condition: 'Damaged',
+    pickupDate: '2023-11-20',
+    status: 'pending',
+  },
+  {
+    orderId: '#12346',
+    customerName: 'Bob Smith',
+    contactNo: '+1987654321',
+    productName: 'Snake Plant',
+    reason: 'Wrong item received',
+    condition: 'Unopened',
+    pickupDate: '2023-11-21',
+    status: 'approved',
+  }
+];
