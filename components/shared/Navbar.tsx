@@ -1,4 +1,10 @@
+'use client';
+
 import Image from "next/image";
+import Link from "next/link";
+import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
 
 const canadaFlag = "https://www.figma.com/api/mcp/asset/b672379d-0c27-4040-a593-1da330971f36";
 
@@ -39,14 +45,85 @@ function CartIcon() {
 }
 
 function AccountBlock() {
+  const [isOpen, setIsOpen] = useState(false);
+  const { session, logout } = useAuth();
+  const isLoggedIn = !!session;
+  
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleLogout = () => {
+    logout();
+    setIsOpen(false);
+    router.push('/login');
+  };
+
   return (
-    <button type="button" className="flex shrink-0 flex-col items-start gap-1 text-left">
-      <span className="text-[13px] leading-[1.3] text-[#a9acb2] xl:text-[14px]">Hello, sign in</span>
-      <span className="flex items-center gap-1 text-[15px] leading-[1.2] font-bold text-white xl:text-[16px]">
-        Account
-        <ChevronDownIcon />
-      </span>
-    </button>
+    <div className="relative" ref={dropdownRef}>
+      <button 
+        type="button" 
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex shrink-0 flex-col items-start gap-1 text-left"
+      >
+        <span className="text-[13px] leading-[1.3] text-[#a9acb2] xl:text-[14px]">
+          {isLoggedIn ? `Hello, ` : 'Hello, sign in'}
+        </span>
+        <span className="flex items-center gap-1 text-[15px] leading-[1.2] font-bold text-white xl:text-[16px]">
+          Account
+          <ChevronDownIcon />
+        </span>
+      </button>
+
+      {isOpen && (
+        <div className="absolute right-0 top-full mt-2 w-48 rounded-[4px] bg-white py-2 shadow-lg ring-1 ring-black/5 z-50">
+          {!isLoggedIn ? (
+            <>
+              <Link
+                href="/login"
+                className="block px-4 py-2 text-[14px] text-black hover:bg-gray-100"
+                onClick={() => setIsOpen(false)}
+              >
+                Sign In
+              </Link>
+              <Link
+                href="/register"
+                className="block px-4 py-2 text-[14px] text-black hover:bg-gray-100"
+                onClick={() => setIsOpen(false)}
+              >
+                Register
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/profile"
+                className="block px-4 py-2 text-[14px] text-black hover:bg-gray-100"
+                onClick={() => setIsOpen(false)}
+              >
+                Profile
+              </Link>
+              <button
+                type="button"
+                className="block w-full text-left px-4 py-2 text-[14px] text-[#cb1b1b] hover:bg-gray-100 cursor-pointer"
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
+            </>
+          )}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -55,11 +132,11 @@ export default function Navbar() {
     <header className="w-full bg-black text-white">
       <div className="mx-auto flex w-full max-w-[1760px] flex-col gap-4 px-4 py-4 sm:px-6 md:px-8 lg:flex-row lg:items-center lg:gap-6 lg:px-10 xl:px-16 2xl:px-20">
         <div className="flex items-center justify-between gap-4 lg:shrink-0">
-          <button type="button" className="shrink-0 text-left" aria-label="Facep home">
+          <Link href="/" className="shrink-0 text-left" aria-label="Facep home">
             <span className="font-[Arial] text-[28px] leading-[1.2] font-bold text-white sm:text-[32px] xl:text-[36px]">
               Logo
             </span>
-          </button>
+          </Link>
 
           <div className="flex items-center gap-3 lg:hidden">
             <button type="button" className="flex items-center gap-1 text-[14px] leading-[1.2] font-bold text-white">
@@ -119,11 +196,11 @@ export default function Navbar() {
               </button>
             </div>
 
-            <div className="hidden items-center gap-5 xl:flex xl:gap-7">
+            <div className="hidden items-end gap-5 xl:flex xl:gap-7">
               <AccountBlock />
-              <button type="button" className="shrink-0 text-[15px] leading-[1.2] font-bold text-white xl:text-[16px]">
+              <Link href="/orders" className="shrink-0 text-[15px] leading-[1.2] font-bold text-white xl:text-[16px] hover:text-[#dec33a] transition-all">
                 Returns &amp; Orders
-              </button>
+              </Link>
             </div>
 
             <button type="button" className="flex shrink-0 items-center justify-center gap-1 text-white">

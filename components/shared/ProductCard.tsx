@@ -26,11 +26,11 @@
  * @module components/shared/ProductCard
  */
 
-"use client";
+'use client';
 
-import Image from "next/image";
-import { Star, ArrowRight } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
+import { ArrowRight, Star, Heart } from 'lucide-react';
+import Image from 'next/image';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types & Interfaces
@@ -47,11 +47,7 @@ import { cn } from "@/lib/utils";
  * - `"none"`         – No action rendered. The card body shrinks to fit
  *                      content naturally — no white-space gap at the bottom.
  */
-export type ProductCardButtonVariant =
-  | "add-to-cart"
-  | "see-options"
-  | "explore-more"
-  | "none";
+export type ProductCardButtonVariant = 'add-to-cart' | 'see-options' | 'explore-more' | 'none';
 
 /**
  * Props for the {@link ProductCard} component.
@@ -145,12 +141,19 @@ export interface ProductCardProps {
   // ── Offer / Promotion ─────────────────────────────────────────────────────
 
   /**
-   * Promotional text rendered in green (#229A4E) below the price row.
+   * Promotional text rendered below the price row.
+   * If `offerTextMuted` is true, it renders in gray (#848995) and forces a 2-line height.
+   * Otherwise, it renders in green (#229A4E).
    * Omit when `badgeText` is provided.
    *
    * @example "Up to 30% off" | "No offers Right now"
    */
   offerText?: string;
+
+  /**
+   * If true, renders the offerText in a muted gray color and forces it to take up 2 lines of height.
+   */
+  offerTextMuted?: boolean;
 
   // ── Shipping ──────────────────────────────────────────────────────────────
 
@@ -190,6 +193,11 @@ export interface ProductCardProps {
 
   /** Additional CSS class names merged into the card root element. */
   className?: string;
+
+  /**
+   * Whether to show a heart icon on the image (e.g. for wishlist).
+   */
+  showHeart?: boolean;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -224,8 +232,8 @@ interface StarRatingProps {
 function StarRating({ rating, totalStars = 5 }: StarRatingProps) {
   return (
     <div
-      className="flex items-center gap-[2px]"
-      role="img"
+      className='flex items-center gap-[2px]'
+      role='img'
       aria-label={`${rating} out of ${totalStars} stars`}
     >
       {Array.from({ length: totalStars }, (_, index) => {
@@ -242,26 +250,26 @@ function StarRating({ rating, totalStars = 5 }: StarRatingProps) {
         return (
           <span
             key={index}
-            className="relative block size-3 shrink-0 overflow-hidden"
-            aria-hidden="true"
+            className='relative block size-3 shrink-0 overflow-hidden'
+            aria-hidden='true'
           >
             {/* Base layer: empty/outline star */}
             <Star
-              className="absolute inset-0 size-3 text-[#F09000]"
+              className='absolute inset-0 size-3 text-[#F09000]'
               strokeWidth={1.5}
-              fill="none"
+              fill='none'
             />
 
             {/* Fill layer: clipped filled star representing the fill % */}
             {(isFilled || isPartial) && (
               <span
-                className="absolute inset-0 overflow-hidden"
-                style={{ width: isFilled ? "100%" : `${fillAmount * 100}%` }}
+                className='absolute inset-0 overflow-hidden'
+                style={{ width: isFilled ? '100%' : `${fillAmount * 100}%` }}
               >
                 <Star
-                  className="absolute inset-0 size-3 text-[#F09000]"
+                  className='absolute inset-0 size-3 text-[#F09000]'
                   strokeWidth={1.5}
-                  fill="#F09000"
+                  fill='#F09000'
                 />
               </span>
             )}
@@ -364,12 +372,14 @@ export default function ProductCard({
   badgeText,
   badgeLabel,
   offerText,
+  offerTextMuted,
   shippingText,
-  buttonVariant = "add-to-cart",
+  buttonVariant = 'add-to-cart',
   onAddToCart,
   onSeeOptions,
   onExploreMore,
   className,
+  showHeart = false,
 }: ProductCardProps) {
   /**
    * Whether this card has a full-width CTA button at the bottom.
@@ -380,8 +390,7 @@ export default function ProductCard({
    * When false, the body height is auto (content-sized) to prevent white
    * space beneath the last piece of text content.
    */
-  const hasFullButton =
-    buttonVariant === "add-to-cart" || buttonVariant === "see-options";
+  const hasFullButton = buttonVariant === 'add-to-cart' || buttonVariant === 'see-options';
 
   /**
    * Whether the flash-deal badge row should be shown.
@@ -400,20 +409,20 @@ export default function ProductCard({
    * Whether a rating row should be rendered.
    * Requires both `rating` (numeric) and `reviewCount` (string) to be present.
    */
-  const hasRating = typeof rating === "number" && Boolean(reviewCount);
+  const hasRating = typeof rating === 'number' && Boolean(reviewCount);
 
   return (
     <article
       className={cn(
         // ── Structure ─────────────────────────────────────────────────
-        "group relative flex h-full w-full flex-col items-start overflow-hidden",
+        'group relative flex h-full w-full flex-col items-start overflow-hidden',
         // ── Border & Background — Figma: border #E5E5E6, radius 4px ──
-        "rounded-[4px] border border-[#E5E5E6] bg-white",
-        // ── Hover: subtle lift, border emphasis, shadow ────────────── 
-        "transition-all duration-200 ease-out",
-        "hover:-translate-y-0.5 hover:border-[#CACACE]",
-        "hover:shadow-[0_4px_20px_rgba(0,0,0,0.10)]",
-        "cursor-pointer",
+        'rounded-[4px] border border-[#E5E5E6] bg-white',
+        // ── Hover: subtle lift, border emphasis, shadow ──────────────
+        'transition-all duration-200 ease-out',
+        'hover:-translate-y-0.5 hover:border-[#CACACE]',
+        'hover:shadow-[0_4px_20px_rgba(0,0,0,0.10)]',
+        'cursor-pointer',
         className,
       )}
     >
@@ -428,18 +437,31 @@ export default function ProductCard({
        * `group-hover:scale-105` adds a subtle zoom animation on hover
        * via the `overflow-hidden` clipping on the parent container.
        */}
-      <div className="relative h-[180px] w-full shrink-0 overflow-hidden rounded-tl-[4px] rounded-tr-[4px]">
+      <div className='relative h-[180px] w-full shrink-0 overflow-hidden rounded-tl-[4px] rounded-tr-[4px]'>
         <Image
           src={imageSrc}
           alt={imageAlt}
           fill
           unoptimized
           className={cn(
-            "object-cover",
-            "transition-transform duration-300 ease-out group-hover:scale-105",
+            'object-cover',
+            'transition-transform duration-300 ease-out group-hover:scale-105',
           )}
-          sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 20vw"
+          sizes='(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 20vw'
         />
+        {showHeart && (
+          <button
+            type='button'
+            className='absolute bottom-[8px] right-[6px] z-10 flex size-[30px] items-center justify-center rounded-[9999px] bg-[#DEC33A] hover:bg-[#cbb235] transition-colors focus-visible:outline-none'
+            aria-label='Add to wishlist'
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
+          >
+            <Heart size={16} className='text-black' />
+          </button>
+        )}
       </div>
 
       {/* ── Card Body ────────────────────────────────────────────────────
@@ -456,8 +478,8 @@ export default function ProductCard({
        */}
       <div
         className={cn(
-          "flex w-full flex-1 flex-col items-start px-2 py-3",
-          hasFullButton ? "justify-between" : "justify-start gap-1",
+          'flex w-full flex-1 flex-col items-start px-2 py-3',
+          hasFullButton ? 'justify-between' : 'justify-start gap-1',
         )}
       >
         {/* ── Content Block ──────────────────────────────────────────────
@@ -465,12 +487,7 @@ export default function ProductCard({
          * - Full-button cards: gap is implicit via fixed heights
          * - Auto-height cards: explicit `gap-1` on the parent
          */}
-        <div
-          className={cn(
-            "flex w-full flex-col",
-            hasFullButton ? "gap-1" : "gap-1",
-          )}
-        >
+        <div className={cn('flex w-full flex-col', hasFullButton ? 'gap-1' : 'gap-1')}>
           {/* Flash Deal Badge Row
            *
            * Shown when `badgeText` is provided.
@@ -482,17 +499,17 @@ export default function ProductCard({
            *   - Row gap:    10px
            */}
           {hasFlashDeal && (
-            <div className="flex items-center gap-[10px]">
+            <div className='flex items-center gap-[10px]'>
               {/* Yellow badge chip */}
-              <span className="flex shrink-0 items-center justify-center overflow-clip rounded-[2px] bg-[#DEC33A] px-[10px] py-[2px]">
-                <span className="whitespace-nowrap text-[12px] font-normal leading-[1.3] text-black">
+              <span className='flex shrink-0 items-center justify-center overflow-clip rounded-[2px] bg-[#DEC33A] px-[10px] py-[2px]'>
+                <span className='whitespace-nowrap text-[12px] font-normal leading-[1.3] text-black'>
                   {badgeText}
                 </span>
               </span>
 
               {/* Optional label beside the badge chip */}
               {badgeLabel && (
-                <span className="whitespace-nowrap text-[12px] font-bold leading-[1.3] text-[#DEC33A]">
+                <span className='whitespace-nowrap text-[12px] font-bold leading-[1.3] text-[#DEC33A]'>
                   {badgeLabel}
                 </span>
               )}
@@ -505,16 +522,12 @@ export default function ProductCard({
            * `showArrow` appends an ArrowRight icon for category tiles.
            * `truncate` prevents overflow in narrow grid columns.
            */}
-          <div className="flex w-full items-center gap-1">
-            <p className="flex-1 truncate text-[14px] font-normal leading-[1.3] text-[#165DD0]">
+          <div className='flex w-full items-center gap-1'>
+            <p className='flex-1 truncate text-[14px] font-normal leading-[1.3] text-[#165DD0]'>
               {title}
             </p>
             {showArrow && (
-              <ArrowRight
-                className="shrink-0 text-[#165DD0]"
-                size={16}
-                aria-hidden="true"
-              />
+              <ArrowRight className='shrink-0 text-[#165DD0]' size={16} aria-hidden='true' />
             )}
           </div>
 
@@ -527,9 +540,9 @@ export default function ProductCard({
            *   - Review count: 12px Regular, #4A5565
            */}
           {hasRating && (
-            <div className="flex w-full items-center gap-2">
+            <div className='flex w-full items-center gap-2'>
               <StarRating rating={rating as number} />
-              <span className="whitespace-nowrap text-[12px] font-normal leading-[1.3] text-[#4A5565]">
+              <span className='whitespace-nowrap text-[12px] font-normal leading-[1.3] text-[#4A5565]'>
                 {rating} ({reviewCount})
               </span>
             </div>
@@ -548,15 +561,13 @@ export default function ProductCard({
            *    Both items sit on the same baseline row.
            */}
           {hasPrice && (
-            <div className="flex items-baseline gap-[12px]">
+            <div className='flex items-baseline gap-[12px]'>
               {/* Sale / current price */}
-              <span className="text-[18px] font-normal leading-[1.2] text-black">
-                {price}
-              </span>
+              <span className='text-[18px] font-normal leading-[1.2] text-black'>{price}</span>
 
               {/* Original price with strikethrough (deal cards only) */}
               {originalPrice && (
-                <span className="text-[14px] font-normal leading-[1.3] text-[#42454D] line-through">
+                <span className='text-[14px] font-normal leading-[1.3] text-[#42454D] line-through'>
                   {originalPrice}
                 </span>
               )}
@@ -565,16 +576,20 @@ export default function ProductCard({
 
           {/* Offer / Promotion Text
            *
-           * Hidden when `badgeText` is present (both compete for the same
-           * visual slot in the card body hierarchy).
-           *
-           * Figma spec: 12px Regular, color #229A4E (success-strong green).
-           * Capped at 2 lines via `line-clamp-2` (matches Figma 32px height).
+           * Hidden when `badgeText` is present.
+           * If `offerTextMuted` is true, renders gray and forces 2 lines.
            */}
           {!hasFlashDeal && offerText && (
-            <p className="line-clamp-2 text-[12px] font-normal leading-[1.3] text-[#229A4E]">
-              {offerText}
-            </p>
+            <div className={cn('text-[12px] font-normal leading-[1.3] w-full', offerTextMuted ? 'text-[#848995]' : 'text-[#229A4E] line-clamp-2')}>
+              {offerTextMuted ? (
+                <>
+                  <p className="mb-0">{offerText}</p>
+                  <p>&#8203;</p>
+                </>
+              ) : (
+                offerText
+              )}
+            </div>
           )}
 
           {/* Shipping Information
@@ -582,9 +597,7 @@ export default function ProductCard({
            * Figma spec: 12px Regular, color #42454D (text-weak muted gray).
            */}
           {shippingText && (
-            <p className="text-[12px] font-normal leading-[1.3] text-[#42454D]">
-              {shippingText}
-            </p>
+            <p className='text-[12px] font-normal leading-[1.3] text-[#42454D]'>{shippingText}</p>
           )}
 
           {/* "Explore More" Text Link
@@ -597,21 +610,21 @@ export default function ProductCard({
            *   - Arrow icon: 12px ArrowRight, #165DD0
            *   - No background; sits flush at the bottom of the content block
            */}
-          {buttonVariant === "explore-more" && (
+          {buttonVariant === 'explore-more' && (
             <button
-              type="button"
+              type='button'
               onClick={onExploreMore}
               className={cn(
-                "mt-1 flex items-center gap-1",
-                "text-[14px] font-normal leading-[1.3] text-[#165DD0]",
-                "transition-opacity duration-150 hover:opacity-75",
-                "focus-visible:outline-none focus-visible:ring-1",
-                "focus-visible:ring-[#165DD0] focus-visible:ring-offset-1",
+                'mt-1 flex items-center gap-1',
+                'text-[14px] font-normal leading-[1.3] text-[#165DD0]',
+                'transition-opacity duration-150 hover:opacity-75',
+                'focus-visible:outline-none focus-visible:ring-1',
+                'focus-visible:ring-[#165DD0] focus-visible:ring-offset-1',
               )}
               aria-label={`Explore more about ${title}`}
             >
               <span>Explore More</span>
-              <ArrowRight size={12} aria-hidden="true" />
+              <ArrowRight size={12} aria-hidden='true' />
             </button>
           )}
         </div>
@@ -631,26 +644,22 @@ export default function ProductCard({
          */}
         {hasFullButton && (
           <button
-            type="button"
-            onClick={
-              buttonVariant === "add-to-cart" ? onAddToCart : onSeeOptions
-            }
+            type='button'
+            onClick={buttonVariant === 'add-to-cart' ? onAddToCart : onSeeOptions}
             className={cn(
-              "flex w-full items-center justify-center",
+              'flex w-full items-center justify-center',
               // Figma: h 32px, radius 2px
-              "h-8 rounded-[2px] border text-[12px] font-normal leading-[1.3] text-black",
+              'h-8 rounded-[2px] text-[12px] font-normal leading-[1.3] text-black',
               // Variant specific styles
-              buttonVariant === "add-to-cart"
-                ? "border-[#DEC33A] bg-[#DEC33A] transition-colors duration-150 hover:bg-[#C9B034] hover:border-[#C9B034] active:bg-[#B49A2E] active:border-[#B49A2E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#DEC33A] focus-visible:ring-offset-1"
-                : "border-[#E5E5E6] bg-white transition-colors duration-150 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E5E5E6] focus-visible:ring-offset-1"
+              buttonVariant === 'add-to-cart'
+                ? 'border border-[#DEC33A] bg-[#DEC33A] transition-colors duration-150 hover:bg-[#C9B034] hover:border-[#C9B034] active:bg-[#B49A2E] active:border-[#B49A2E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#DEC33A] focus-visible:ring-offset-1'
+                : 'border-[0.75px] border-[#686F7D] bg-white transition-colors duration-150 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E5E5E6] focus-visible:ring-offset-1',
             )}
             aria-label={
-              buttonVariant === "add-to-cart"
-                ? `Add ${title} to cart`
-                : `See options for ${title}`
+              buttonVariant === 'add-to-cart' ? `Add ${title} to cart` : `See options for ${title}`
             }
           >
-            {buttonVariant === "add-to-cart" ? "Add To Cart" : "See Options"}
+            {buttonVariant === 'add-to-cart' ? 'Add To Cart' : 'See Options'}
           </button>
         )}
       </div>

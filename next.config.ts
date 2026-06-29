@@ -8,6 +8,10 @@ const nextConfig: NextConfig = {
         hostname: "www.figma.com",
       },
       {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+      {
         // Figma Dev Mode MCP server — serves asset previews in local development.
         // Remove or restrict this pattern before deploying to production.
         protocol: "http",
