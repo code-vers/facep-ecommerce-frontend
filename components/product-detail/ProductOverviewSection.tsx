@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import BrowsingHistorySection from './BrowsingHistorySection';
 import { ExternalLink, MapPin, Star } from 'lucide-react';
 import CustomerReviewsSection from './CustomerReviewsSection';
@@ -96,10 +97,15 @@ function ProductGallery() {
 function ProductMeta() {
   return (
     <div className='flex w-full flex-col gap-4 border-b border-[#E5E5E6] pb-[18px]'>
-      <div className='flex flex-wrap items-center gap-[7px]'>
-        <p className='text-[16px] leading-[1.2] text-[#165DD0]'>Brand: Oraimo</p>
-        <ExternalLink size={18} strokeWidth={1.8} className='text-black' />
-      </div>
+      <Link
+        href="/brand/plant-house"
+        className='flex flex-wrap items-center gap-[7px] w-fit hover:opacity-85 transition-opacity group'
+      >
+        <p className='text-[16px] leading-[1.2] text-[#165DD0] font-semibold group-hover:underline'>
+          Brand: Plant House
+        </p>
+        <ExternalLink size={18} strokeWidth={1.8} className='text-[#165DD0]' />
+      </Link>
 
       <h1 className='font-[Arial] text-[24px] leading-[1.2] font-normal text-[#42454D] sm:text-[26px] xl:text-[28px]'>
         Oraimo AirBuds Pro 2 Earphones
