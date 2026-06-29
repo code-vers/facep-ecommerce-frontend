@@ -1,29 +1,29 @@
 'use client';
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 import {
-  ChevronUp,
-  LayoutDashboard,
   Boxes,
+  ChevronUp,
   CirclePlus,
-  ShoppingBag,
-  Truck,
   CircleX,
+  Cog,
   Coins,
-  TicketPercent,
+  LayoutDashboard,
+  LogOut,
+  ShoppingBag,
   Star,
   Store,
+  TicketPercent,
+  Truck,
   Wrench,
-  Cog,
-  LogOut,
 } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 const navItems = [
   { name: 'Overview', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Product Management', href: '/dashboard/products', icon: Boxes },
-  { name: 'Add New Product', href: '/dashboard/products/new', icon: CirclePlus },
+  { name: 'Add New Product', href: '/dashboard/add-new-products', icon: CirclePlus },
   { name: 'Orders', href: '/dashboard/orders', icon: ShoppingBag },
   { name: 'Shipping', href: '/dashboard/shipping', icon: Truck },
   { name: 'Returns', href: '/dashboard/returns', icon: CircleX },
@@ -82,9 +82,7 @@ export default function DashboardSidebar() {
                 key={item.name}
                 href={item.href}
                 className={`flex items-center gap-2 rounded-sm p-3 transition-colors ${
-                  isActive
-                    ? 'bg-[#F09000] text-black'
-                    : 'text-black hover:bg-black/5'
+                  isActive ? 'bg-[#F09000] text-black' : 'text-black hover:bg-black/5'
                 }`}
               >
                 <Icon size={16} />
