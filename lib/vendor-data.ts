@@ -1,6 +1,6 @@
 /**
- * @fileoverview Mock data for the Vendor Dashboard Product & Returns Management layouts.
- * Matches Figma Node 2161:5546 and Node 2180:6099 details.
+ * @fileoverview Mock data for the Vendor Dashboard Product Management layout.
+ * Matches Figma Node 2161:5546 details.
  *
  * @module lib/vendor-data
  */
@@ -25,17 +25,6 @@ export interface VendorStats {
   lowStock: number;
   outOfStock: number;
   inStock: number;
-}
-
-export interface VendorReturnRequest {
-  orderId: string;
-  customerName: string;
-  contactNo: string;
-  productName: string;
-  reason: string;
-  condition: string;
-  pickupDate: string;
-  status: 'pending' | 'approved' | 'declined';
 }
 
 export const VENDOR_STATS: VendorStats = {
@@ -109,68 +98,5 @@ export const VENDOR_PRODUCTS: VendorProduct[] = [
     unitsSold: 300,
     status: 'Out Of Stock',
     imageSrc: 'https://images.unsplash.com/photo-1597055181300-e3633a207518?q=80&w=200&auto=format&fit=crop',
-  },
-];
-
-export const VENDOR_RETURNS: VendorReturnRequest[] = [
-  {
-    orderId: 'GH201',
-    customerName: 'John Smith',
-    contactNo: '555-901-2345',
-    productName: 'Kitchen Cookware Set',
-    reason: 'Product damaged during shipping',
-    condition: 'defective product.',
-    pickupDate: '2024-01-05',
-    status: 'pending',
-  },
-  {
-    orderId: 'RT234',
-    customerName: 'Alice Johnson',
-    contactNo: '555-901-2345',
-    productName: 'Kitchen Cookware Set',
-    reason: 'Product damaged during shipping',
-    condition: 'defective product.',
-    pickupDate: '2024-02-12',
-    status: 'pending',
-  },
-  {
-    orderId: 'YU789',
-    customerName: 'Robert Williams',
-    contactNo: '555-901-2345',
-    productName: 'Kitchen Cookware Set',
-    reason: 'Product damaged during shipping',
-    condition: 'defective product.',
-    pickupDate: '2024-03-20',
-    status: 'pending',
-  },
-  {
-    orderId: 'KJ345',
-    customerName: 'Emily Brown',
-    contactNo: '555-901-2345',
-    productName: 'Kitchen Cookware Set',
-    reason: 'Product damaged during shipping',
-    condition: 'defective product.',
-    pickupDate: '2024-04-01',
-    status: 'pending',
-  },
-  {
-    orderId: 'VC678',
-    customerName: 'David Garcia',
-    contactNo: '555-901-2345',
-    productName: 'Kitchen Cookware Set',
-    reason: 'Product damaged during shipping',
-    condition: 'defective product.',
-    pickupDate: '2024-05-15',
-    status: 'pending',
-  },
-  {
-    orderId: 'ZX901',
-    customerName: 'Linda Rodriguez',
-    contactNo: '555-901-2345',
-    productName: 'Kitchen Cookware Set',
-    reason: 'Product damaged during shipping',
-    condition: 'defective product.',
-    pickupDate: '2024-06-22',
-    status: 'pending',
   },
 ];
