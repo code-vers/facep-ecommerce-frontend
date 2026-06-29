@@ -37,7 +37,7 @@ export default function RecentlyViewedItems() {
                     offerText={item.offerText}
                     offerTextMuted={item.offerText === 'No offers Right now'}
                     shippingText={item.shippingText}
-                    buttonVariant={item.buttonVariant as 'add-to-cart' | 'see-options'}
+                    buttonVariant="none"
                     showHeart={true}
                   />
                 ))}

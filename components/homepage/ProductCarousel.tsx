@@ -59,11 +59,11 @@ export default function ProductCarousel({
         {/* Scroll Container */}
         <div
           ref={scrollRef}
-          className="flex gap-4 overflow-x-auto pb-4 scroll-smooth scrollbar-hide"
+          className="flex gap-4 overflow-x-auto pb-4 scroll-smooth scrollbar-hide items-stretch"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {products.map((product) => (
-            <div key={product.id} className="w-[176px] shrink-0 h-full">
+            <div key={product.id} className="flex w-[199px] shrink-0">
               <ProductCard
                 imageSrc={product.imageSrc}
                 imageAlt={product.imageAlt}
