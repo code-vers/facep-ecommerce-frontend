@@ -16,12 +16,16 @@ import {
   TicketPercent,
   Truck,
   Wrench,
+  Cog,
+  LogOut,
+  User,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const navItems = [
   { name: 'Overview', href: '/dashboard', icon: LayoutDashboard },
+  { name: 'Users', href: '/dashboard/users', icon: User },
   { name: 'Product Management', href: '/dashboard/products', icon: Boxes },
   { name: 'Add New Product', href: '/dashboard/add-new-products', icon: CirclePlus },
   { name: 'Orders', href: '/dashboard/orders', icon: ShoppingBag },
