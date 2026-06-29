@@ -10,7 +10,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { Star, ArrowRight } from 'lucide-react';
+import { Star, ArrowRight, ArrowLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export interface ReturnableItem {
