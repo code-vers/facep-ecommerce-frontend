@@ -63,7 +63,7 @@ const aboutItems = [
 
 function ProductGallery() {
   return (
-    <div className='flex w-full flex-col gap-4 sm:gap-5 lg:gap-6 xl:max-w-[700px] xl:shrink-0'>
+    <div className='flex w-full flex-col gap-4 sm:gap-5 lg:gap-6'>
       <div className='relative aspect-square w-full overflow-hidden bg-white'>
         <Image
           src={productImages[0].src}
@@ -213,7 +213,7 @@ function AboutSection() {
 
 function PurchaseCard() {
   return (
-    <aside className='flex w-full flex-col gap-5 border border-[#E5E5E6] bg-[#F2F2F3] p-5 sm:p-6 xl:max-w-[453.75px] xl:shrink-0'>
+    <aside className='flex w-full flex-col gap-5 border border-[#E5E5E6] bg-[#F2F2F3] p-5 sm:p-6'>
       <p className='font-[Arial] text-[24px] leading-[1.2] text-[#42454D] sm:text-[28px]'>
         <span className='text-[18.06px]'>$</span>
         <span>26</span>
@@ -306,30 +306,35 @@ export default function ProductOverviewSection() {
     <>
       <section className='w-full'>
         <div className='mx-auto flex max-w-[1920px] flex-col gap-8 px-4 py-6 sm:px-5 sm:py-8 lg:px-10 xl:px-20 xl:py-[50px]'>
-          <div className='flex flex-col gap-8 xl:flex-row xl:items-start xl:gap-14'>
-            <div className='flex min-w-0 flex-1 flex-col gap-8 lg:gap-10 xl:flex-row xl:items-start xl:gap-12'>
+          <div className='grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-12 xl:gap-14'>
+            {/* Gallery */}
+            <div className='md:col-span-1 lg:col-span-5 xl:col-span-5'>
               <ProductGallery />
-
-              <div className='flex min-w-0 flex-1 flex-col gap-4'>
-                <ProductMeta />
-
-                <div className='flex flex-col gap-3'>
-                  <PriceBlock />
-
-                  <div className='flex items-center gap-[4.831px] text-[16px] text-black'>
-                    <p className='font-semibold leading-[1.3]'>Size:</p>
-                    <p className='leading-[1.2]'>-</p>
-                  </div>
-
-                  <ColorPalette />
-                </div>
-
-                <DetailList />
-                <AboutSection />
-              </div>
             </div>
 
-            <PurchaseCard />
+            {/* Meta */}
+            <div className='flex min-w-0 flex-1 flex-col gap-4 md:col-span-1 lg:col-span-4 xl:col-span-4'>
+              <ProductMeta />
+
+              <div className='flex flex-col gap-3'>
+                <PriceBlock />
+
+                <div className='flex items-center gap-[4.831px] text-[16px] text-black'>
+                  <p className='font-semibold leading-[1.3]'>Size:</p>
+                  <p className='leading-[1.2]'>-</p>
+                </div>
+
+                <ColorPalette />
+              </div>
+
+              <DetailList />
+              <AboutSection />
+            </div>
+
+            {/* Purchase Card */}
+            <div className='md:col-span-2 lg:col-span-3 xl:col-span-3'>
+              <PurchaseCard />
+            </div>
           </div>
 
           <SellerDescription />
