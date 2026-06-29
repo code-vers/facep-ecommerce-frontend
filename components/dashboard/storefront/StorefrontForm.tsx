@@ -5,7 +5,7 @@ import { CircleCheck } from 'lucide-react';
 
 export default function StorefrontForm() {
   return (
-    <div className='flex w-full flex-col items-start border border-[#E5E5E6] bg-white p-[24px] rounded-[4px] gap-[24px]'>
+    <div className='flex w-full flex-col items-start border border-[#E5E5E6] bg-white p-4 md:p-6 2xl:p-[24px] rounded-[4px] gap-[24px]'>
       
       {/* Basic Store Information */}
       <div className='flex w-full flex-col items-start gap-[18px]'>
@@ -46,9 +46,9 @@ export default function StorefrontForm() {
               </button>
             </div>
             <div className='flex w-full flex-col items-center rounded-[2px] border border-dashed border-[#E5E5E6] px-[24px] py-[12px]'>
-              <div className='relative h-[499px] w-full overflow-hidden bg-white'>
+              <div className='relative h-[250px] sm:h-[350px] 2xl:h-[499px] w-full overflow-hidden bg-white'>
                 {/* Banner Content Container matches Figma height perfectly */}
-                <div className='absolute left-0 top-[11px] h-[478px] w-full overflow-hidden rounded-[4px]'>
+                <div className='absolute left-0 top-[11px] h-[228px] sm:h-[328px] 2xl:h-[478px] w-full overflow-hidden rounded-[4px]'>
                   <Image
                     src='https://images.unsplash.com/photo-1459156212016-c812468e2115?q=80&w=1400&auto=format&fit=crop'
                     alt='Store Banner Background'
@@ -56,11 +56,11 @@ export default function StorefrontForm() {
                     className='object-cover'
                   />
                   {/* Overlay text */}
-                  <div className='absolute left-[130px] top-[179px] flex flex-col items-start gap-[24px] text-white'>
-                    <p className='font-[Arial] text-[48px] font-bold leading-[1.1] tracking-[-0.96px]'>
+                  <div className='absolute left-4 top-1/4 md:left-12 xl:left-[130px] xl:top-[179px] flex flex-col items-start gap-4 xl:gap-[24px] text-white'>
+                    <p className='font-[Arial] text-[24px] sm:text-[36px] xl:text-[48px] font-bold leading-[1.1] tracking-[-0.96px]'>
                       Buy Your Favorite Plant
                     </p>
-                    <p className='font-[Arial] text-[64px] font-bold leading-none tracking-[-1.92px]'>
+                    <p className='font-[Arial] text-[32px] sm:text-[48px] xl:text-[64px] font-bold leading-none tracking-[-1.92px]'>
                       From Plant home
                     </p>
                   </div>
@@ -97,7 +97,7 @@ export default function StorefrontForm() {
           </div>
 
           {/* Contact Email & Phone */}
-          <div className='flex w-full items-start gap-[18px]'>
+          <div className='flex w-full flex-col md:flex-row items-start gap-[16px] 2xl:gap-[18px]'>
             <div className='flex flex-[1_0_0] flex-col items-start gap-[8px]'>
               <label className='text-[16px] font-normal leading-[1.2] text-black'>
                 Contact Email

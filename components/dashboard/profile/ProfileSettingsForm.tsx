@@ -5,7 +5,7 @@ import { Camera, CircleCheck } from 'lucide-react';
 
 export default function ProfileSettingsForm() {
   return (
-    <div className='flex w-full flex-col items-end border border-[#E5E5E6] bg-white p-[24px] rounded-[4px] gap-[36px]'>
+    <div className='flex w-full flex-col items-end border border-[#E5E5E6] bg-white p-4 md:p-6 2xl:p-[24px] rounded-[4px] gap-[36px]'>
       
       {/* Personal Information */}
       <div className='flex w-full flex-col items-start gap-[24px]'>
@@ -33,7 +33,7 @@ export default function ProfileSettingsForm() {
           </label>
         </div>
 
-        <div className='flex w-full items-start gap-[24px]'>
+        <div className='flex w-full flex-col md:flex-row items-start gap-[16px] 2xl:gap-[24px]'>
           <div className='flex flex-[1_0_0] flex-col items-start gap-[8px]'>
             <label className='text-[16px] font-normal leading-[1.2] text-black'>
               Full Name
@@ -60,7 +60,7 @@ export default function ProfileSettingsForm() {
           </div>
         </div>
 
-        <div className='flex w-full items-start gap-[24px]'>
+        <div className='flex w-full flex-col md:flex-row items-start gap-[16px] 2xl:gap-[24px]'>
           <div className='flex flex-[1_0_0] flex-col items-start gap-[8px]'>
             <label className='text-[16px] font-normal leading-[1.2] text-black'>
               Contact Number
