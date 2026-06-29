@@ -60,7 +60,7 @@ export default function DashboardNavbar({ onMenuClick }: { onMenuClick?: () => v
             Seller Name
           </p>
           <p className='w-full text-[12px] font-normal leading-[1.3] text-[#6B7280]'>
-            Seller Name@Resu.com
+            Seller Name
           </p>
         </div>
         <div className='relative h-[32px] w-[32px] shrink-0 overflow-hidden rounded-full'>
