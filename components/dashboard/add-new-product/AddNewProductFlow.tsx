@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 import Stepper from './Stepper';
 import ProductBasics from './ProductBasics';
 import MediaAndVariants from './MediaAndVariants';
+import PricingAndInventory from './PricingAndInventory';
 import PlaceholderStep from './PlaceholderStep';
 
 export default function AddNewProductFlow() {
@@ -26,7 +27,7 @@ export default function AddNewProductFlow() {
       case 2:
         return <MediaAndVariants />;
       case 3:
-        return <PlaceholderStep stepName="Pricing & Inventory" />;
+        return <PricingAndInventory />;
       case 4:
         return <PlaceholderStep stepName="Shipping" />;
       case 5:
