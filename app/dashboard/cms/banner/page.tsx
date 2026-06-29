@@ -3,7 +3,7 @@ import BannerFooter from '@/components/dashboard/cms/BannerFooter';
 
 export default function BannerFooterPage() {
   return (
-    <div className='flex flex-col gap-6 md:p-6 mx-auto w-full'>
+    <div className='flex flex-col gap-6 items-start px-4 py-6 sm:px-6 md:px-8 2xl:px-[45px] 2xl:py-[36px] w-full min-h-screen bg-white'>
       <CmsTabs activeTab='Banner & Footer' />
       <BannerFooter />
     </div>

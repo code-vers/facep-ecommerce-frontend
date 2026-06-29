@@ -9,7 +9,7 @@ export default function VendorsPage() {
   const [activeTab, setActiveTab] = useState<'all-stores' | 'pending-approvals'>('all-stores');
 
   return (
-    <div className='flex w-full flex-col gap-[18px] items-start px-4 py-6 sm:px-6 md:px-8 2xl:px-[45px] 2xl:py-[36px] bg-[#f2f2f3] min-h-screen'>
+    <div className='flex flex-col gap-[18px] items-start px-4 py-6 sm:px-6 md:px-8 2xl:px-[45px] 2xl:py-[36px] w-full min-h-screen bg-white'>
       
       {/* Tabs */}
       <VendorsTabs activeTab={activeTab} onTabChange={setActiveTab} />

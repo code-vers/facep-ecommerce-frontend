@@ -1,6 +1,6 @@
 'use client';
 
-import React, from 'react';
+import React from 'react';
 import { X, Check } from 'lucide-react';
 
 const mockPendingStores = [
@@ -44,10 +44,10 @@ export default function PendingApprovalsTable() {
                 <input type="checkbox" className="size-[14px] rounded-[2px] border-[#e5e5e6] text-[#f09000] focus:ring-[#f09000]" />
               </div>
               <div className="w-[80px] shrink-0 text-[14px] text-black px-2">Logo</div>
-              <div className="flex-[2] text-[14px] text-black px-2">Store</div>
-              <div className="flex-[2] text-[14px] text-black px-2">Vendor</div>
-              <div className="flex-[2] text-[14px] text-black px-2">Email</div>
-              <div className="flex-[2] text-[14px] text-black px-2">Application Date</div>
+              <div className="flex-2 text-[14px] text-black px-2">Store</div>
+              <div className="flex-2 text-[14px] text-black px-2">Vendor</div>
+              <div className="flex-2 text-[14px] text-black px-2">Email</div>
+              <div className="flex-2 text-[14px] text-black px-2">Application Date</div>
               <div className="w-[100px] shrink-0 text-[14px] text-black px-2 text-center">Action</div>
             </div>
 
@@ -74,16 +74,16 @@ export default function PendingApprovalsTable() {
                 </div>
                 
                 {/* Store */}
-                <div className="flex-[2] text-[12px] text-[#42454d] px-2 truncate">{row.store}</div>
+                <div className="flex-2 text-[12px] text-[#42454d] px-2 truncate">{row.store}</div>
                 
                 {/* Vendor */}
-                <div className="flex-[2] text-[12px] text-[#42454d] px-2 truncate">{row.vendor}</div>
+                <div className="flex-2 text-[12px] text-[#42454d] px-2 truncate">{row.vendor}</div>
                 
                 {/* Email */}
-                <div className="flex-[2] text-[12px] text-[#42454d] px-2 truncate">{row.email}</div>
+                <div className="flex-2 text-[12px] text-[#42454d] px-2 truncate">{row.email}</div>
                 
                 {/* Application Date */}
-                <div className="flex-[2] text-[12px] text-[#42454d] px-2">{row.date}</div>
+                <div className="flex-2 text-[12px] text-[#42454d] px-2">{row.date}</div>
                 
                 {/* Action */}
                 <div className="w-[100px] shrink-0 px-2 flex items-center justify-center gap-3">
