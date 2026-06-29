@@ -63,7 +63,11 @@ export default function ProductCarousel({
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {products.map((product) => (
-            <div key={product.id} className="flex w-[199px] shrink-0">
+            <Link 
+              key={product.id} 
+              href={`/product/deals/${product.id}`}
+              className="flex w-[199px] shrink-0 group focus-visible:outline-none"
+            >
               <ProductCard
                 imageSrc={product.imageSrc}
                 imageAlt={product.imageAlt}
@@ -78,7 +82,7 @@ export default function ProductCarousel({
                 shippingText={product.shippingText}
                 buttonVariant="none"
               />
-            </div>
+            </Link>
           ))}
         </div>
 
