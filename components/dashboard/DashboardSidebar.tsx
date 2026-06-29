@@ -35,12 +35,12 @@ const navItems = [
   { name: 'Profile Settings', href: '/dashboard/profile', icon: Cog },
 ];
 
-export default function DashboardSidebar() {
+export default function DashboardSidebar({ isMobile }: { isMobile?: boolean }) {
   const pathname = usePathname();
   const { logout } = useAuth();
 
   return (
-    <aside className='flex h-full w-[280px] flex-col border-r border-[#E5E5E6] bg-[#F2F2F3]'>
+    <aside className={`flex h-full flex-col border-r border-[#E5E5E6] bg-[#F2F2F3] ${isMobile ? 'w-full' : 'w-[280px]'}`}>
       {/* Header / Logo */}
       <div className='flex h-[80px] shrink-0 items-center gap-3 border-b border-[#E5E5E6] px-6 py-4'>
         <div className='relative flex h-9 w-9 items-center justify-center overflow-hidden rounded bg-[#0A132B] text-white'>
