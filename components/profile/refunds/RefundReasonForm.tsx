@@ -211,13 +211,13 @@ export default function RefundReasonForm({ selectedItems, onNext, onBack }: Refu
       </div>
 
       {/* Navigation */}
-      <div className="flex items-center justify-end gap-[16px] mt-8">
+      <div className="flex items-center justify-end gap-[16px] mt-8 w-full">
         <button
           type="button"
           onClick={onBack}
-          className="flex items-center justify-center py-[12px] px-[16px] rounded-[2px] border-[0.75px] border-[#686f7d] text-black hover:bg-gray-50 transition-all cursor-pointer min-w-[80px]"
+          className="flex items-center justify-center py-[12px] px-[24px] rounded-[2px] border border-[#686f7d] text-black hover:bg-gray-50 transition-all cursor-pointer min-w-[80px] h-[48px]"
         >
-          <ArrowLeft className="w-6 h-6" />
+          <ArrowLeft className="w-5 h-5" />
         </button>
 
         <button
@@ -225,13 +225,13 @@ export default function RefundReasonForm({ selectedItems, onNext, onBack }: Refu
           disabled={!isValid}
           onClick={() => isValid && onNext({ productState, returnReason })}
           className={cn(
-            'flex items-center justify-center py-[12px] px-[16px] rounded-[2px] transition-all min-w-[80px]',
+            'flex items-center justify-center py-[12px] px-[24px] rounded-[2px] transition-all min-w-[80px] h-[48px]',
             isValid
               ? 'bg-[#dec33a] border border-[#dec33a] text-black hover:bg-[#c9b034] cursor-pointer'
               : 'bg-[#e5e5e6] border border-[#e5e5e6] text-[#848995] cursor-not-allowed'
           )}
         >
-          <ArrowRight className="w-6 h-6" />
+          <ArrowRight className="w-5 h-5" />
         </button>
       </div>
     </div>

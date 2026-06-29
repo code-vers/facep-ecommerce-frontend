@@ -52,6 +52,7 @@ const RETURNABLE_ITEMS: ReturnableItem[] = [
 
 interface RefundSelectProductsProps {
   onNext: (selectedIds: string[]) => void;
+  onBack?: () => void;
 }
 
 function StarRating({ rating }: { rating: number }) {
@@ -75,7 +76,7 @@ function StarRating({ rating }: { rating: number }) {
 /**
  * Step 1: Select the products to return.
  */
-export default function RefundSelectProducts({ onNext }: RefundSelectProductsProps) {
+export default function RefundSelectProducts({ onNext, onBack }: RefundSelectProductsProps) {
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
   const toggleItem = (id: string) => {
@@ -178,19 +179,27 @@ export default function RefundSelectProducts({ onNext }: RefundSelectProductsPro
       </div>
 
       {/* Navigation */}
-      <div className="flex justify-end">
+      <div className="flex items-center justify-end gap-[16px] mt-8 w-full">
+        {onBack && (
+          <button
+            type="button"
+            onClick={onBack}
+            className="flex items-center justify-center py-[12px] px-[24px] rounded-[2px] border border-[#686f7d] text-black hover:bg-gray-50 transition-all cursor-pointer min-w-[80px] h-[48px]"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+        )}
         <button
           type="button"
           disabled={selected.size === 0}
           onClick={() => onNext(Array.from(selected))}
           className={cn(
-            'flex items-center gap-2 px-4 py-3 rounded-[2px] text-[16px] font-normal leading-[1.2] transition-all',
+            'flex items-center justify-center py-[12px] px-[24px] rounded-[2px] transition-all min-w-[80px] h-[48px]',
             selected.size > 0
               ? 'bg-[#dec33a] border border-[#dec33a] text-black hover:bg-[#c9b034] cursor-pointer'
               : 'bg-[#e5e5e6] border border-[#e5e5e6] text-[#848995] cursor-not-allowed'
           )}
         >
-          Next
           <ArrowRight className="w-5 h-5" />
         </button>
       </div>
