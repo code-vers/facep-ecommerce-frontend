@@ -26,7 +26,6 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-import AuthCard from '@/components/auth/AuthCard';
 import AuthInput from '@/components/auth/AuthInput';
 import AuthButton from '@/components/auth/AuthButton';
 import DemoCredentialCard from '@/components/auth/DemoCredentialCard';
@@ -257,11 +256,11 @@ export default function LoginPage() {
           >
             ⚡ Quick Demo Access
           </p>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             {DEMO_USERS.map((demo) => (
               <DemoCredentialCard
                 key={demo.id}
-                role={demo.role === 'buyer' ? 'Buyer' : 'Vendor'}
+                role={demo.role === 'buyer' ? 'Buyer' : demo.role === 'vendor' ? 'Vendor' : 'Admin'}
                 email={demo.email}
                 password={demo.password}
                 isLoading={demoLoadingId === demo.id}

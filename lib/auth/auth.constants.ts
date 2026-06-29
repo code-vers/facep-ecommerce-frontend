@@ -33,8 +33,8 @@ export const AUTH_KEYS = {
  */
 export const ROLE_REDIRECT: Record<string, string> = {
   buyer: '/products',
-  vendor: '/seller',
-  admin: '/profile',
+  vendor: '/dashboard',
+  admin: '/dashboard',
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -60,6 +60,14 @@ export const DEMO_USERS: StoredUser[] = [
     email: 'vendor@demo.com',
     password: 'demo1234',
     role: 'vendor',
+    createdAt: '2025-01-01T00:00:00.000Z',
+  },
+  {
+    id: 'demo-admin-001',
+    fullName: 'Demo Admin',
+    email: 'admin@demo.com',
+    password: 'demo1234',
+    role: 'admin',
     createdAt: '2025-01-01T00:00:00.000Z',
   },
 ];

@@ -21,7 +21,7 @@ import { cn } from '@/lib/utils';
 
 interface DemoCredentialCardProps {
   /** Human-readable role label. */
-  role: 'Buyer' | 'Vendor';
+  role: 'Buyer' | 'Vendor' | 'Admin';
   /** Pre-filled email. */
   email: string;
   /** Pre-filled password (shown masked). */
