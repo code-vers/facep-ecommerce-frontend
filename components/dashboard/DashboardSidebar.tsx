@@ -19,6 +19,7 @@ import {
   User,
   LayoutTemplate,
   MessageSquare,
+  FilePlusCorner,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -34,6 +35,7 @@ const navItems = [
   { name: 'Earning', href: '/dashboard/earning', icon: Coins },
   { name: 'Promotions & Deals', href: '/dashboard/promotions', icon: TicketPercent },
   { name: 'Reviews', href: '/dashboard/reviews', icon: Star },
+  { name: 'Categories', href: '/dashboard/categories', icon: FilePlusCorner},
   { name: 'Storefront', href: '/dashboard/storefront', icon: Store },
   { name: 'Store Management', href: '/dashboard/store-management', icon: Wrench },
     { name: 'CMS', href: '/dashboard/cms', icon: LayoutTemplate },
