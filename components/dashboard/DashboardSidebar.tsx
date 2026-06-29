@@ -17,11 +17,13 @@ import {
   Wrench,
   Cog,
   LogOut,
+  User,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 const navItems = [
   { name: 'Overview', href: '/dashboard', icon: LayoutDashboard },
+  { name: 'Users', href: '/dashboard/users', icon: User },
   { name: 'Product Management', href: '/dashboard/products', icon: Boxes },
   { name: 'Add New Product', href: '/dashboard/products/new', icon: CirclePlus },
   { name: 'Orders', href: '/dashboard/orders', icon: ShoppingBag },
