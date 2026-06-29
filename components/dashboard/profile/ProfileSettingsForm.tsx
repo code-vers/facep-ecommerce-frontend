@@ -34,7 +34,7 @@ export default function ProfileSettingsForm() {
         </div>
 
         <div className='flex w-full flex-col md:flex-row items-start gap-[16px] 2xl:gap-[24px]'>
-          <div className='flex flex-[1_0_0] flex-col items-start gap-[8px]'>
+          <div className='flex w-full md:w-auto md:flex-[1_0_0] flex-col items-start gap-[8px]'>
             <label className='text-[16px] font-normal leading-[1.2] text-black'>
               Full Name
             </label>
@@ -46,7 +46,7 @@ export default function ProfileSettingsForm() {
               />
             </div>
           </div>
-          <div className='flex flex-[1_0_0] flex-col items-start gap-[8px]'>
+          <div className='flex w-full md:w-auto md:flex-[1_0_0] flex-col items-start gap-[8px]'>
             <label className='text-[16px] font-normal leading-[1.2] text-black'>
               Email
             </label>
@@ -61,7 +61,7 @@ export default function ProfileSettingsForm() {
         </div>
 
         <div className='flex w-full flex-col md:flex-row items-start gap-[16px] 2xl:gap-[24px]'>
-          <div className='flex flex-[1_0_0] flex-col items-start gap-[8px]'>
+          <div className='flex w-full md:w-auto md:flex-[1_0_0] flex-col items-start gap-[8px]'>
             <label className='text-[16px] font-normal leading-[1.2] text-black'>
               Contact Number
             </label>
@@ -73,7 +73,7 @@ export default function ProfileSettingsForm() {
               />
             </div>
           </div>
-          <div className='flex flex-[1_0_0] flex-col items-start gap-[8px]'>
+          <div className='flex w-full md:w-auto md:flex-[1_0_0] flex-col items-start gap-[8px]'>
             <label className='text-[16px] font-normal leading-[1.2] text-black'>
               Address
             </label>
