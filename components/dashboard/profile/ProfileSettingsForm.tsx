@@ -1,16 +1,20 @@
 'use client';
 
 import Image from 'next/image';
-import { Camera, CircleCheck } from 'lucide-react';
+import { Camera, CircleCheck, ChevronDown } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function ProfileSettingsForm() {
+  const { session } = useAuth();
+  const isAdmin = session?.role === 'admin';
+
   return (
     <div className='flex w-full flex-col items-end border border-[#E5E5E6] bg-white p-4 md:p-6 2xl:p-[24px] rounded-[4px] gap-[36px]'>
       
       {/* Personal Information */}
       <div className='flex w-full flex-col items-start gap-[24px]'>
         <h2 className='text-[20px] font-semibold leading-[1.2] text-black'>
-          Personal Information
+          {isAdmin ? 'Profile Settings' : 'Personal Information'}
         </h2>
         
         <div className='flex w-full flex-col items-start gap-[12px]'>
@@ -29,7 +33,7 @@ export default function ProfileSettingsForm() {
             </button>
           </div>
           <label className='text-[16px] font-normal leading-[1.2] text-black'>
-            Seller Name
+            {isAdmin ? 'Admin Name' : 'Seller Name'}
           </label>
         </div>
 
@@ -88,6 +92,129 @@ export default function ProfileSettingsForm() {
         </div>
 
       </div>
+
+      {isAdmin && (
+        <>
+          {/* Business Settings */}
+          <div className='flex w-full flex-col items-start gap-[24px]'>
+            <h2 className='text-[20px] font-semibold leading-[1.2] text-black'>
+              Business Settings
+            </h2>
+            
+            <div className='flex w-full flex-col md:flex-row items-start gap-[16px] 2xl:gap-[24px]'>
+              <div className='flex w-full md:w-auto md:flex-[1_0_0] flex-col items-start gap-[8px]'>
+                <label className='text-[16px] font-normal leading-[1.2] text-black'>
+                  Site Name
+                </label>
+                <div className='flex w-full items-center overflow-hidden rounded-[2px] border border-[#E5E5E6] bg-white px-[12px] py-[10px]'>
+                  <input
+                    type='text'
+                    placeholder='Business name'
+                    className='w-full bg-transparent text-[14px] font-normal leading-[1.3] text-[#42454D] outline-none placeholder:text-[#848995]'
+                  />
+                </div>
+              </div>
+              <div className='flex w-full md:w-auto md:flex-[1_0_0] flex-col items-start gap-[8px]'>
+                <label className='text-[16px] font-normal leading-[1.2] text-black'>
+                  Admin Email
+                </label>
+                <div className='flex w-full items-center overflow-hidden rounded-[2px] border border-[#E5E5E6] bg-white px-[12px] py-[10px]'>
+                  <input
+                    type='email'
+                    placeholder='alexander@domain.com'
+                    className='w-full bg-transparent text-[14px] font-normal leading-[1.3] text-[#42454D] outline-none placeholder:text-[#848995]'
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className='flex w-full flex-col md:flex-row items-start gap-[16px] 2xl:gap-[24px]'>
+              <div className='flex w-full md:w-auto md:flex-[1_0_0] flex-col items-start gap-[8px]'>
+                <label className='text-[16px] font-normal leading-[1.2] text-black'>
+                  Support Email
+                </label>
+                <div className='flex w-full items-center overflow-hidden rounded-[2px] border border-[#E5E5E6] bg-white px-[12px] py-[10px]'>
+                  <input
+                    type='email'
+                    placeholder='alexander@domain.com'
+                    className='w-full bg-transparent text-[14px] font-normal leading-[1.3] text-[#42454D] outline-none placeholder:text-[#848995]'
+                  />
+                </div>
+              </div>
+              <div className='flex w-full md:w-auto md:flex-[1_0_0] flex-col items-start gap-[8px]'>
+                <label className='text-[16px] font-normal leading-[1.2] text-black'>
+                  Address
+                </label>
+                <div className='flex w-full items-center overflow-hidden rounded-[2px] border border-[#E5E5E6] bg-white px-[12px] py-[10px]'>
+                  <input
+                    type='text'
+                    placeholder='123 Edelweiss Strasse, Zurich'
+                    className='w-full bg-transparent text-[14px] font-normal leading-[1.3] text-[#42454D] outline-none placeholder:text-[#848995]'
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className='flex w-full flex-col md:flex-row items-start gap-[16px] 2xl:gap-[24px]'>
+              <div className='flex w-full md:w-auto md:flex-[1_0_0] flex-col items-start gap-[8px]'>
+                <label className='text-[16px] font-normal leading-[1.2] text-black'>
+                  Default Currency
+                </label>
+                <div className='flex w-full items-center overflow-hidden rounded-[2px] border border-[#E5E5E6] bg-white px-[12px] py-[10px]'>
+                  <p className='w-full bg-transparent text-[14px] font-normal leading-[1.3] text-[#848995]'>
+                    $ (Dollar)
+                  </p>
+                  <ChevronDown size={16} className='text-[#848995]' />
+                </div>
+              </div>
+              <div className='flex w-full md:w-auto md:flex-[1_0_0] flex-col items-start gap-[8px]'>
+                <label className='text-[16px] font-normal leading-[1.2] text-black'>
+                  Default Time zone
+                </label>
+                <div className='flex w-full items-center overflow-hidden rounded-[2px] border border-[#E5E5E6] bg-white px-[12px] py-[10px]'>
+                  <p className='w-full bg-transparent text-[14px] font-normal leading-[1.3] text-[#848995]'>
+                    GMT +6
+                  </p>
+                  <ChevronDown size={16} className='text-[#848995]' />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Platform Commission */}
+          <div className='flex w-full flex-col items-start gap-[24px]'>
+            <h2 className='text-[20px] font-semibold leading-[1.2] text-black'>
+              Platform Commission
+            </h2>
+            <div className='flex w-full flex-col md:flex-row items-start gap-[16px] 2xl:gap-[24px]'>
+              <div className='flex w-full md:w-auto md:flex-[1_0_0] flex-col items-start gap-[8px]'>
+                <label className='text-[16px] font-normal leading-[1.2] text-black'>
+                  Commission Rate (%)
+                </label>
+                <div className='flex w-full items-center overflow-hidden rounded-[2px] border border-[#E5E5E6] bg-white px-[12px] py-[10px]'>
+                  <input
+                    type='text'
+                    placeholder='10%'
+                    className='w-full bg-transparent text-[14px] font-normal leading-[1.3] text-[#42454D] outline-none placeholder:text-[#848995]'
+                  />
+                </div>
+              </div>
+              <div className='flex w-full md:w-auto md:flex-[1_0_0] flex-col items-start gap-[8px]'>
+                <label className='text-[16px] font-normal leading-[1.2] text-black'>
+                  Payment Gateway Fee (%)
+                </label>
+                <div className='flex w-full items-center overflow-hidden rounded-[2px] border border-[#E5E5E6] bg-white px-[12px] py-[10px]'>
+                  <input
+                    type='text'
+                    placeholder='2%'
+                    className='w-full bg-transparent text-[14px] font-normal leading-[1.3] text-[#42454D] outline-none placeholder:text-[#848995]'
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Change Password */}
       <div className='flex w-full flex-col items-start gap-[24px]'>
