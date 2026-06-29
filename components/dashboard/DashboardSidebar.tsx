@@ -16,9 +16,8 @@ import {
   TicketPercent,
   Truck,
   Wrench,
-  Cog,
-  LogOut,
   User,
+  LayoutTemplate,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -36,6 +35,7 @@ const navItems = [
   { name: 'Reviews', href: '/dashboard/reviews', icon: Star },
   { name: 'Storefront', href: '/dashboard/storefront', icon: Store },
   { name: 'Store Management', href: '/dashboard/store-management', icon: Wrench },
+    { name: 'CMS', href: '/dashboard/cms', icon: LayoutTemplate },
   { name: 'Profile Settings', href: '/dashboard/profile', icon: Cog },
 ];
 
