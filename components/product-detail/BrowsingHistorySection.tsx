@@ -287,12 +287,12 @@ export default function BrowsingHistorySection() {
             </button>
           </div>
 
-          <button
-            type='button'
-            className='h-12 w-full rounded-xs border-[0.75px] border-black bg-transparent px-4 text-[16px] leading-[1.2] text-black sm:w-auto sm:min-w-52.75'
+          <Link
+            href="/products"
+            className='flex items-center justify-center h-12 w-full rounded-xs border-[0.75px] border-black bg-transparent px-4 text-[16px] leading-[1.2] text-black sm:w-auto sm:min-w-52.75 hover:bg-gray-50 transition-colors'
           >
             Explore More
-          </button>
+          </Link>
         </div>
       </div>
     </section>

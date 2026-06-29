@@ -60,9 +60,9 @@ export default function BrowsingHistory() {
 
         {/* Explore More Button */}
         <div className='mt-[36px] flex justify-center'>
-          <button className='flex h-[43px] w-[211px] items-center justify-center rounded-[2px] border border-[#DEC33A] bg-[#DEC33A] transition-colors hover:bg-[#C9B034] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#DEC33A] focus-visible:ring-offset-1'>
+          <Link href="/products" className='flex h-[43px] w-[211px] items-center justify-center rounded-[2px] border border-[#DEC33A] bg-[#DEC33A] transition-colors hover:bg-[#C9B034] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#DEC33A] focus-visible:ring-offset-1'>
             <span className='text-[16px] font-normal text-black'>Explore More</span>
-          </button>
+          </Link>
         </div>
       </div>
     </section>
