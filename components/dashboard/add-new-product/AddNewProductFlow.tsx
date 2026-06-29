@@ -6,6 +6,7 @@ import Stepper from './Stepper';
 import ProductBasics from './ProductBasics';
 import MediaAndVariants from './MediaAndVariants';
 import PricingAndInventory from './PricingAndInventory';
+import ShippingStep from './ShippingStep';
 import PlaceholderStep from './PlaceholderStep';
 
 export default function AddNewProductFlow() {
@@ -29,7 +30,7 @@ export default function AddNewProductFlow() {
       case 3:
         return <PricingAndInventory />;
       case 4:
-        return <PlaceholderStep stepName="Shipping" />;
+        return <ShippingStep />;
       case 5:
         return <PlaceholderStep stepName="Product Details" />;
       case 6:
