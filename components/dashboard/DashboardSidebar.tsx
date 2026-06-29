@@ -24,22 +24,33 @@ import {
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-const navItems = [
+const vendorNavItems = [
   { name: 'Overview', href: '/dashboard', icon: LayoutDashboard },
-  { name: 'Users', href: '/dashboard/users', icon: User },
-  { name: 'Vendors', href: '/dashboard/vendors', icon: Store },
   { name: 'Product Management', href: '/dashboard/products', icon: Boxes },
   { name: 'Add New Product', href: '/dashboard/add-new-products', icon: CirclePlus },
   { name: 'Orders', href: '/dashboard/orders', icon: ShoppingBag },
   { name: 'Shipping', href: '/dashboard/shipping', icon: Truck },
-  { name: 'Returns & Refund', href: '/dashboard/returns', icon: CircleX },
+  { name: 'Returns', href: '/dashboard/returns', icon: CircleX },
   { name: 'Earning', href: '/dashboard/earning', icon: Coins },
   { name: 'Promotions & Deals', href: '/dashboard/promotions', icon: TicketPercent },
   { name: 'Reviews', href: '/dashboard/reviews', icon: Star },
-  { name: 'Categories', href: '/dashboard/categories', icon: FilePlusCorner},
   { name: 'Storefront', href: '/dashboard/storefront', icon: Store },
   { name: 'Store Management', href: '/dashboard/store-management', icon: Wrench },
-    { name: 'CMS', href: '/dashboard/cms', icon: LayoutTemplate },
+  { name: 'Profile Settings', href: '/dashboard/profile', icon: Cog },
+];
+
+const adminNavItems = [
+  { name: 'Overview', href: '/dashboard', icon: LayoutDashboard },
+  { name: 'Users', href: '/dashboard/users', icon: User },
+  { name: 'Vendors', href: '/dashboard/vendors', icon: Store },
+  { name: 'Product Management', href: '/dashboard/products', icon: Boxes },
+  { name: 'Categories', href: '/dashboard/categories', icon: FilePlusCorner },
+  { name: 'Orders', href: '/dashboard/orders', icon: ShoppingBag },
+  { name: 'Returns & Refunds', href: '/dashboard/returns', icon: CircleX },
+  { name: 'Shipping', href: '/dashboard/shipping', icon: Truck },
+  { name: 'Promotions & Deals', href: '/dashboard/promotions', icon: TicketPercent },
+  { name: 'Support Inquiries', href: '/dashboard/support', icon: MessageSquare },
+  { name: 'CMS', href: '/dashboard/cms', icon: LayoutTemplate },
   { name: 'Profile Settings', href: '/dashboard/profile', icon: Cog },
 ];
 
@@ -48,15 +59,7 @@ export default function DashboardSidebar({ isMobile }: { isMobile?: boolean }) {
   const { session, logout } = useAuth();
   const isAdmin = session?.role === 'admin';
 
-  const visibleNavItems = [...navItems];
-  if (isAdmin) {
-    // Insert "Support Inquiries" before "Profile Settings"
-    visibleNavItems.splice(visibleNavItems.length - 1, 0, {
-      name: 'Support Inquiries',
-      href: '/dashboard/support',
-      icon: MessageSquare,
-    });
-  }
+  const visibleNavItems = isAdmin ? adminNavItems : vendorNavItems;
 
   return (
     <aside className={`flex h-full flex-col border-r border-[#E5E5E6] bg-[#F2F2F3] ${isMobile ? 'w-full' : 'w-[280px]'}`}>
