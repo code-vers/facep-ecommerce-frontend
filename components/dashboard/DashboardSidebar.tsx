@@ -31,7 +31,7 @@ const navItems = [
   { name: 'Add New Product', href: '/dashboard/add-new-products', icon: CirclePlus },
   { name: 'Orders', href: '/dashboard/orders', icon: ShoppingBag },
   { name: 'Shipping', href: '/dashboard/shipping', icon: Truck },
-  { name: 'Returns', href: '/dashboard/returns', icon: CircleX },
+  { name: 'Returns & Refund', href: '/dashboard/returns', icon: CircleX },
   { name: 'Earning', href: '/dashboard/earning', icon: Coins },
   { name: 'Promotions & Deals', href: '/dashboard/promotions', icon: TicketPercent },
   { name: 'Reviews', href: '/dashboard/reviews', icon: Star },
