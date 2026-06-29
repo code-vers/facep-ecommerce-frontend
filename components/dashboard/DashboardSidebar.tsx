@@ -16,8 +16,6 @@ import {
   TicketPercent,
   Truck,
   Wrench,
-  Cog,
-  LogOut,
   User,
 } from 'lucide-react';
 import Link from 'next/link';
