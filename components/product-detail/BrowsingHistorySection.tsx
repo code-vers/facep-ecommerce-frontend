@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
 import { useRef } from 'react';
+import Link from 'next/link';
 
 type HistoryProduct = {
   id: string;
@@ -180,48 +181,50 @@ const historyProducts: HistoryProduct[] = [
 
 function BrowsingHistoryCard({ product }: { product: HistoryProduct }) {
   return (
-    <article className='flex min-w-49.75 flex-col overflow-hidden rounded-lg border border-[#E5E5E6] bg-white'>
-      <div className='relative h-45 w-full overflow-hidden rounded-t-lg'>
-        <Image
-          src={product.imageSrc}
-          alt={product.imageAlt}
-          fill
-          unoptimized
-          className='object-cover'
-          sizes='199px'
-        />
-      </div>
+    <Link href={`/product/deals/${product.id}`} className='group focus-visible:outline-none'>
+      <article className='flex min-w-49.75 flex-col overflow-hidden rounded-lg border border-[#E5E5E6] bg-white transition-all hover:-translate-y-0.5 hover:shadow-md'>
+        <div className='relative h-45 w-full overflow-hidden rounded-t-lg'>
+          <Image
+            src={product.imageSrc}
+            alt={product.imageAlt}
+            fill
+            unoptimized
+            className='object-cover transition-transform duration-300 group-hover:scale-105'
+            sizes='199px'
+          />
+        </div>
 
-      <div className='flex w-full flex-col gap-1 px-2 py-3'>
-        <p className='w-full text-[14px] leading-[1.3] text-[#165DD0]'>{product.title}</p>
+        <div className='flex w-full flex-col gap-1 px-2 py-3'>
+          <p className='w-full text-[14px] leading-[1.3] text-[#165DD0]'>{product.title}</p>
 
-        <div className='flex items-center gap-2'>
-          <div className='flex items-center gap-0.5'>
-            {Array.from({ length: 5 }, (_, index) => (
-              <Star
-                key={index}
-                size={12}
-                strokeWidth={1.7}
-                fill={index < 4 ? '#F09000' : 'none'}
-                className='text-[#F09000]'
-              />
-            ))}
+          <div className='flex items-center gap-2'>
+            <div className='flex items-center gap-0.5'>
+              {Array.from({ length: 5 }, (_, index) => (
+                <Star
+                  key={index}
+                  size={12}
+                  strokeWidth={1.7}
+                  fill={index < 4 ? '#F09000' : 'none'}
+                  className='text-[#F09000]'
+                />
+              ))}
+            </div>
+            <p className='whitespace-nowrap text-[12px] leading-[1.3] text-[#4A5565]'>
+              {product.ratingText}
+            </p>
           </div>
-          <p className='whitespace-nowrap text-[12px] leading-[1.3] text-[#4A5565]'>
-            {product.ratingText}
-          </p>
+
+          <p className='w-full text-[18px] leading-[1.2] text-black'>{product.price}</p>
+
+          <div className='min-h-7.75 w-full text-[12px] leading-[1.3] text-[#229A4E]'>
+            <p>{product.offerText}</p>
+            <p aria-hidden='true'>&nbsp;</p>
+          </div>
+
+          <p className='w-full text-[12px] leading-[1.3] text-[#42454D]'>{product.shippingText}</p>
         </div>
-
-        <p className='w-full text-[18px] leading-[1.2] text-black'>{product.price}</p>
-
-        <div className='min-h-7.75 w-full text-[12px] leading-[1.3] text-[#229A4E]'>
-          <p>{product.offerText}</p>
-          <p aria-hidden='true'>&nbsp;</p>
-        </div>
-
-        <p className='w-full text-[12px] leading-[1.3] text-[#42454D]'>{product.shippingText}</p>
-      </div>
-    </article>
+      </article>
+    </Link>
   );
 }
 

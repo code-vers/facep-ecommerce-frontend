@@ -1,5 +1,6 @@
 import ProductCard from '@/components/shared/ProductCard';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import Link from 'next/link';
 
 const IMG1 = '/ImageWithFallback.png';
 const IMG2 = '/ImageWithFallback2.png';
@@ -30,7 +31,7 @@ export default function BrowsingHistory() {
             <div className='flex w-full'>
               <div className='grid w-full grid-flow-row grid-cols-2 gap-6 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8'>
                 {products.map((product, idx) => (
-                  <div key={idx} className='h-full w-full max-w-[199px]'>
+                  <Link key={idx} href={`/product/deals/${product.id}`} className='h-full w-full max-w-[199px] group focus-visible:outline-none'>
                     <ProductCard
                       imageSrc={product.imageSrc}
                       imageAlt={product.title}
@@ -42,7 +43,7 @@ export default function BrowsingHistory() {
                       shippingText={product.shippingText}
                       buttonVariant='none'
                     />
-                  </div>
+                  </Link>
                 ))}
               </div>
             </div>
