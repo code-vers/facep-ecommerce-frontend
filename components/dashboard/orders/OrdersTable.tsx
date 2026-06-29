@@ -1,6 +1,7 @@
 'use client';
 
-import { ChevronDown, Eye, Pencil, Trash2 } from 'lucide-react';
+import { ChevronDown, Eye, Pencil, Trash2, FileDown } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 type OrderStatus = 'Shipped' | 'Delivered' | 'Processing' | 'Pending' | 'Cancelled';
 
@@ -12,6 +13,7 @@ interface OrderData {
   amount: string;
   date: string;
   status: OrderStatus;
+  store: string;
 }
 
 const mockOrders: OrderData[] = [
@@ -23,6 +25,7 @@ const mockOrders: OrderData[] = [
     amount: '$119.99',
     date: '2024-01-05',
     status: 'Shipped',
+    store: 'Plant House',
   },
   {
     id: 'RT234',
@@ -32,6 +35,7 @@ const mockOrders: OrderData[] = [
     amount: '$79.99',
     date: '2024-02-12',
     status: 'Delivered',
+    store: 'Technet Au',
   },
   {
     id: 'YU789',
@@ -41,6 +45,7 @@ const mockOrders: OrderData[] = [
     amount: '$89.99',
     date: '2024-03-20',
     status: 'Processing',
+    store: 'Technet Au',
   },
   {
     id: 'KJ345',
@@ -50,6 +55,7 @@ const mockOrders: OrderData[] = [
     amount: '$39.99',
     date: '2024-04-01',
     status: 'Pending',
+    store: 'Technet Au',
   },
   {
     id: 'VC678',
@@ -59,6 +65,7 @@ const mockOrders: OrderData[] = [
     amount: '$69.99',
     date: '2024-05-15',
     status: 'Shipped',
+    store: 'Technet Au',
   },
   {
     id: 'ZX901',
@@ -68,6 +75,7 @@ const mockOrders: OrderData[] = [
     amount: '$49.99',
     date: '2024-06-22',
     status: 'Cancelled',
+    store: 'Technet Au',
   },
 ];
 
@@ -89,6 +97,9 @@ const getStatusStyles = (status: OrderStatus) => {
 };
 
 export default function OrdersTable() {
+  const { session } = useAuth();
+  const isAdmin = session?.role === 'admin';
+
   return (
     <div className='flex w-full shrink-0 flex-col items-start gap-[24px] rounded-[4px] border border-[#E5E5E6] p-4 md:p-[16px]'>
       {/* Header */}
@@ -98,11 +109,19 @@ export default function OrdersTable() {
             Orders
           </p>
         </div>
-        <div className='flex h-[36px] w-full sm:w-[250px] shrink-0 items-center overflow-hidden rounded-[2px] border border-[#E5E5E6] bg-white pl-[12px] pr-[12px] py-[10px]'>
-          <p className='min-w-0 flex-[1_0_0] overflow-hidden text-ellipsis whitespace-nowrap text-[14px] font-normal leading-[1.3] text-[#848995]'>
-            Filter By Status
-          </p>
-          <ChevronDown size={16} className='text-[#848995]' />
+        <div className='flex items-center gap-[12px]'>
+          <div className='flex h-[36px] w-full sm:w-[250px] shrink-0 items-center overflow-hidden rounded-[2px] border border-[#E5E5E6] bg-white pl-[12px] pr-[12px] py-[10px]'>
+            <p className='min-w-0 flex-[1_0_0] overflow-hidden text-ellipsis whitespace-nowrap text-[14px] font-normal leading-[1.3] text-[#848995]'>
+              Filter By Status
+            </p>
+            <ChevronDown size={16} className='text-[#848995]' />
+          </div>
+          {isAdmin && (
+            <button className='flex h-[36px] shrink-0 items-center justify-center gap-[8px] rounded-[2px] border border-[#E5E5E6] bg-white px-[12px] transition-colors hover:bg-gray-50'>
+              <span className='text-[14px] font-normal leading-[1.2] text-[#42454D]'>Export CSV</span>
+              <FileDown size={16} className='text-[#42454D]' />
+            </button>
+          )}
         </div>
       </div>
 
@@ -121,11 +140,19 @@ export default function OrdersTable() {
                 Customer
               </p>
             </div>
-            <div className='w-[150px] shrink-0 px-[8px]'>
-              <p className='whitespace-nowrap text-[14px] font-normal leading-[1.3] text-black'>
-                Customer Contact No
-              </p>
-            </div>
+            {isAdmin ? (
+              <div className='w-[150px] shrink-0 px-[8px]'>
+                <p className='whitespace-nowrap text-[14px] font-normal leading-[1.3] text-black'>
+                  Store
+                </p>
+              </div>
+            ) : (
+              <div className='w-[150px] shrink-0 px-[8px]'>
+                <p className='whitespace-nowrap text-[14px] font-normal leading-[1.3] text-black'>
+                  Customer Contact No
+                </p>
+              </div>
+            )}
             <div className='min-w-[150px] flex-[1_0_0] px-[8px]'>
               <p className='whitespace-nowrap text-[14px] font-normal leading-[1.3] text-black'>
                 Product
@@ -136,11 +163,13 @@ export default function OrdersTable() {
                 Amount
               </p>
             </div>
-            <div className='w-[120px] shrink-0 px-[8px]'>
-              <p className='whitespace-nowrap text-[14px] font-normal leading-[1.3] text-black'>
-                Date
-              </p>
-            </div>
+            {!isAdmin && (
+              <div className='w-[120px] shrink-0 px-[8px]'>
+                <p className='whitespace-nowrap text-[14px] font-normal leading-[1.3] text-black'>
+                  Date
+                </p>
+              </div>
+            )}
             <div className='w-[120px] shrink-0 px-[8px]'>
               <p className='whitespace-nowrap text-[14px] font-normal leading-[1.3] text-black'>
                 Status
@@ -169,11 +198,19 @@ export default function OrdersTable() {
                   {order.customer}
                 </p>
               </div>
-              <div className='w-[150px] shrink-0 px-[8px]'>
-                <p className='truncate text-[12px] font-normal leading-[1.3] text-[#42454D]'>
-                  {order.contactNo}
-                </p>
-              </div>
+              {isAdmin ? (
+                <div className='w-[150px] shrink-0 px-[8px]'>
+                  <p className='truncate text-[12px] font-normal leading-[1.3] text-[#42454D]'>
+                    {order.store}
+                  </p>
+                </div>
+              ) : (
+                <div className='w-[150px] shrink-0 px-[8px]'>
+                  <p className='truncate text-[12px] font-normal leading-[1.3] text-[#42454D]'>
+                    {order.contactNo}
+                  </p>
+                </div>
+              )}
               <div className='min-w-[150px] flex-[1_0_0] px-[8px]'>
                 <p className='truncate text-[12px] font-normal leading-[1.3] text-[#42454D]'>
                   {order.product}
@@ -184,20 +221,28 @@ export default function OrdersTable() {
                   {order.amount}
                 </p>
               </div>
-              <div className='w-[120px] shrink-0 px-[8px]'>
-                <p className='truncate text-[12px] font-normal leading-[1.3] text-[#42454D]'>
-                  {order.date}
-                </p>
-              </div>
-              <div className='w-[120px] shrink-0 px-[8px]'>
-                <div
-                  className={`inline-flex items-center gap-[4px] rounded-[2px] px-[8px] py-[2px] ${getStatusStyles(
-                    order.status
-                  )}`}
-                >
-                  <span className='text-[12px] font-normal leading-[1.3]'>{order.status}</span>
-                  <ChevronDown size={12} className='opacity-70' />
+              {!isAdmin && (
+                <div className='w-[120px] shrink-0 px-[8px]'>
+                  <p className='truncate text-[12px] font-normal leading-[1.3] text-[#42454D]'>
+                    {order.date}
+                  </p>
                 </div>
+              )}
+              <div className='w-[120px] shrink-0 px-[8px]'>
+                {isAdmin ? (
+                  <div className={`inline-flex h-[24px] items-center justify-between gap-[8px] rounded-[2px] px-[8px] ${getStatusStyles(order.status)}`}>
+                    <span className='text-[12px] font-medium leading-[1.2]'>
+                      {order.status}
+                    </span>
+                    <ChevronDown size={12} />
+                  </div>
+                ) : (
+                  <div className={`flex h-[24px] w-[80px] items-center justify-center rounded-full ${getStatusStyles(order.status)}`}>
+                    <span className='text-[12px] font-medium leading-[1.2]'>
+                      {order.status}
+                    </span>
+                  </div>
+                )}
               </div>
               <div className='w-[100px] shrink-0 px-[8px]'>
                 <div className='flex items-center justify-center gap-[12px]'>
