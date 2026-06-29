@@ -90,15 +90,15 @@ const getStatusStyles = (status: OrderStatus) => {
 
 export default function OrdersTable() {
   return (
-    <div className='flex w-full shrink-0 flex-col items-start gap-[24px] rounded-[4px] border border-[#E5E5E6] p-[16px]'>
+    <div className='flex w-full shrink-0 flex-col items-start gap-[24px] rounded-[4px] border border-[#E5E5E6] p-4 md:p-[16px]'>
       {/* Header */}
-      <div className='flex w-full shrink-0 items-start gap-[24px]'>
+      <div className='flex w-full shrink-0 flex-col sm:flex-row items-start sm:items-center justify-between gap-[16px] sm:gap-[24px]'>
         <div className='flex min-w-0 flex-[1_0_0] items-center justify-between'>
           <p className='whitespace-nowrap text-[20px] font-semibold leading-[1.2] text-black'>
             Orders
           </p>
         </div>
-        <div className='flex h-[36px] w-[250px] shrink-0 items-center overflow-hidden rounded-[2px] border border-[#E5E5E6] bg-white pl-[12px] pr-[12px] py-[10px]'>
+        <div className='flex h-[36px] w-full sm:w-[250px] shrink-0 items-center overflow-hidden rounded-[2px] border border-[#E5E5E6] bg-white pl-[12px] pr-[12px] py-[10px]'>
           <p className='min-w-0 flex-[1_0_0] overflow-hidden text-ellipsis whitespace-nowrap text-[14px] font-normal leading-[1.3] text-[#848995]'>
             Filter By Status
           </p>

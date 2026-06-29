@@ -114,7 +114,7 @@ export default function OrderStats() {
   ];
 
   return (
-    <div className='flex w-full shrink-0 items-center gap-[24px]'>
+    <div className='grid w-full grid-cols-1 gap-[16px] sm:grid-cols-2 lg:grid-cols-4 2xl:gap-[24px]'>
       {stats.map((stat, index) => (
         <StatCard key={index} {...stat} />
       ))}

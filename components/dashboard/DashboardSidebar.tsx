@@ -1,31 +1,33 @@
 'use client';
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 import {
-  ChevronUp,
-  LayoutDashboard,
   Boxes,
+  ChevronUp,
   CirclePlus,
-  ShoppingBag,
-  Truck,
   CircleX,
+  Cog,
   Coins,
-  TicketPercent,
+  LayoutDashboard,
+  LogOut,
+  ShoppingBag,
   Star,
   Store,
+  TicketPercent,
+  Truck,
   Wrench,
   Cog,
   LogOut,
   User,
 } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 const navItems = [
   { name: 'Overview', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Users', href: '/dashboard/users', icon: User },
   { name: 'Product Management', href: '/dashboard/products', icon: Boxes },
-  { name: 'Add New Product', href: '/dashboard/products/new', icon: CirclePlus },
+  { name: 'Add New Product', href: '/dashboard/add-new-products', icon: CirclePlus },
   { name: 'Orders', href: '/dashboard/orders', icon: ShoppingBag },
   { name: 'Shipping', href: '/dashboard/shipping', icon: Truck },
   { name: 'Returns', href: '/dashboard/returns', icon: CircleX },
@@ -37,12 +39,12 @@ const navItems = [
   { name: 'Profile Settings', href: '/dashboard/profile', icon: Cog },
 ];
 
-export default function DashboardSidebar() {
+export default function DashboardSidebar({ isMobile }: { isMobile?: boolean }) {
   const pathname = usePathname();
   const { logout } = useAuth();
 
   return (
-    <aside className='flex h-full w-[280px] flex-col border-r border-[#E5E5E6] bg-[#F2F2F3]'>
+    <aside className={`flex h-full flex-col border-r border-[#E5E5E6] bg-[#F2F2F3] ${isMobile ? 'w-full' : 'w-[280px]'}`}>
       {/* Header / Logo */}
       <div className='flex h-[80px] shrink-0 items-center gap-3 border-b border-[#E5E5E6] px-6 py-4'>
         <div className='relative flex h-9 w-9 items-center justify-center overflow-hidden rounded bg-[#0A132B] text-white'>
@@ -84,9 +86,7 @@ export default function DashboardSidebar() {
                 key={item.name}
                 href={item.href}
                 className={`flex items-center gap-2 rounded-sm p-3 transition-colors ${
-                  isActive
-                    ? 'bg-[#F09000] text-black'
-                    : 'text-black hover:bg-black/5'
+                  isActive ? 'bg-[#F09000] text-black' : 'text-black hover:bg-black/5'
                 }`}
               >
                 <Icon size={16} />

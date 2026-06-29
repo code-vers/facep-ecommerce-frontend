@@ -20,17 +20,25 @@ const getPageTitle = (pathname: string) => {
   return 'Store Overview';
 };
 
-export default function DashboardNavbar() {
+export default function DashboardNavbar({ onMenuClick }: { onMenuClick?: () => void }) {
   const pathname = usePathname();
   const pageTitle = getPageTitle(pathname);
 
   return (
-    <header className='flex items-center justify-between border-b border-[#E5E5E6] bg-[#F2F2F3] px-[45px] py-[20px]'>
-      <h1 className='shrink-0 text-[22px] font-normal leading-[1.2] text-black'>{pageTitle}</h1>
+    <header className='flex flex-wrap items-center justify-between gap-4 border-b border-[#E5E5E6] bg-[#F2F2F3] px-4 py-4 md:px-8 xl:px-[45px] xl:py-[20px]'>
+      <div className='flex items-center gap-3'>
+        <button 
+          onClick={onMenuClick}
+          className='flex lg:hidden p-1.5 bg-white border border-[#E5E5E6] rounded-sm text-black hover:bg-gray-50'
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+        <h1 className='shrink-0 text-[18px] md:text-[22px] font-normal leading-[1.2] text-black'>{pageTitle}</h1>
+      </div>
 
-      {/* Search Bar matching Figma exactly */}
-      <div className='flex items-stretch rounded-[4px] shrink-0'>
-        <div className='flex w-[695px] items-center bg-white border border-[#E5E5E6] px-[12px] py-[10px] rounded-l-[4px] border-r-0'>
+      {/* Search Bar */}
+      <div className='flex items-stretch rounded-[4px] w-full md:w-auto order-last md:order-0'>
+        <div className='flex w-full md:w-[350px] lg:w-[450px] xl:w-[695px] items-center bg-white border border-[#E5E5E6] px-[12px] py-[10px] rounded-l-[4px] border-r-0'>
           <input
             type='text'
             placeholder='Search anything'
