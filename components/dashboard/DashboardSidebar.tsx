@@ -1,46 +1,64 @@
 'use client';
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 import {
-  ChevronUp,
-  LayoutDashboard,
   Boxes,
+  ChevronUp,
   CirclePlus,
-  ShoppingBag,
-  Truck,
   CircleX,
+  Cog,
   Coins,
-  TicketPercent,
+  LayoutDashboard,
+  LogOut,
+  ShoppingBag,
   Star,
   Store,
+  TicketPercent,
+  Truck,
   Wrench,
-  Cog,
-  LogOut,
+  User,
+  LayoutTemplate,
+  MessageSquare,
+  FilePlusCorner,
 } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 const navItems = [
   { name: 'Overview', href: '/dashboard', icon: LayoutDashboard },
+  { name: 'Users', href: '/dashboard/users', icon: User },
   { name: 'Product Management', href: '/dashboard/products', icon: Boxes },
-  { name: 'Add New Product', href: '/dashboard/products/new', icon: CirclePlus },
+  { name: 'Add New Product', href: '/dashboard/add-new-products', icon: CirclePlus },
   { name: 'Orders', href: '/dashboard/orders', icon: ShoppingBag },
   { name: 'Shipping', href: '/dashboard/shipping', icon: Truck },
-  { name: 'Returns', href: '/dashboard/returns', icon: CircleX },
+  { name: 'Returns & Refund', href: '/dashboard/returns', icon: CircleX },
   { name: 'Earning', href: '/dashboard/earning', icon: Coins },
   { name: 'Promotions & Deals', href: '/dashboard/promotions', icon: TicketPercent },
   { name: 'Reviews', href: '/dashboard/reviews', icon: Star },
+  { name: 'Categories', href: '/dashboard/categories', icon: FilePlusCorner},
   { name: 'Storefront', href: '/dashboard/storefront', icon: Store },
   { name: 'Store Management', href: '/dashboard/store-management', icon: Wrench },
+    { name: 'CMS', href: '/dashboard/cms', icon: LayoutTemplate },
   { name: 'Profile Settings', href: '/dashboard/profile', icon: Cog },
 ];
 
-export default function DashboardSidebar() {
+export default function DashboardSidebar({ isMobile }: { isMobile?: boolean }) {
   const pathname = usePathname();
-  const { logout } = useAuth();
+  const { session, logout } = useAuth();
+  const isAdmin = session?.role === 'admin';
+
+  const visibleNavItems = [...navItems];
+  if (isAdmin) {
+    // Insert "Support Inquiries" before "Profile Settings"
+    visibleNavItems.splice(visibleNavItems.length - 1, 0, {
+      name: 'Support Inquiries',
+      href: '/dashboard/support',
+      icon: MessageSquare,
+    });
+  }
 
   return (
-    <aside className='flex h-full w-[280px] flex-col border-r border-[#E5E5E6] bg-[#F2F2F3]'>
+    <aside className={`flex h-full flex-col border-r border-[#E5E5E6] bg-[#F2F2F3] ${isMobile ? 'w-full' : 'w-[280px]'}`}>
       {/* Header / Logo */}
       <div className='flex h-[80px] shrink-0 items-center gap-3 border-b border-[#E5E5E6] px-6 py-4'>
         <div className='relative flex h-9 w-9 items-center justify-center overflow-hidden rounded bg-[#0A132B] text-white'>
@@ -74,7 +92,7 @@ export default function DashboardSidebar() {
       {/* Navigation */}
       <div className='flex flex-1 flex-col justify-between overflow-y-auto'>
         <nav className='flex flex-col gap-1 p-6'>
-          {navItems.map((item) => {
+          {visibleNavItems.map((item) => {
             const isActive = pathname === item.href;
             const Icon = item.icon;
             return (
@@ -82,9 +100,7 @@ export default function DashboardSidebar() {
                 key={item.name}
                 href={item.href}
                 className={`flex items-center gap-2 rounded-sm p-3 transition-colors ${
-                  isActive
-                    ? 'bg-[#F09000] text-black'
-                    : 'text-black hover:bg-black/5'
+                  isActive ? 'bg-[#F09000] text-black' : 'text-black hover:bg-black/5'
                 }`}
               >
                 <Icon size={16} />
