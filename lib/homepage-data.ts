@@ -63,7 +63,7 @@ export const CATEGORY_GRIDS_1: CategoryGridData[] = [
     items: [
       {
         label: "Chandeliers",
-        imageSrc: "https://images.unsplash.com/photo-1543242594-c77a443519c0?q=80&w=300&auto=format&fit=crop",
+        imageSrc: "https://images.unsplash.com/photo-1578500494198-246f612d3b3d?q=80&w=300&auto=format&fit=crop",
       },
       {
         label: "String Lights",
@@ -98,7 +98,7 @@ export const CATEGORY_GRIDS_1: CategoryGridData[] = [
       },
       {
         label: "Show Piece",
-        imageSrc: "https://images.unsplash.com/photo-1534349762230-e0add2c44f7b?q=80&w=300&auto=format&fit=crop",
+        imageSrc: "https://images.unsplash.com/photo-1558002038-1055907df827?q=80&w=300&auto=format&fit=crop",
       },
     ],
   },
@@ -132,11 +132,11 @@ export const CATEGORY_GRIDS_1: CategoryGridData[] = [
     items: [
       {
         label: "Ceiling Fans",
-        imageSrc: "https://images.unsplash.com/photo-1618955036643-f1a40237f397?q=80&w=300&auto=format&fit=crop",
+        imageSrc: "https://images.unsplash.com/photo-1558002038-1055907df827?q=80&w=300&auto=format&fit=crop",
       },
       {
         label: "Wall Decor",
-        imageSrc: "https://images.unsplash.com/photo-1534349762230-e0add2c44f7b?q=80&w=300&auto=format&fit=crop",
+        imageSrc: "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?q=80&w=300&auto=format&fit=crop",
       },
       {
         label: "Under Cabinet Storage",
@@ -181,15 +181,15 @@ export const CATEGORY_GRIDS_2: CategoryGridData[] = [
     items: [
       {
         label: "Pins",
-        imageSrc: "https://images.unsplash.com/photo-1590579491410-67ff7bf0225b?q=80&w=300&auto=format&fit=crop",
+        imageSrc: "https://images.unsplash.com/photo-1590794056226-79ef3a8147e1?q=80&w=300&auto=format&fit=crop",
       },
       {
         label: "Ties",
-        imageSrc: "https://images.unsplash.com/photo-1589756823851-ede1bf1da6f2?q=80&w=300&auto=format&fit=crop",
+        imageSrc: "https://images.unsplash.com/photo-1558002038-1055907df827?q=80&w=300&auto=format&fit=crop",
       },
       {
         label: "Formal Shirts",
-        imageSrc: "https://images.unsplash.com/photo-1620012253295-c05518e993be?q=80&w=300&auto=format&fit=crop",
+        imageSrc: "https://images.unsplash.com/photo-1496747611176-843222e1e57c?q=80&w=300&auto=format&fit=crop",
       },
       {
         label: "Tshirts",
@@ -253,7 +253,7 @@ export const CATEGORY_GRIDS_3: CategoryGridData[] = [
     items: [
       {
         label: "Gaming Chairs",
-        imageSrc: "https://images.unsplash.com/photo-1598550476439-6847785fce6e?q=80&w=300&auto=format&fit=crop",
+        imageSrc: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=300&auto=format&fit=crop",
       },
       {
         label: "Gaming Desks",
@@ -276,7 +276,7 @@ export const CATEGORY_GRIDS_3: CategoryGridData[] = [
     items: [
       {
         label: "Travel Adapters",
-        imageSrc: "https://images.unsplash.com/photo-1563163447-10a11468be2e?q=80&w=300&auto=format&fit=crop",
+        imageSrc: "https://images.unsplash.com/photo-1578587018452-892bacefd3f2?q=80&w=300&auto=format&fit=crop",
       },
       {
         label: "Travel Pillows",
@@ -307,7 +307,7 @@ export const CATEGORY_GRIDS_3: CategoryGridData[] = [
       },
       {
         label: "Action Figures",
-        imageSrc: "https://images.unsplash.com/photo-1608889175123-8ec330b86f84?q=80&w=300&auto=format&fit=crop",
+        imageSrc: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=300&auto=format&fit=crop",
       },
       {
         label: "Dolls",
@@ -348,7 +348,7 @@ export const CATEGORY_GRIDS_4: CategoryGridData[] = [
     items: [
       {
         label: "Gaming Chairs",
-        imageSrc: "https://images.unsplash.com/photo-1598550476439-6847785fce6e?q=80&w=300&auto=format&fit=crop",
+        imageSrc: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=300&auto=format&fit=crop",
       },
       {
         label: "Gaming Desks",
@@ -371,7 +371,7 @@ export const CATEGORY_GRIDS_4: CategoryGridData[] = [
     items: [
       {
         label: "USB Power Adapters",
-        imageSrc: "https://images.unsplash.com/photo-1563163447-10a11468be2e?q=80&w=300&auto=format&fit=crop",
+        imageSrc: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=300&auto=format&fit=crop",
       },
       {
         label: "Smart Robots",
@@ -383,7 +383,7 @@ export const CATEGORY_GRIDS_4: CategoryGridData[] = [
       },
       {
         label: "Smart Watches",
-        imageSrc: "https://images.unsplash.com/photo-1517502884422-41eaaced0168?q=80&w=300&auto=format&fit=crop",
+        imageSrc: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=300&auto=format&fit=crop",
       },
     ],
   },
@@ -402,7 +402,7 @@ export const CATEGORY_GRIDS_4: CategoryGridData[] = [
       },
       {
         label: "Action Figures",
-        imageSrc: "https://images.unsplash.com/photo-1608889175123-8ec330b86f84?q=80&w=300&auto=format&fit=crop",
+        imageSrc: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=300&auto=format&fit=crop",
       },
       {
         label: "Dolls",
@@ -463,11 +463,11 @@ const TECH_IMAGES = [
   "https://images.unsplash.com/photo-1587829741301-dc798b83add3?q=80&w=300&auto=format&fit=crop", // Keyboard
   "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?q=80&w=300&auto=format&fit=crop", // Mouse
   "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=300&auto=format&fit=crop", // Headphones
-  "https://images.unsplash.com/photo-1517502884422-41eaaced0168?q=80&w=300&auto=format&fit=crop", // Smartwatch
+
   "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?q=80&w=300&auto=format&fit=crop", // VR Headset
   "https://images.unsplash.com/photo-1545454675-3531b543be5d?q=80&w=300&auto=format&fit=crop", // Speaker
   "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?q=80&w=300&auto=format&fit=crop", // Laptop
-  "https://images.unsplash.com/photo-1511707171634-5f897ff02aa0?q=80&w=300&auto=format&fit=crop", // Phone
+  "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=300&auto=format&fit=crop", // Phone
 ];
 
 const BEAUTY_IMAGES = [
@@ -484,7 +484,7 @@ const BEAUTY_IMAGES = [
 const CLOTHING_IMAGES = [
   "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?q=80&w=300&auto=format&fit=crop", // Dress model
   "https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=300&auto=format&fit=crop", // Evening gown
-  "https://images.unsplash.com/photo-1620012253295-c05518e993be?q=80&w=300&auto=format&fit=crop", // Men's shirt
+  "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=300&auto=format&fit=crop", // Men's shirt
   "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?q=80&w=300&auto=format&fit=crop", // Tshirt
   "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=300&auto=format&fit=crop", // Nike shoe
   "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=300&auto=format&fit=crop", // Jewelry necklace
@@ -496,7 +496,7 @@ const HOME_IMAGES = [
   "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?q=80&w=300&auto=format&fit=crop", // Lamp
   "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?q=80&w=300&auto=format&fit=crop", // Ceiling light
   "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=300&auto=format&fit=crop", // Organizer
-  "https://images.unsplash.com/photo-1618955036643-f1a40237f397?q=80&w=300&auto=format&fit=crop", // Fan
+  "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=300&auto=format&fit=crop", // Fan
   "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?q=80&w=300&auto=format&fit=crop", // Kitchen utensils
   "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?q=80&w=300&auto=format&fit=crop", // Chair
   "https://images.unsplash.com/photo-1556912173-3bb406ef7e77?q=80&w=300&auto=format&fit=crop", // Plates
