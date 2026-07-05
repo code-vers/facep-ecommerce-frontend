@@ -363,6 +363,7 @@ export default function ProductOverviewSection() {
   const handleAddToCart = () => {
     addToCart({
       id: 'prod-3',
+      cartItemId: `prod-3-${selectedColor}`,
       name: 'Oraimo AirBuds Pro 2 Earphones',
       price: 26,
       quantity,
