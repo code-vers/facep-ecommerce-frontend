@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function SellerCta() {
   return (
@@ -22,12 +23,12 @@ export default function SellerCta() {
           <p className="max-w-175 font-[Arial] text-[18px] leading-[1.35] text-[#42454d] sm:text-[20px] md:text-[22px] xl:text-[24px] xl:leading-[1.2]">
             Join millions of entrepreneurs who have built successful businesses with us
           </p>
-          <button
-            type="button"
+          <Link
+            href="/register/vendor"
             className="mt-2 flex h-12 w-full max-w-52.75 items-center justify-center rounded-xs border border-[#f09000] bg-[#f09000] px-4 py-3 font-sans text-[16px] leading-[1.2] text-black"
           >
             Start selling today
-          </button>
+          </Link>
         </div>
       </div>
     </section>

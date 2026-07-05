@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function SellerHero() {
   return (
@@ -18,12 +19,12 @@ export default function SellerHero() {
             </p>
           </div>
 
-          <button
-            type="button"
+          <Link
+            href="/register/vendor"
             className="flex h-12 w-full max-w-52.75 items-center justify-center rounded-xs border border-[#f09000] bg-[#f09000] px-4 py-3 text-[16px] leading-[1.2] font-normal text-black"
           >
             Create Account
-          </button>
+          </Link>
         </div>
 
         <div className="relative min-h-70 w-full overflow-hidden rounded-xl shadow-[115px_110px_45px_0px_rgba(0,0,0,0),74px_70px_41px_0px_rgba(0,0,0,0.01),41px_40px_34px_0px_rgba(0,0,0,0.05),18px_18px_25px_0px_rgba(0,0,0,0.09),5px_4px_14px_0px_rgba(0,0,0,0.1)] sm:min-h-90 md:min-h-110 xl:min-h-191">
