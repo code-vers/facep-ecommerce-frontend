@@ -6,11 +6,37 @@ import { useState } from 'react';
 type ReviewProductModalProps = {
   isOpen: boolean;
   onClose: () => void;
+  onSubmit: (review: { rating: number; text: string; attachmentCount: number }) => void;
 };
 
-export default function ReviewProductModal({ isOpen, onClose }: ReviewProductModalProps) {
+export default function ReviewProductModal({ isOpen, onClose, onSubmit }: ReviewProductModalProps) {
   const [rating, setRating] = useState(0);
   const [reviewText, setReviewText] = useState('');
+  const [files, setFiles] = useState<File[]>([]);
+  
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setFiles(Array.from(e.target.files));
+    }
+  };
+
+  const handleSubmit = () => {
+    if (rating === 0) {
+      // We will handle validation with sonner toast in parent or just alert here
+      return;
+    }
+    
+    onSubmit({
+      rating,
+      text: reviewText,
+      attachmentCount: files.length
+    });
+    
+    // Reset state
+    setRating(0);
+    setReviewText('');
+    setFiles([]);
+  };
 
   if (!isOpen) {
     return null;
@@ -89,7 +115,7 @@ export default function ReviewProductModal({ isOpen, onClose }: ReviewProductMod
               <p className='flex-1 text-[16px] leading-[1.2] text-black'>Add image</p>
             </div>
 
-            <div className='flex h-38.5 w-full flex-col items-center justify-center gap-3 rounded-[6px] border border-dashed border-[#CACBCE] p-4 sm:p-6'>
+            <label className='flex h-38.5 w-full flex-col items-center justify-center gap-3 rounded-[6px] border border-dashed border-[#CACBCE] p-4 sm:p-6 cursor-pointer hover:bg-gray-50 transition-colors'>
               <ImageUp size={36} strokeWidth={1.6} className='text-[#848995]' />
 
               <div
@@ -98,20 +124,21 @@ export default function ReviewProductModal({ isOpen, onClose }: ReviewProductMod
               >
                 <p className='text-[#42454D]'>Drag and drop your Logo here</p>
                 <p className='text-[#42454D]'>or</p>
-                <button
-                  type='button'
-                  className='text-[#165DD0] underline [text-underline-position:from-font]'
-                >
+                <span className='text-[#165DD0] underline [text-underline-position:from-font]'>
                   Upload from computer
-                </button>
+                </span>
+                <input type="file" multiple className="hidden" onChange={handleFileChange} />
+                {files.length > 0 && <p className="text-xs text-green-600 mt-2">{files.length} file(s) selected</p>}
               </div>
-            </div>
+            </label>
           </div>
 
           <div className='flex w-full justify-end'>
             <button
               type='button'
-              className='h-12 w-full rounded-xs border border-[#DEC33A] bg-[#DEC33A] px-4 text-[16px] leading-[1.2] text-black sm:min-w-52.75 sm:w-auto'
+              onClick={handleSubmit}
+              className='h-12 w-full rounded-xs border border-[#DEC33A] bg-[#DEC33A] px-4 text-[16px] leading-[1.2] text-black sm:min-w-52.75 sm:w-auto hover:bg-[#c9b134] transition-colors disabled:opacity-50'
+              disabled={rating === 0}
             >
               Submit Review
             </button>

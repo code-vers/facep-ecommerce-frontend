@@ -3,6 +3,8 @@
 import Image from 'next/image';
 import { Star } from 'lucide-react';
 import { useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
 import ReviewProductModal from './ReviewProductModal';
 
 const reviewerAvatar = 'https://www.figma.com/api/mcp/asset/c3e9cc45-a921-44b6-939a-41a022f3aedc';
@@ -23,7 +25,7 @@ type Review = {
   attachmentCount?: number;
 };
 
-const reviews: Review[] = [
+const initialReviews: Review[] = [
   {
     id: 'review-1',
     name: 'Dianne Russell',
@@ -188,6 +190,24 @@ function ReviewRow({ review }: { review: Review }) {
 
 export default function CustomerReviewsSection() {
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [reviewsList, setReviewsList] = useState<Review[]>(initialReviews);
+  const { session } = useAuth();
+
+  const handleReviewSubmit = (review: { rating: number; text: string; attachmentCount: number }) => {
+    const newReview: Review = {
+      id: `review-${Date.now()}`,
+      name: session?.fullName || 'Anonymous User',
+      text: review.text,
+      date: new Date().toISOString().split('T')[0],
+      attachmentCount: review.attachmentCount > 0 ? review.attachmentCount : undefined
+    };
+
+    setReviewsList([newReview, ...reviewsList]);
+    setIsReviewModalOpen(false);
+    toast.success('Review Submitted', {
+      description: 'Thank you for your feedback!'
+    });
+  };
 
   return (
     <>
@@ -201,7 +221,7 @@ export default function CustomerReviewsSection() {
             <RatingSummaryCard onOpenReviewModal={() => setIsReviewModalOpen(true)} />
 
             <div className='flex min-w-0 flex-1 flex-col'>
-              {reviews.map((review) => (
+              {reviewsList.map((review) => (
                 <ReviewRow key={review.id} review={review} />
               ))}
             </div>
@@ -209,7 +229,7 @@ export default function CustomerReviewsSection() {
         </div>
       </section>
 
-      <ReviewProductModal isOpen={isReviewModalOpen} onClose={() => setIsReviewModalOpen(false)} />
+      <ReviewProductModal isOpen={isReviewModalOpen} onClose={() => setIsReviewModalOpen(false)} onSubmit={handleReviewSubmit} />
     </>
   );
 }
