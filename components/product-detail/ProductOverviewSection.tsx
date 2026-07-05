@@ -1,7 +1,13 @@
+'use client';
+
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import BrowsingHistorySection from './BrowsingHistorySection';
 import { ExternalLink, MapPin, Star } from 'lucide-react';
+import { toast } from 'sonner';
+import { useCartStore } from '@/contexts/CartContext';
 import CustomerReviewsSection from './CustomerReviewsSection';
 import RelatedProductsSection from './RelatedProductsSection';
 import SignUpBanner from '@/components/product/SignUpBanner';
@@ -63,12 +69,14 @@ const aboutItems = [
 ] as const;
 
 function ProductGallery() {
+  const [activeImage, setActiveImage] = useState<string>(productImages[0].src);
+
   return (
     <div className='flex w-full flex-col gap-4 sm:gap-5 lg:gap-6'>
       <div className='relative aspect-square w-full overflow-hidden bg-white'>
         <Image
-          src={productImages[0].src}
-          alt={productImages[0].alt}
+          src={activeImage}
+          alt="Product image"
           fill
           unoptimized
           className='object-cover'
@@ -76,18 +84,24 @@ function ProductGallery() {
         />
       </div>
 
-      <div className='grid w-full grid-cols-4 gap-2 sm:gap-3'>
-        {productImages.slice(1).map((image) => (
-          <div key={image.src} className='relative aspect-square overflow-hidden bg-white'>
+      <div className='grid w-full grid-cols-5 gap-2 sm:gap-3'>
+        {productImages.map((image) => (
+          <button
+            key={image.src}
+            onClick={() => setActiveImage(image.src)}
+            className={`relative aspect-square overflow-hidden bg-white border-2 transition-colors ${
+              activeImage === image.src ? 'border-[#F09000]' : 'border-transparent hover:border-gray-200'
+            }`}
+          >
             <Image
               src={image.src}
               alt={image.alt}
               fill
               unoptimized
               className='object-cover'
-              sizes='(max-width: 1279px) 25vw, 166px'
+              sizes='(max-width: 1279px) 20vw, 140px'
             />
-          </div>
+          </button>
         ))}
       </div>
     </div>
@@ -150,30 +164,45 @@ function PriceBlock() {
   );
 }
 
-function ColorPalette() {
+function ColorPalette({ selectedColor, setSelectedColor }: { selectedColor: string, setSelectedColor: (c: string) => void }) {
+  // A helper to map hex codes to names roughly, or just display hex
+  const colorNameMap: Record<string, string> = {
+    '#F09000': 'Yellow/Orange', '#1F8394': 'Teal', '#EAB308': 'Yellow',
+    '#29941F': 'Green', '#941F21': 'Red', '#86941F': 'Olive',
+    '#231F94': 'Blue', '#121212': 'Black', '#FBFEFF': 'White',
+    '#A45496': 'Purple', '#989A98': 'Gray', '#3DC4C4': 'Cyan',
+    '#BF97CF': 'Lavender', '#8B8AA4': 'Slate'
+  };
+
   return (
     <div className='flex w-full flex-col gap-4'>
       <div className='flex items-center gap-[4.831px] text-[16px] text-black'>
         <p className='font-semibold leading-[1.3]'>Color:</p>
-        <p className='leading-[1.2]'>Yellow</p>
+        <p className='leading-[1.2]'>{colorNameMap[selectedColor] || selectedColor}</p>
       </div>
 
       <div className='flex w-full flex-col gap-1.5'>
         <div className='grid w-full grid-cols-7 gap-1'>
-          {colorOptions.slice(0, 7).map((color, index) => (
-            <div key={color} className={index === 2 ? 'border border-[#686F7D] p-0.5' : ''}>
-              <div className='aspect-square w-full' style={{ backgroundColor: color }} />
-            </div>
+          {colorOptions.slice(0, 7).map((color) => (
+            <button
+              key={color}
+              onClick={() => setSelectedColor(color)}
+              className={selectedColor === color ? 'border-2 border-[#686F7D] p-0.5 transition-all' : 'border-2 border-transparent p-0.5 transition-all hover:border-gray-200'}
+            >
+              <div className='aspect-square w-full border border-black/5' style={{ backgroundColor: color }} />
+            </button>
           ))}
         </div>
 
         <div className='grid w-full grid-cols-7 gap-1'>
           {colorOptions.slice(7).map((color) => (
-            <div
+            <button
               key={color}
-              className='aspect-square w-full border border-black/5'
-              style={{ backgroundColor: color }}
-            />
+              onClick={() => setSelectedColor(color)}
+              className={selectedColor === color ? 'border-2 border-[#686F7D] p-0.5 transition-all' : 'border-2 border-transparent p-0.5 transition-all hover:border-gray-200'}
+            >
+              <div className='aspect-square w-full border border-black/5' style={{ backgroundColor: color }} />
+            </button>
           ))}
         </div>
       </div>
@@ -217,7 +246,7 @@ function AboutSection() {
   );
 }
 
-function PurchaseCard() {
+function PurchaseCard({ quantity, setQuantity, onAddToCart, onBuyNow }: { quantity: number, setQuantity: (q: number) => void, onAddToCart: () => void, onBuyNow: () => void }) {
   return (
     <aside className='flex w-full flex-col gap-5 border border-[#E5E5E6] bg-[#F2F2F3] p-5 sm:p-6'>
       <p className='font-[Arial] text-[24px] leading-[1.2] text-[#42454D] sm:text-[28px]'>
@@ -251,16 +280,34 @@ function PurchaseCard() {
           </div>
         </div>
 
+        <div className='flex items-center justify-between border border-[#E5E5E6] bg-white rounded-[2px] h-12 px-4'>
+          <button 
+            onClick={() => setQuantity(Math.max(1, quantity - 1))}
+            className='text-[20px] text-[#42454D] hover:text-black w-8'
+          >
+            -
+          </button>
+          <span className='text-[16px] text-black font-semibold'>{quantity}</span>
+          <button 
+            onClick={() => setQuantity(quantity + 1)}
+            className='text-[20px] text-[#42454D] hover:text-black w-8'
+          >
+            +
+          </button>
+        </div>
+
         <div className='flex flex-col gap-3 sm:gap-4'>
           <button
             type='button'
-            className='h-12 rounded-[2px] border border-[#DEC33A] bg-[#DEC33A] text-[16px] leading-[1.2] text-black'
+            onClick={onBuyNow}
+            className='h-12 rounded-[2px] border border-[#DEC33A] bg-[#DEC33A] text-[16px] leading-[1.2] text-black font-semibold hover:bg-[#c9b134] transition-colors'
           >
             Buy Now
           </button>
           <button
             type='button'
-            className='h-12 rounded-[2px] border border-[#686F7D] bg-transparent text-[16px] leading-[1.2] text-black'
+            onClick={onAddToCart}
+            className='h-12 rounded-[2px] border border-[#686F7D] bg-transparent text-[16px] leading-[1.2] text-black hover:bg-gray-100 transition-colors'
           >
             Add to Cart
           </button>
@@ -308,6 +355,31 @@ function SellerDescription() {
 }
 
 export default function ProductOverviewSection() {
+  const [selectedColor, setSelectedColor] = useState<string>(colorOptions[2]);
+  const [quantity, setQuantity] = useState(1);
+  const addToCart = useCartStore((state) => state.addToCart);
+  const router = useRouter();
+
+  const handleAddToCart = () => {
+    addToCart({
+      id: 'prod-3',
+      name: 'Oraimo AirBuds Pro 2 Earphones',
+      price: 26,
+      quantity,
+      color: selectedColor,
+      image: productImages[0].src
+    });
+    
+    toast.success('Added to Cart', {
+      description: `${quantity}x Oraimo AirBuds Pro 2 Earphones (${selectedColor}) added to your cart.`
+    });
+  };
+
+  const handleBuyNow = () => {
+    handleAddToCart();
+    router.push('/checkout');
+  };
+
   return (
     <>
       <section className='w-full'>
@@ -330,7 +402,7 @@ export default function ProductOverviewSection() {
                   <p className='leading-[1.2]'>-</p>
                 </div>
 
-                <ColorPalette />
+                <ColorPalette selectedColor={selectedColor} setSelectedColor={setSelectedColor} />
               </div>
 
               <DetailList />
@@ -339,7 +411,7 @@ export default function ProductOverviewSection() {
 
             {/* Purchase Card */}
             <div className='md:col-span-2 lg:col-span-3 xl:col-span-3'>
-              <PurchaseCard />
+              <PurchaseCard quantity={quantity} setQuantity={setQuantity} onAddToCart={handleAddToCart} onBuyNow={handleBuyNow} />
             </div>
           </div>
 

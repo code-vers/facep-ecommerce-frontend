@@ -17,6 +17,7 @@ import AuthGuard from '@/components/auth/AuthGuard';
 import SiteChrome from '@/components/shared/SiteChrome';
 import './globals.css';
 import { cn } from '@/lib/utils';
+import { Toaster } from 'sonner';
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -58,6 +59,7 @@ export default function RootLayout({
             <SiteChrome>{children}</SiteChrome>
           </AuthGuard>
         </AuthProvider>
+        <Toaster position="bottom-right" richColors />
       </body>
     </html>
   );
