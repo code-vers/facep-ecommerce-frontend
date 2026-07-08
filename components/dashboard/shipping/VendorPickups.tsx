@@ -3,6 +3,7 @@
 import { ChevronDown, Eye, Pencil, Trash2 } from 'lucide-react';
 import Pagination from '@/components/dashboard/orders/Pagination';
 import { cn } from '@/lib/utils';
+import { useState } from 'react';
 
 type PickupStatus = 'Shipped' | 'Delivered' | 'Pending' | 'Returned';
 
@@ -81,7 +82,25 @@ const getStatusStyles = (status: PickupStatus) => {
   }
 };
 
+const cycleStatus = (current: PickupStatus): PickupStatus => {
+  const statuses: PickupStatus[] = ['Shipped', 'Delivered', 'Pending', 'Returned'];
+  const idx = statuses.indexOf(current);
+  return statuses[(idx + 1) % statuses.length];
+};
+
 export default function VendorPickups() {
+  const [pickups, setPickups] = useState(mockPickups);
+
+  const handleDelete = (id: string) => {
+    setPickups(pickups.filter((p) => p.id !== id));
+  };
+
+  const handleStatusChange = (id: string) => {
+    setPickups(
+      pickups.map((p) => (p.id === id ? { ...p, status: cycleStatus(p.status) } : p))
+    );
+  };
+
   return (
     <div className='flex w-full shrink-0 flex-col items-start gap-[24px] rounded-[4px] border border-[#E5E5E6] bg-white p-[16px] md:p-[24px]'>
       {/* Header */}
@@ -90,7 +109,7 @@ export default function VendorPickups() {
           Pickups
         </h2>
         <div className='flex flex-col sm:flex-row items-center gap-[12px]'>
-          <div className='flex h-[36px] w-full sm:w-[250px] shrink-0 items-center overflow-hidden rounded-[2px] border border-[#E5E5E6] bg-white px-[12px] py-[10px]'>
+          <div className='flex h-[36px] w-full sm:w-[250px] shrink-0 items-center overflow-hidden rounded-[2px] border border-[#E5E5E6] bg-white px-[12px] py-[10px] cursor-pointer hover:border-[#848995] transition-colors'>
             <p className='min-w-0 flex-[1_0_0] overflow-hidden text-ellipsis whitespace-nowrap text-[14px] font-normal leading-[1.3] text-[#848995]'>
               Filter By Status
             </p>
@@ -142,7 +161,7 @@ export default function VendorPickups() {
           </div>
 
           {/* Table Body rows */}
-          {mockPickups.map((pickup) => (
+          {pickups.map((pickup) => (
             <div
               key={pickup.id}
               className='flex w-full shrink-0 items-center border-b border-[#E5E5E6] py-[16px] px-[8px] transition-colors hover:bg-gray-50'
@@ -175,6 +194,7 @@ export default function VendorPickups() {
               <div className='w-[120px] shrink-0 px-[8px]'>
                 <button
                   type='button'
+                  onClick={() => handleStatusChange(pickup.id)}
                   className={cn(
                     'inline-flex items-center gap-[4px] rounded-[2px] px-[8px] py-[4px] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-300',
                     getStatusStyles(pickup.status)
@@ -187,18 +207,21 @@ export default function VendorPickups() {
               <div className='w-[100px] shrink-0 px-[8px]'>
                 <div className='flex items-center justify-center gap-[12px]'>
                   <button
+                    onClick={() => alert(`View Pickup ${pickup.id}`)}
                     className='text-[#42454D] transition-colors hover:text-black focus-visible:outline-none'
                     aria-label='View Pickup'
                   >
                     <Eye size={16} />
                   </button>
                   <button
+                    onClick={() => alert(`Edit Pickup ${pickup.id}`)}
                     className='text-[#42454D] transition-colors hover:text-black focus-visible:outline-none'
                     aria-label='Edit Pickup'
                   >
                     <Pencil size={16} />
                   </button>
                   <button
+                    onClick={() => handleDelete(pickup.id)}
                     className='text-[#CB1B1B] transition-colors hover:text-red-700 focus-visible:outline-none'
                     aria-label='Delete Pickup'
                   >
