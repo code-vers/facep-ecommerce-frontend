@@ -1,6 +1,7 @@
 'use client';
 
 import { CirclePlus, Eye, Pencil, Trash2 } from 'lucide-react';
+import { useState } from 'react';
 
 const mockCouriers = [
   {
@@ -41,6 +42,23 @@ const mockCouriers = [
 ];
 
 export default function CourierPartners() {
+  const [couriers, setCouriers] = useState(mockCouriers);
+
+  const handleAdd = () => {
+    const newCourier = {
+      id: Date.now(),
+      name: 'New Courier',
+      rate: '$0.00',
+      delivery: 'TBD',
+      shipments: '0',
+    };
+    setCouriers([newCourier, ...couriers]);
+  };
+
+  const handleDelete = (id: number) => {
+    setCouriers(couriers.filter((courier) => courier.id !== id));
+  };
+
   return (
     <div className='flex w-full shrink-0 flex-col items-start gap-[24px] rounded-[4px] border border-[#E5E5E6] bg-white p-[16px]'>
       {/* Header */}
@@ -48,7 +66,9 @@ export default function CourierPartners() {
         <p className='whitespace-nowrap text-[20px] font-semibold leading-[1.2] text-black'>
           Courier Partners
         </p>
-        <button className='flex h-[36px] items-center gap-[8px] rounded-[2px] bg-[#F09000] px-[16px] transition-colors hover:bg-[#D98200] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F09000] focus-visible:ring-offset-1'>
+        <button 
+          onClick={handleAdd}
+          className='flex h-[36px] items-center gap-[8px] rounded-[2px] bg-[#F09000] px-[16px] transition-colors hover:bg-[#D98200] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F09000] focus-visible:ring-offset-1'>
           <span className='text-[14px] font-normal text-black'>Add New Courier Partner</span>
           <CirclePlus size={16} className='text-black' />
         </button>
@@ -56,9 +76,9 @@ export default function CourierPartners() {
 
       {/* Cards Grid */}
       <div className='grid w-full grid-cols-1 gap-[16px] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5'>
-        {mockCouriers.map((courier, idx) => (
+        {couriers.map((courier) => (
           <div
-            key={idx}
+            key={courier.id}
             className='flex flex-col gap-[16px] rounded-[4px] border border-[#E5E5E6] bg-white p-[16px] hover:shadow-sm transition-shadow'
           >
             {/* Mock Logo */}
@@ -87,18 +107,21 @@ export default function CourierPartners() {
             {/* Actions */}
             <div className='mt-auto flex items-center gap-[8px] pt-[8px]'>
               <button
+                onClick={() => alert(`View ${courier.name}`)}
                 className='flex h-[32px] w-[32px] items-center justify-center rounded-[2px] border border-[#E5E5E6] text-[#42454D] transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-300'
                 aria-label='View courier partner'
               >
                 <Eye size={16} />
               </button>
               <button
+                onClick={() => alert(`Edit ${courier.name}`)}
                 className='flex h-[32px] w-[32px] items-center justify-center rounded-[2px] border border-[#E5E5E6] text-[#42454D] transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-300'
                 aria-label='Edit courier partner'
               >
                 <Pencil size={16} />
               </button>
               <button
+                onClick={() => handleDelete(courier.id)}
                 className='flex h-[32px] w-[32px] items-center justify-center rounded-[2px] border border-[#FCA5A5] text-[#CB1B1B] transition-colors hover:bg-red-50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-red-300'
                 aria-label='Delete courier partner'
               >
