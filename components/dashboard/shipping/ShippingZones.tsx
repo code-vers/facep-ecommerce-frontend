@@ -2,6 +2,7 @@
 
 import { Check, Eye, Pencil, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useState } from 'react';
 
 const mockZones = [
   {
@@ -39,6 +40,47 @@ const mockZones = [
 ];
 
 export default function ShippingZones() {
+  const [zones, setZones] = useState(mockZones);
+  
+  // States for new row inputs
+  const [newZone, setNewZone] = useState('');
+  const [newCountries, setNewCountries] = useState('');
+  const [newBaseRate, setNewBaseRate] = useState('');
+  const [newPerKg, setNewPerKg] = useState('');
+  const [newFreeShipping, setNewFreeShipping] = useState(false);
+
+  const handleAdd = () => {
+    // Add either the input values or placeholders if empty
+    const zoneToAdd = {
+      id: Date.now(),
+      zone: newZone || 'New Zone',
+      countries: newCountries || 'Country',
+      baseRate: newBaseRate || '$0.00',
+      perKg: newPerKg || '$0.00',
+      freeShipping: newFreeShipping,
+    };
+    setZones([...zones, zoneToAdd]);
+    
+    // Reset inputs
+    setNewZone('');
+    setNewCountries('');
+    setNewBaseRate('');
+    setNewPerKg('');
+    setNewFreeShipping(false);
+  };
+
+  const handleDelete = (id: number) => {
+    setZones(zones.filter((z) => z.id !== id));
+  };
+
+  const handleToggleFreeShipping = (id: number) => {
+    setZones(
+      zones.map((z) =>
+        z.id === id ? { ...z, freeShipping: !z.freeShipping } : z
+      )
+    );
+  };
+
   return (
     <div className='flex w-full shrink-0 flex-col items-start gap-[24px] rounded-[4px] border border-[#E5E5E6] bg-white p-[16px]'>
       {/* Header */}
@@ -46,7 +88,9 @@ export default function ShippingZones() {
         <p className='whitespace-nowrap text-[20px] font-semibold leading-[1.2] text-black'>
           Shipping Zones & Rates
         </p>
-        <button className='text-[14px] font-normal text-[#165DD0] transition-colors hover:underline focus-visible:outline-none'>
+        <button 
+          onClick={handleAdd}
+          className='text-[14px] font-normal text-[#165DD0] transition-colors hover:underline focus-visible:outline-none'>
           Add Row +
         </button>
       </div>
@@ -89,7 +133,7 @@ export default function ShippingZones() {
           </div>
 
           {/* Table Body rows */}
-          {mockZones.map((zone) => (
+          {zones.map((zone) => (
             <div
               key={zone.id}
               className='flex h-[48px] w-full shrink-0 items-center border-b border-[#E5E5E6] px-[8px] transition-colors hover:bg-gray-50'
@@ -115,7 +159,8 @@ export default function ShippingZones() {
                 </p>
               </div>
               <div className='w-[150px] shrink-0 px-[8px]'>
-                <div
+                <button
+                  onClick={() => handleToggleFreeShipping(zone.id)}
                   className={cn(
                     'flex size-[16px] items-center justify-center rounded-[2px] border transition-colors',
                     zone.freeShipping
@@ -124,17 +169,17 @@ export default function ShippingZones() {
                   )}
                 >
                   {zone.freeShipping && <Check size={12} className='text-white' strokeWidth={3} />}
-                </div>
+                </button>
               </div>
               <div className='w-[120px] shrink-0 px-[8px]'>
                 <div className='flex items-center gap-[12px]'>
-                  <button className='text-[#42454D] transition-colors hover:text-black'>
+                  <button onClick={() => alert(`View ${zone.zone}`)} className='text-[#42454D] transition-colors hover:text-black'>
                     <Eye size={14} />
                   </button>
-                  <button className='text-[#42454D] transition-colors hover:text-black'>
+                  <button onClick={() => alert(`Edit ${zone.zone}`)} className='text-[#42454D] transition-colors hover:text-black'>
                     <Pencil size={14} />
                   </button>
-                  <button className='text-[#CB1B1B] transition-colors hover:text-red-700'>
+                  <button onClick={() => handleDelete(zone.id)} className='text-[#CB1B1B] transition-colors hover:text-red-700'>
                     <Trash2 size={14} />
                   </button>
                 </div>
@@ -148,6 +193,8 @@ export default function ShippingZones() {
               <input
                 type='text'
                 placeholder='Zone'
+                value={newZone}
+                onChange={(e) => setNewZone(e.target.value)}
                 className='h-[34px] w-full rounded-[2px] border border-[#E5E5E6] bg-white px-[12px] text-[13px] text-[#42454D] placeholder:text-[#848995] focus-visible:border-[#165DD0] focus-visible:outline-none'
               />
             </div>
@@ -155,6 +202,8 @@ export default function ShippingZones() {
               <input
                 type='text'
                 placeholder='Countries'
+                value={newCountries}
+                onChange={(e) => setNewCountries(e.target.value)}
                 className='h-[34px] w-full rounded-[2px] border border-[#E5E5E6] bg-white px-[12px] text-[13px] text-[#42454D] placeholder:text-[#848995] focus-visible:border-[#165DD0] focus-visible:outline-none'
               />
             </div>
@@ -162,29 +211,35 @@ export default function ShippingZones() {
               <input
                 type='text'
                 placeholder='Base rate'
+                value={newBaseRate}
+                onChange={(e) => setNewBaseRate(e.target.value)}
                 className='h-[34px] w-full rounded-[2px] border border-[#E5E5E6] bg-white px-[12px] text-[13px] text-[#42454D] placeholder:text-[#848995] focus-visible:border-[#165DD0] focus-visible:outline-none'
               />
             </div>
             <div className='w-[150px] shrink-0 px-[8px]'>
               <input
                 type='text'
-                placeholder='pre kg rate'
+                placeholder='per kg rate'
+                value={newPerKg}
+                onChange={(e) => setNewPerKg(e.target.value)}
                 className='h-[34px] w-full rounded-[2px] border border-[#E5E5E6] bg-white px-[12px] text-[13px] text-[#42454D] placeholder:text-[#848995] focus-visible:border-[#165DD0] focus-visible:outline-none'
               />
             </div>
             <div className='w-[150px] shrink-0 px-[8px]'>
-              <div className='flex size-[16px] cursor-pointer items-center justify-center rounded-[2px] border border-[#E5E5E6] bg-white transition-colors hover:border-[#848995]'></div>
+              <button 
+                onClick={() => setNewFreeShipping(!newFreeShipping)}
+                className={cn(
+                  'flex size-[16px] cursor-pointer items-center justify-center rounded-[2px] border transition-colors hover:border-[#848995]',
+                  newFreeShipping ? 'border-[#F09000] bg-[#F09000]' : 'border-[#E5E5E6] bg-white'
+                )}
+              >
+                {newFreeShipping && <Check size={12} className='text-white' strokeWidth={3} />}
+              </button>
             </div>
             <div className='w-[120px] shrink-0 px-[8px]'>
               <div className='flex items-center gap-[12px]'>
-                <button className='text-[#42454D] transition-colors hover:text-black'>
-                  <Eye size={14} />
-                </button>
-                <button className='text-[#42454D] transition-colors hover:text-black'>
-                  <Pencil size={14} />
-                </button>
-                <button className='text-[#CB1B1B] transition-colors hover:text-red-700'>
-                  <Trash2 size={14} />
+                <button onClick={handleAdd} className='text-[#42454D] transition-colors hover:text-black font-semibold text-[13px]'>
+                  Save
                 </button>
               </div>
             </div>
