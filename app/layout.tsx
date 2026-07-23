@@ -18,6 +18,7 @@ import SiteChrome from '@/components/shared/SiteChrome';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from 'sonner';
+import QueryProvider from '@/providers/QueryProvider';
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -54,11 +55,13 @@ export default function RootLayout({
       )}
     >
       <body className="min-h-full bg-background text-foreground">
-        <AuthProvider>
-          <AuthGuard>
-            <SiteChrome>{children}</SiteChrome>
-          </AuthGuard>
-        </AuthProvider>
+        <QueryProvider>
+          <AuthProvider>
+            <AuthGuard>
+              <SiteChrome>{children}</SiteChrome>
+            </AuthGuard>
+          </AuthProvider>
+        </QueryProvider>
         <Toaster position="bottom-right" richColors />
       </body>
     </html>

@@ -8,18 +8,18 @@
 
 'use client';
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { CheckCircle2, ChevronRight, Home } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
-import { useAuth } from '@/contexts/AuthContext';
-import CheckoutUserDetails from '@/components/checkout/CheckoutUserDetails';
-import CheckoutShippingDetails from '@/components/checkout/CheckoutShippingDetails';
-import CheckoutPaymentDetails from '@/components/checkout/CheckoutPaymentDetails';
 import CheckoutOrderSummary from '@/components/checkout/CheckoutOrderSummary';
-import { CHECKOUT_ITEMS, SAVED_CARDS } from '@/lib/checkout-data';
+import CheckoutPaymentDetails from '@/components/checkout/CheckoutPaymentDetails';
+import CheckoutShippingDetails from '@/components/checkout/CheckoutShippingDetails';
+import CheckoutUserDetails from '@/components/checkout/CheckoutUserDetails';
+import { useAuth } from '@/contexts/AuthContext';
 import type { AuthSession } from '@/lib/auth/auth.types';
+import { CHECKOUT_ITEMS, SAVED_CARDS } from '@/lib/checkout-data';
 
 interface CheckoutFormProps {
   session: AuthSession | null;
@@ -54,8 +54,8 @@ function CheckoutForm({ session }: CheckoutFormProps) {
 
   // Initial Form State populated directly from session if present
   const [formData, setFormData] = useState<CheckoutFormState>(() => ({
-    fullName: session?.fullName || '',
-    email: session?.email || '',
+    fullName: session?.user?.name || '',
+    email: session?.user?.email || '',
     contactNumber: '',
     address: '',
     country: '',
@@ -164,31 +164,31 @@ function CheckoutForm({ session }: CheckoutFormProps) {
   const total = subtotal + shippingFee;
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className='min-h-screen bg-white'>
       {/* ── 1. Page Breadcrumbs & Border Title ── */}
-      <div className="w-full border-b border-[#e5e5e6]">
-        <div className="max-w-[1760px] mx-auto px-4 sm:px-6 lg:px-10 py-5 text-left">
+      <div className='w-full border-b border-[#e5e5e6]'>
+        <div className='max-w-[1760px] mx-auto px-4 sm:px-6 lg:px-10 py-5 text-left'>
           {/* Breadcrumbs Navigation */}
-          <div className="flex items-center gap-2 text-[14px] text-[#848995] mb-2 font-normal">
-            <Link href="/" className="hover:text-black flex items-center gap-1">
-              <Home className="w-3.5 h-3.5" />
+          <div className='flex items-center gap-2 text-[14px] text-[#848995] mb-2 font-normal'>
+            <Link href='/' className='hover:text-black flex items-center gap-1'>
+              <Home className='w-3.5 h-3.5' />
               <span>Home</span>
             </Link>
-            <ChevronRight className="w-3.5 h-3.5" />
-            <span className="text-black font-medium">Checkout</span>
+            <ChevronRight className='w-3.5 h-3.5' />
+            <span className='text-black font-medium'>Checkout</span>
           </div>
           {/* Title */}
-          <h1 className="text-[28px] font-semibold text-black leading-tight tracking-tight">
+          <h1 className='text-[28px] font-semibold text-black leading-tight tracking-tight'>
             Checkout
           </h1>
         </div>
       </div>
 
       {/* ── 2. Two-Column Grid Responsive Layout ── */}
-      <div className="max-w-[1760px] mx-auto px-4 sm:px-6 lg:px-10 py-10">
-        <div className="flex flex-col lg:flex-row gap-12 items-start justify-between w-full">
+      <div className='max-w-[1760px] mx-auto px-4 sm:px-6 lg:px-10 py-10'>
+        <div className='flex flex-col lg:flex-row gap-12 items-start justify-between w-full'>
           {/* Left Column: Input Forms */}
-          <div className="flex-1 w-full space-y-8">
+          <div className='flex-1 w-full space-y-8'>
             <CheckoutUserDetails
               formData={{
                 fullName: formData.fullName,
@@ -226,7 +226,7 @@ function CheckoutForm({ session }: CheckoutFormProps) {
           </div>
 
           {/* Right Column: Order Summary */}
-          <div className="w-full lg:w-auto shrink-0">
+          <div className='w-full lg:w-auto shrink-0'>
             <CheckoutOrderSummary
               items={CHECKOUT_ITEMS}
               shippingFee={shippingFee}
@@ -239,83 +239,87 @@ function CheckoutForm({ session }: CheckoutFormProps) {
 
       {/* ── 3. Success Modal Backdrop Blur Overlay ── */}
       {showSuccessModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto">
-          <div className="bg-white rounded-lg shadow-2xl max-w-lg w-full p-8 text-center animate-in zoom-in-95 duration-200 relative border border-[#e5e5e6]">
+        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto'>
+          <div className='bg-white rounded-lg shadow-2xl max-w-lg w-full p-8 text-center animate-in zoom-in-95 duration-200 relative border border-[#e5e5e6]'>
             {/* Animated Success Checkmark Icon */}
-            <div className="mx-auto w-16 h-16 bg-[#eefcf3] rounded-full flex items-center justify-center mb-6">
-              <CheckCircle2 className="w-10 h-10 text-[#22c55e]" />
+            <div className='mx-auto w-16 h-16 bg-[#eefcf3] rounded-full flex items-center justify-center mb-6'>
+              <CheckCircle2 className='w-10 h-10 text-[#22c55e]' />
             </div>
 
             {/* Modal Heading */}
-            <h2 className="text-[24px] font-bold text-black mb-2">
-              Order Placed Successfully!
-            </h2>
-            <p className="text-[14px] text-[#848995] mb-6">
-              Thank you for shopping with us. Your order <span className="font-semibold text-black">{orderId}</span> has been confirmed.
+            <h2 className='text-[24px] font-bold text-black mb-2'>Order Placed Successfully!</h2>
+            <p className='text-[14px] text-[#848995] mb-6'>
+              Thank you for shopping with us. Your order{' '}
+              <span className='font-semibold text-black'>{orderId}</span> has been confirmed.
             </p>
 
             {/* Order Overview Panel */}
-            <div className="bg-[#f2f2f3] rounded p-5 mb-8 text-left space-y-4 border border-[#e5e5e6]">
-              <h4 className="text-[14px] uppercase tracking-wider font-bold text-gray-500 border-b border-gray-200 pb-2">
+            <div className='bg-[#f2f2f3] rounded p-5 mb-8 text-left space-y-4 border border-[#e5e5e6]'>
+              <h4 className='text-[14px] uppercase tracking-wider font-bold text-gray-500 border-b border-gray-200 pb-2'>
                 Order details
               </h4>
-              
+
               {/* Items loop summary */}
-              <div className="max-h-[140px] overflow-y-auto space-y-2.5 pr-2">
+              <div className='max-h-35 overflow-y-auto space-y-2.5 pr-2'>
                 {CHECKOUT_ITEMS.map((item) => (
-                  <div key={item.id} className="flex justify-between items-center text-[14px]">
-                    <span className="text-[#42454d] truncate max-w-[240px]">
-                      {item.title} <span className="text-gray-400">x{item.quantity}</span>
+                  <div key={item.id} className='flex justify-between items-center text-[14px]'>
+                    <span className='text-[#42454d] truncate max-w-60'>
+                      {item.title} <span className='text-gray-400'>x{item.quantity}</span>
                     </span>
-                    <span className="text-black font-semibold">
-                      {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(item.price * item.quantity)}
+                    <span className='text-black font-semibold'>
+                      {new Intl.NumberFormat('en-US', {
+                        style: 'currency',
+                        currency: 'USD',
+                      }).format(item.price * item.quantity)}
                     </span>
                   </div>
                 ))}
               </div>
 
-              <div className="border-t border-gray-200 pt-3 space-y-2 text-[14px]">
+              <div className='border-t border-gray-200 pt-3 space-y-2 text-[14px]'>
                 {/* Delivery Address */}
-                <div className="flex justify-between items-start">
-                  <span className="text-gray-500">Shipping To:</span>
-                  <span className="text-black font-medium text-right max-w-[200px] truncate">
+                <div className='flex justify-between items-start'>
+                  <span className='text-gray-500'>Shipping To:</span>
+                  <span className='text-black font-medium text-right max-w-50 truncate'>
                     {formData.city}, {formData.country}
                   </span>
                 </div>
-                
+
                 {/* Payment method info */}
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-500">Payment:</span>
-                  <span className="text-black font-medium">
+                <div className='flex justify-between items-center'>
+                  <span className='text-gray-500'>Payment:</span>
+                  <span className='text-black font-medium'>
                     {formData.paymentMethod === 'COD' ? 'Cash on Delivery' : 'Credit Card'}
                   </span>
                 </div>
 
                 {/* Final Total */}
-                <div className="flex justify-between items-center border-t border-dashed border-gray-200 pt-2 text-[15px] font-bold">
-                  <span className="text-black">Total Paid:</span>
-                  <span className="text-black text-[16px]">
-                    {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(total)}
+                <div className='flex justify-between items-center border-t border-dashed border-gray-200 pt-2 text-[15px] font-bold'>
+                  <span className='text-black'>Total Paid:</span>
+                  <span className='text-black text-[16px]'>
+                    {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(
+                      total,
+                    )}
                   </span>
                 </div>
               </div>
             </div>
 
             {/* Modal Actions */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
               <Link
-                href="/products"
-                className="w-full bg-[#dec33a] hover:bg-[#c9b030] text-black text-[15px] font-semibold py-3 px-4 rounded transition-all text-center flex items-center justify-center cursor-pointer"
+                href='/products'
+                className='w-full bg-[#dec33a] hover:bg-[#c9b030] text-black text-[15px] font-semibold py-3 px-4 rounded transition-all text-center flex items-center justify-center cursor-pointer'
               >
                 Continue Shopping
               </Link>
               <button
-                type="button"
+                type='button'
                 onClick={() => {
                   setShowSuccessModal(false);
                   router.push('/orders');
                 }}
-                className="w-full border border-[#686f7d] hover:bg-[#686f7d]/5 text-black text-[15px] font-medium py-3 px-4 rounded transition-all text-center flex items-center justify-center cursor-pointer"
+                className='w-full border border-[#686f7d] hover:bg-[#686f7d]/5 text-black text-[15px] font-medium py-3 px-4 rounded transition-all text-center flex items-center justify-center cursor-pointer'
               >
                 View Orders
               </button>
@@ -335,14 +339,14 @@ export default function CheckoutPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white text-black">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 border-4 border-[#dec33a] border-t-transparent rounded-full animate-spin"></div>
-          <span className="text-[16px] font-medium">Loading checkout...</span>
+      <div className='min-h-screen flex items-center justify-center bg-white text-black'>
+        <div className='flex flex-col items-center gap-4'>
+          <div className='w-10 h-10 border-4 border-[#dec33a] border-t-transparent rounded-full animate-spin'></div>
+          <span className='text-[16px] font-medium'>Loading checkout...</span>
         </div>
       </div>
     );
   }
 
-  return <CheckoutForm key={session?.userId || 'guest'} session={session} />;
+  return <CheckoutForm key={session?.user?.id || 'guest'} session={session} />;
 }
