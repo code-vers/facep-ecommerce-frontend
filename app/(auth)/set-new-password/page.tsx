@@ -1,37 +1,12 @@
-/**
- * @fileoverview Set New Password page — `/set-new-password`.
- *
- * Implements Figma node 2237-7582.
- *
- * Reached from the OTP verify flow (`/verify-otp?flow=reset`).
- * Reads `?email=` from the query string to identify which account
- * to update.
- *
- * Layout inside card:
- *   1. "Set new password" heading
- *   2. "Type new password" field (with eye toggle)
- *   3. "Confirm Password" field (with eye toggle)
- *   4. Yellow "Reset Password" CTA button
- *   5. Divider
- *   6. "Already have an account? Login"
- *   7. "You are a Vendor? Create a Vendor Account"
- *
- * @module app/(auth)/set-new-password/page
- */
-
 'use client';
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { Suspense } from 'react';
-
+import AuthButton from '@/components/auth/AuthButton';
 import AuthCard from '@/components/auth/AuthCard';
 import AuthInput from '@/components/auth/AuthInput';
-import AuthButton from '@/components/auth/AuthButton';
-import { updateUserPassword } from '@/lib/auth/auth.utils';
-
-// ─────────────────────────────────────────────────────────────────────────────
+import { authApi } from '@/lib/api/auth';
+import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense, useState } from 'react';
 
 interface FormState {
   password: string;
@@ -44,12 +19,10 @@ interface FormErrors {
   general?: string;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-
 function SetNewPasswordContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const email = searchParams.get('email') ?? '';
+  const token = searchParams.get('token') ?? '';
 
   const [form, setForm] = useState<FormState>({
     password: '',
@@ -58,8 +31,6 @@ function SetNewPasswordContent() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-
-  // ── Helpers ────────────────────────────────────────────────────────────────
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -70,17 +41,13 @@ function SetNewPasswordContent() {
   const validate = (): boolean => {
     const next: FormErrors = {};
     if (!form.password) next.password = 'Password is required.';
-    else if (form.password.length < 6)
-      next.password = 'Password must be at least 6 characters.';
-    if (!form.confirmPassword)
-      next.confirmPassword = 'Please confirm your password.';
+    else if (form.password.length < 6) next.password = 'Password must be at least 6 characters.';
+    if (!form.confirmPassword) next.confirmPassword = 'Please confirm your password.';
     else if (form.password !== form.confirmPassword)
       next.confirmPassword = 'Passwords do not match.';
     setErrors(next);
     return Object.keys(next).length === 0;
   };
-
-  // ── Submit ─────────────────────────────────────────────────────────────────
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,9 +57,8 @@ function SetNewPasswordContent() {
     await new Promise((r) => setTimeout(r, 600));
 
     try {
-      updateUserPassword(email, form.password);
+      await authApi.resetPassword({ resetToken: token, newPassword: form.password });
       setSuccess(true);
-      // Redirect to login after 1.5 s
       setTimeout(() => router.push('/login?password-reset=1'), 1500);
     } catch {
       setErrors({ general: 'Failed to update password. Please try again.' });
@@ -101,39 +67,37 @@ function SetNewPasswordContent() {
     }
   };
 
-  // ── Render ─────────────────────────────────────────────────────────────────
-
   return (
     <AuthCard>
       <form onSubmit={handleSubmit} noValidate>
-        <div className="flex flex-col gap-6">
+        <div className='flex flex-col gap-6'>
           {/* Heading */}
           <h1
-            className="text-[32px] font-bold leading-[1.2] text-black"
+            className='text-[32px] font-bold leading-[1.2] text-black'
             style={{ fontFamily: 'Arial' }}
           >
             Set new password
           </h1>
 
           {/* Fields */}
-          <div className="flex flex-col gap-6">
+          <div className='flex flex-col gap-6'>
             <AuthInput
-              id="new-password"
-              name="password"
-              label="Type new password"
-              type="password"
-              placeholder="••••••••••"
+              id='new-password'
+              name='password'
+              label='Type new password'
+              type='password'
+              placeholder='••••••••••'
               value={form.password}
               onChange={handleChange}
               error={errors.password}
               required
             />
             <AuthInput
-              id="confirm-new-password"
-              name="confirmPassword"
-              label="Confirm Password"
-              type="password"
-              placeholder="••••••••••"
+              id='confirm-new-password'
+              name='confirmPassword'
+              label='Confirm Password'
+              type='password'
+              placeholder='••••••••••'
               value={form.confirmPassword}
               onChange={handleChange}
               error={errors.confirmPassword}
@@ -142,51 +106,44 @@ function SetNewPasswordContent() {
 
             {/* Success message */}
             {success && (
-              <p className="rounded-[2px] bg-green-50 px-3 py-2 text-[13px] text-green-700">
+              <p className='rounded-xs bg-green-50 px-3 py-2 text-[13px] text-green-700'>
                 Password updated successfully! Redirecting to login…
               </p>
             )}
 
             {/* General error */}
             {errors.general && (
-              <p className="rounded-[2px] bg-red-50 px-3 py-2 text-[13px] text-red-600">
+              <p className='rounded-xs bg-red-50 px-3 py-2 text-[13px] text-red-600'>
                 {errors.general}
               </p>
             )}
 
             {/* CTA */}
-            <AuthButton
-              type="submit"
-              variant="primary"
-              isLoading={isLoading}
-              disabled={success}
-            >
+            <AuthButton type='submit' variant='primary' isLoading={isLoading} disabled={success}>
               Reset Password
             </AuthButton>
           </div>
 
           {/* Divider */}
-          <div className="h-px w-full bg-[#E5E5E6]" aria-hidden="true" />
+          <div className='h-px w-full bg-[#E5E5E6]' aria-hidden='true' />
 
           {/* Login link */}
           <p
-            className="text-[16px] font-normal leading-[1.2] text-black"
+            className='text-[16px] font-normal leading-[1.2] text-black'
             style={{ fontFamily: 'Open Sans' }}
           >
             Already have an account?{' '}
-            <Link href="/login" className="text-[#165DD0] underline">
+            <Link href='/login' className='text-[#165DD0] underline'>
               Login
             </Link>
           </p>
 
           {/* Vendor CTA */}
           <div style={{ fontFamily: 'Open Sans' }}>
-            <p className="text-[16px] font-bold leading-[1.2] text-black">
-              You are a Vendor?
-            </p>
+            <p className='text-[16px] font-bold leading-[1.2] text-black'>You are a Vendor?</p>
             <Link
-              href="/register/vendor"
-              className="text-[16px] font-normal leading-[1.2] text-[#165DD0] underline"
+              href='/register/vendor'
+              className='text-[16px] font-normal leading-[1.2] text-[#165DD0] underline'
             >
               Create a Vendor Account
             </Link>
@@ -197,11 +154,9 @@ function SetNewPasswordContent() {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-
 export default function SetNewPasswordPage() {
   return (
-    <Suspense fallback={<div className="flex min-h-screen items-center justify-center" />}>
+    <Suspense fallback={<div className='flex min-h-screen items-center justify-center' />}>
       <SetNewPasswordContent />
     </Suspense>
   );
