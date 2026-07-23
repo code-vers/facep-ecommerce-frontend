@@ -1,9 +1,9 @@
 'use client';
 
-import Image from 'next/image';
-import { Star } from 'lucide-react';
-import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { Star } from 'lucide-react';
+import Image from 'next/image';
+import { useState } from 'react';
 import { toast } from 'sonner';
 import ReviewProductModal from './ReviewProductModal';
 
@@ -193,19 +193,23 @@ export default function CustomerReviewsSection() {
   const [reviewsList, setReviewsList] = useState<Review[]>(initialReviews);
   const { session } = useAuth();
 
-  const handleReviewSubmit = (review: { rating: number; text: string; attachmentCount: number }) => {
+  const handleReviewSubmit = (review: {
+    rating: number;
+    text: string;
+    attachmentCount: number;
+  }) => {
     const newReview: Review = {
       id: `review-${Date.now()}`,
-      name: session?.fullName || 'Anonymous User',
+      name: session?.user?.name || 'Anonymous User',
       text: review.text,
       date: new Date().toISOString().split('T')[0],
-      attachmentCount: review.attachmentCount > 0 ? review.attachmentCount : undefined
+      attachmentCount: review.attachmentCount > 0 ? review.attachmentCount : undefined,
     };
 
     setReviewsList([newReview, ...reviewsList]);
     setIsReviewModalOpen(false);
     toast.success('Review Submitted', {
-      description: 'Thank you for your feedback!'
+      description: 'Thank you for your feedback!',
     });
   };
 
@@ -229,7 +233,11 @@ export default function CustomerReviewsSection() {
         </div>
       </section>
 
-      <ReviewProductModal isOpen={isReviewModalOpen} onClose={() => setIsReviewModalOpen(false)} onSubmit={handleReviewSubmit} />
+      <ReviewProductModal
+        isOpen={isReviewModalOpen}
+        onClose={() => setIsReviewModalOpen(false)}
+        onSubmit={handleReviewSubmit}
+      />
     </>
   );
 }

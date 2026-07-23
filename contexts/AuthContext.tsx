@@ -19,27 +19,10 @@
 
 'use client';
 
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import {
-  clearStoredSession,
-  getStoredSession,
-  loginWithCredentials,
-  registerUser,
-  seedDemoUsers,
-} from '@/lib/auth/auth.utils';
-import type {
-  AuthContextValue,
-  AuthSession,
-  RegisterPayload,
-} from '@/lib/auth/auth.types';
+import { authApi } from '@/lib/api/auth';
+import type { AuthContextValue, AuthSession, RegisterPayload } from '@/lib/auth/auth.types';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Context
@@ -63,44 +46,41 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [session, setSession] = useState<AuthSession | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // On first mount: seed demo users then restore any existing session.
+  // On first mount: restore any existing session.
   useEffect(() => {
-    seedDemoUsers();
-    const restored = getStoredSession();
-    setSession(restored);
-    setIsLoading(false);
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      authApi
+        .getProfile()
+        .then((res) => {
+          setSession({ user: res.data, token });
+        })
+        .catch(() => {
+          localStorage.removeItem('accessToken');
+          setSession(null);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    } else {
+      setIsLoading(false);
+    }
   }, []);
 
-  /**
-   * Validates credentials, persists the session, and updates context state.
-   * @throws {@link AuthError} on invalid credentials.
-   */
-  const login = useCallback(
-    async (email: string, password: string): Promise<AuthSession> => {
-      const newSession = loginWithCredentials(email, password);
-      setSession(newSession);
-      return newSession;
-    },
-    [],
-  );
+  const login = useCallback(async (email: string, password: string): Promise<AuthSession> => {
+    const response = await authApi.login({ email, password });
+    const newSession = { user: response.data.user, token: response.data.accessToken };
+    localStorage.setItem('accessToken', response.data.accessToken);
+    setSession(newSession);
+    return newSession;
+  }, []);
 
-  /**
-   * Creates a new user account and persists it to localStorage.
-   * Does NOT automatically log the user in.
-   * @throws {@link AuthError} on duplicate email.
-   */
-  const register = useCallback(
-    async (payload: RegisterPayload): Promise<void> => {
-      registerUser(payload);
-    },
-    [],
-  );
+  const register = useCallback(async (payload: RegisterPayload): Promise<void> => {
+    await authApi.register(payload);
+  }, []);
 
-  /**
-   * Destroys the active session from localStorage and resets context state.
-   */
   const logout = useCallback((): void => {
-    clearStoredSession();
+    localStorage.removeItem('accessToken');
     setSession(null);
   }, []);
 

@@ -6,7 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 
 export default function ProfileSettingsForm() {
   const { session } = useAuth();
-  const isAdmin = session?.role === 'admin';
+  const isAdmin = session?.user?.role === 'admin';
 
   return (
     <div className='flex w-full flex-col items-end border border-[#E5E5E6] bg-white p-4 md:p-6 2xl:p-[24px] rounded-[4px] gap-[36px]'>

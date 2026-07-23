@@ -1,7 +1,7 @@
 'use client';
 
-import { ChevronDown, Eye, Pencil, Trash2, FileDown } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { ChevronDown, Eye, FileDown, Pencil, Trash2 } from 'lucide-react';
 
 type OrderStatus = 'Shipped' | 'Delivered' | 'Processing' | 'Pending' | 'Cancelled';
 
@@ -98,27 +98,29 @@ const getStatusStyles = (status: OrderStatus) => {
 
 export default function OrdersTable() {
   const { session } = useAuth();
-  const isAdmin = session?.role === 'admin';
+  const isAdmin = session?.user?.role === 'admin';
 
   return (
-    <div className='flex w-full shrink-0 flex-col items-start gap-[24px] rounded-[4px] border border-[#E5E5E6] p-4 md:p-[16px]'>
+    <div className='flex w-full shrink-0 flex-col items-start gap-6 rounded-lg border border-[#E5E5E6] p-4 md:p-4'>
       {/* Header */}
-      <div className='flex w-full shrink-0 flex-col sm:flex-row items-start sm:items-center justify-between gap-[16px] sm:gap-[24px]'>
+      <div className='flex w-full shrink-0 flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6'>
         <div className='flex min-w-0 flex-[1_0_0] items-center justify-between'>
           <p className='whitespace-nowrap text-[20px] font-semibold leading-[1.2] text-black'>
             Orders
           </p>
         </div>
-        <div className='flex items-center gap-[12px]'>
-          <div className='flex h-[36px] w-full sm:w-[250px] shrink-0 items-center overflow-hidden rounded-[2px] border border-[#E5E5E6] bg-white pl-[12px] pr-[12px] py-[10px]'>
+        <div className='flex items-center gap-3'>
+          <div className='flex h-9 w-full sm:w-62.5 shrink-0 items-center overflow-hidden rounded-xs border border-[#E5E5E6] bg-white pl-3 pr-3 py-2.5'>
             <p className='min-w-0 flex-[1_0_0] overflow-hidden text-ellipsis whitespace-nowrap text-[14px] font-normal leading-[1.3] text-[#848995]'>
               Filter By Status
             </p>
             <ChevronDown size={16} className='text-[#848995]' />
           </div>
           {isAdmin && (
-            <button className='flex h-[36px] shrink-0 items-center justify-center gap-[8px] rounded-[2px] border border-[#E5E5E6] bg-white px-[12px] transition-colors hover:bg-gray-50'>
-              <span className='text-[14px] font-normal leading-[1.2] text-[#42454D]'>Export CSV</span>
+            <button className='flex h-9 shrink-0 items-center justify-center gap-2 rounded-xs border border-[#E5E5E6] bg-white px-3 transition-colors hover:bg-gray-50'>
+              <span className='text-[14px] font-normal leading-[1.2] text-[#42454D]'>
+                Export CSV
+              </span>
               <FileDown size={16} className='text-[#42454D]' />
             </button>
           )}
@@ -127,55 +129,55 @@ export default function OrdersTable() {
 
       {/* Table Data */}
       <div className='flex w-full shrink-0 flex-col items-start overflow-x-auto'>
-        <div className='min-w-[1000px] flex w-full shrink-0 flex-col items-start'>
+        <div className='min-w-250 flex w-full shrink-0 flex-col items-start'>
           {/* Table Header row */}
-          <div className='flex w-full shrink-0 items-center bg-[#F2F2F3] border-t border-b border-[#E5E5E6] h-[34px]'>
-            <div className='w-[100px] shrink-0 px-[8px]'>
+          <div className='flex w-full shrink-0 items-center bg-[#F2F2F3] border-t border-b border-[#E5E5E6] h-8.5'>
+            <div className='w-25 shrink-0 px-2'>
               <p className='whitespace-nowrap text-[14px] font-normal leading-[1.3] text-black'>
                 Order ID
               </p>
             </div>
-            <div className='w-[150px] shrink-0 px-[8px]'>
+            <div className='w-37.5 shrink-0 px-2'>
               <p className='whitespace-nowrap text-[14px] font-normal leading-[1.3] text-black'>
                 Customer
               </p>
             </div>
             {isAdmin ? (
-              <div className='w-[150px] shrink-0 px-[8px]'>
+              <div className='w-37.5 shrink-0 px-2'>
                 <p className='whitespace-nowrap text-[14px] font-normal leading-[1.3] text-black'>
                   Store
                 </p>
               </div>
             ) : (
-              <div className='w-[150px] shrink-0 px-[8px]'>
+              <div className='w-37.5 shrink-0 px-2'>
                 <p className='whitespace-nowrap text-[14px] font-normal leading-[1.3] text-black'>
                   Customer Contact No
                 </p>
               </div>
             )}
-            <div className='min-w-[150px] flex-[1_0_0] px-[8px]'>
+            <div className='min-w-37.5 flex-[1_0_0] px-2'>
               <p className='whitespace-nowrap text-[14px] font-normal leading-[1.3] text-black'>
                 Product
               </p>
             </div>
-            <div className='w-[100px] shrink-0 px-[8px]'>
+            <div className='w-25 shrink-0 px-2'>
               <p className='whitespace-nowrap text-[14px] font-normal leading-[1.3] text-black'>
                 Amount
               </p>
             </div>
             {!isAdmin && (
-              <div className='w-[120px] shrink-0 px-[8px]'>
+              <div className='w-30 shrink-0 px-2'>
                 <p className='whitespace-nowrap text-[14px] font-normal leading-[1.3] text-black'>
                   Date
                 </p>
               </div>
             )}
-            <div className='w-[120px] shrink-0 px-[8px]'>
+            <div className='w-30 shrink-0 px-2'>
               <p className='whitespace-nowrap text-[14px] font-normal leading-[1.3] text-black'>
                 Status
               </p>
             </div>
-            <div className='w-[100px] shrink-0 px-[8px] text-center'>
+            <div className='w-25 shrink-0 px-2 text-center'>
               <p className='whitespace-nowrap text-[14px] font-normal leading-[1.3] text-black'>
                 Action
               </p>
@@ -186,66 +188,66 @@ export default function OrdersTable() {
           {mockOrders.map((order, idx) => (
             <div
               key={idx}
-              className='flex w-full shrink-0 items-center border-b border-[#E5E5E6] h-[48px] hover:bg-gray-50 transition-colors'
+              className='flex w-full shrink-0 items-center border-b border-[#E5E5E6] h-12 hover:bg-gray-50 transition-colors'
             >
-              <div className='w-[100px] shrink-0 px-[8px]'>
+              <div className='w-25 shrink-0 px-2'>
                 <p className='truncate text-[12px] font-normal leading-[1.3] text-[#42454D]'>
                   {order.id}
                 </p>
               </div>
-              <div className='w-[150px] shrink-0 px-[8px]'>
+              <div className='w-37.5 shrink-0 px-2'>
                 <p className='truncate text-[12px] font-normal leading-[1.3] text-[#42454D]'>
                   {order.customer}
                 </p>
               </div>
               {isAdmin ? (
-                <div className='w-[150px] shrink-0 px-[8px]'>
+                <div className='w-37.5 shrink-0 px-2'>
                   <p className='truncate text-[12px] font-normal leading-[1.3] text-[#42454D]'>
                     {order.store}
                   </p>
                 </div>
               ) : (
-                <div className='w-[150px] shrink-0 px-[8px]'>
+                <div className='w-37.5 shrink-0 px-2'>
                   <p className='truncate text-[12px] font-normal leading-[1.3] text-[#42454D]'>
                     {order.contactNo}
                   </p>
                 </div>
               )}
-              <div className='min-w-[150px] flex-[1_0_0] px-[8px]'>
+              <div className='min-w-37.5 flex-[1_0_0] px-2'>
                 <p className='truncate text-[12px] font-normal leading-[1.3] text-[#42454D]'>
                   {order.product}
                 </p>
               </div>
-              <div className='w-[100px] shrink-0 px-[8px]'>
+              <div className='w-25 shrink-0 px-2'>
                 <p className='truncate text-[12px] font-normal leading-[1.3] text-[#42454D]'>
                   {order.amount}
                 </p>
               </div>
               {!isAdmin && (
-                <div className='w-[120px] shrink-0 px-[8px]'>
+                <div className='w-30 shrink-0 px-2'>
                   <p className='truncate text-[12px] font-normal leading-[1.3] text-[#42454D]'>
                     {order.date}
                   </p>
                 </div>
               )}
-              <div className='w-[120px] shrink-0 px-[8px]'>
+              <div className='w-30 shrink-0 px-2'>
                 {isAdmin ? (
-                  <div className={`inline-flex h-[24px] items-center justify-between gap-[8px] rounded-[2px] px-[8px] ${getStatusStyles(order.status)}`}>
-                    <span className='text-[12px] font-medium leading-[1.2]'>
-                      {order.status}
-                    </span>
+                  <div
+                    className={`inline-flex h-6 items-center justify-between gap-2 rounded-xs px-2 ${getStatusStyles(order.status)}`}
+                  >
+                    <span className='text-[12px] font-medium leading-[1.2]'>{order.status}</span>
                     <ChevronDown size={12} />
                   </div>
                 ) : (
-                  <div className={`flex h-[24px] w-[80px] items-center justify-center rounded-full ${getStatusStyles(order.status)}`}>
-                    <span className='text-[12px] font-medium leading-[1.2]'>
-                      {order.status}
-                    </span>
+                  <div
+                    className={`flex h-6 w-20 items-center justify-center rounded-full ${getStatusStyles(order.status)}`}
+                  >
+                    <span className='text-[12px] font-medium leading-[1.2]'>{order.status}</span>
                   </div>
                 )}
               </div>
-              <div className='w-[100px] shrink-0 px-[8px]'>
-                <div className='flex items-center justify-center gap-[12px]'>
+              <div className='w-25 shrink-0 px-2'>
+                <div className='flex items-center justify-center gap-3'>
                   <button className='text-[#42454D] hover:text-black transition-colors'>
                     <Eye size={14} />
                   </button>
