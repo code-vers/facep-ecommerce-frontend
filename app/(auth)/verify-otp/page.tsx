@@ -7,6 +7,7 @@ import { authApi } from '@/lib/api/auth';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useState } from 'react';
+import { toast } from 'sonner';
 
 function maskEmail(email: string): string {
   const [local, domain] = email.split('@');
@@ -50,8 +51,8 @@ function VerifyOtpContent() {
       } else {
         router.push('/login?verified=1');
       }
-    } catch {
-      alert('Invalid code');
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || 'Invalid code. Please try again.');
     } finally {
       setIsLoading(false);
     }

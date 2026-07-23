@@ -9,7 +9,7 @@ export interface ApiResponse<T> {
 
 export const authApi = {
   register: async (data: RegisterPayload) => {
-    const response = await apiClient.post<ApiResponse<Record<string, unknown>>>(
+    const response = await apiClient.post<ApiResponse<AuthResponse['user']>>(
       '/auth/register',
       data,
     );
@@ -22,7 +22,7 @@ export const authApi = {
   },
 
   getProfile: async () => {
-    const response = await apiClient.get<ApiResponse<Record<string, unknown>>>('/users/me');
+    const response = await apiClient.get<ApiResponse<AuthResponse['user']>>('/users/me');
     return response.data;
   },
 
@@ -32,9 +32,10 @@ export const authApi = {
   },
 
   verifyResetCode: async (data: { email: string; resetCode: string }) => {
+    // Backend expects { email: string; code: string }
     const response = await apiClient.post<ApiResponse<{ resetToken: string }>>(
       '/auth/verify-reset-code',
-      data,
+      { email: data.email, code: data.resetCode },
     );
     return response.data;
   },

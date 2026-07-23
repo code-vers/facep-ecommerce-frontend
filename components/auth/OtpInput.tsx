@@ -116,7 +116,7 @@ export default function OtpInput({ value, onChange, disabled = false }: OtpInput
           aria-label={`Digit ${i + 1} of ${OTP_LENGTH}`}
           className={cn(
             // Each box: flex-1 so they share the full container width
-            'flex-1 rounded-[2px] border border-[#E5E5E6] bg-white',
+            'flex-1 min-w-0 rounded-[2px] border border-[#E5E5E6] bg-white',
             'h-[44px] text-center',
             'text-[14px] font-normal leading-[1.3] text-black',
             'outline-none transition-colors duration-150',
