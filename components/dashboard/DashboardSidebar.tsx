@@ -8,18 +8,18 @@ import {
   CircleX,
   Cog,
   Coins,
+  FilePlusCorner,
   LayoutDashboard,
+  LayoutTemplate,
   LogOut,
+  MessageSquare,
   ShoppingBag,
   Star,
   Store,
   TicketPercent,
   Truck,
-  Wrench,
   User,
-  LayoutTemplate,
-  MessageSquare,
-  FilePlusCorner,
+  Wrench,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -57,14 +57,16 @@ const adminNavItems = [
 export default function DashboardSidebar({ isMobile }: { isMobile?: boolean }) {
   const pathname = usePathname();
   const { session, logout } = useAuth();
-  const isAdmin = session?.role === 'admin';
+  const isAdmin = session?.user?.role === 'admin';
 
   const visibleNavItems = isAdmin ? adminNavItems : vendorNavItems;
 
   return (
-    <aside className={`flex h-full flex-col border-r border-[#E5E5E6] bg-[#F2F2F3] ${isMobile ? 'w-full' : 'w-[280px]'}`}>
+    <aside
+      className={`flex h-full flex-col border-r border-[#E5E5E6] bg-[#F2F2F3] ${isMobile ? 'w-full' : 'w-70'}`}
+    >
       {/* Header / Logo */}
-      <div className='flex h-[80px] shrink-0 items-center gap-3 border-b border-[#E5E5E6] px-6 py-4'>
+      <div className='flex h-20 shrink-0 items-center gap-3 border-b border-[#E5E5E6] px-6 py-4'>
         <div className='relative flex h-9 w-9 items-center justify-center overflow-hidden rounded bg-[#0A132B] text-white'>
           {/* Using a placeholder SVG similar to the Figma one */}
           <svg

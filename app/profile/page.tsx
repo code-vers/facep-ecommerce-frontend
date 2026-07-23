@@ -1,25 +1,26 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
-import ProfileOverview from '@/components/profile/ProfileOverview';
 import ProfileAddresses from '@/components/profile/ProfileAddresses';
+import ProfileOverview from '@/components/profile/ProfileOverview';
 import ProfilePaymentMethods from '@/components/profile/ProfilePaymentMethods';
+import { useAuth } from '@/contexts/AuthContext';
 import { INITIAL_ADDRESSES, INITIAL_CARDS, UserAddress, UserSavedCard } from '@/lib/profile-data';
+import { useState } from 'react';
 
 export default function ProfilePage() {
   const { session } = useAuth();
-  
+
   const [addresses, setAddresses] = useState<UserAddress[]>(INITIAL_ADDRESSES);
   const [cards, setCards] = useState<UserSavedCard[]>(INITIAL_CARDS);
   const [paymentMethod, setPaymentMethod] = useState<'COD' | 'CARD'>('COD');
 
   const [profileData, setProfileData] = useState({
-    fullName: session?.fullName || '',
-    email: session?.email || '',
+    fullName: session?.user?.name || '',
+    email: session?.user?.email || '',
     contactNumber: '+41 00 000 00 00',
     address: '123 Edelweiss Strasse, Zurich',
-    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop',
+    avatarUrl:
+      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop',
   });
 
   const handleSaveProfile = async (updated: typeof profileData) => {
@@ -45,16 +46,10 @@ export default function ProfilePage() {
   if (!session) return null; // Loading/Auth states are handled by layout.tsx
 
   return (
-    <div className="space-y-8 w-full text-left">
-      <ProfileOverview
-        initialData={profileData}
-        onSave={handleSaveProfile}
-      />
-      
-      <ProfileAddresses
-        initialAddresses={addresses}
-        onUpdateAddresses={handleUpdateAddresses}
-      />
+    <div className='space-y-8 w-full text-left'>
+      <ProfileOverview initialData={profileData} onSave={handleSaveProfile} />
+
+      <ProfileAddresses initialAddresses={addresses} onUpdateAddresses={handleUpdateAddresses} />
 
       <ProfilePaymentMethods
         initialCards={cards}
