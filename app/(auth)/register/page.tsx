@@ -69,7 +69,7 @@ export default function RegisterPage() {
         fullName: form.fullName.trim(),
         email: form.email.trim(),
         password: form.password,
-        role: 'buyer',
+        role: 'BUYER',
       });
       // Redirect to login after successful registration
       router.push('/login?registered=1');

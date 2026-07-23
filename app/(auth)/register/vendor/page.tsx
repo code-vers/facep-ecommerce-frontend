@@ -78,7 +78,7 @@ export default function VendorRegisterPage() {
         fullName: form.fullName.trim(),
         email: form.email.trim(),
         password: form.password,
-        role: 'vendor',
+        role: 'VENDOR',
       });
       router.push('/login?registered=vendor');
     } catch (err) {
