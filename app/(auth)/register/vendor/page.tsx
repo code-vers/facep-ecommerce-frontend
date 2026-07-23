@@ -1,17 +1,3 @@
-/**
- * @fileoverview Vendor registration page — `/register/vendor`.
- *
- * Implements Figma node 2237-6982 (Create Account — Vendor).
- *
- * Identical to the buyer registration form in layout, but:
- *   - CTA button is orange (#F59E0B) "Create Vendor Account"
- *   - Role is set to `"vendor"` on submit
- *   - No "You are a Vendor?" section (user is already creating a vendor account)
- *   - "Already have an account? Login" link at the bottom
- *
- * @module app/(auth)/register/vendor/page
- */
-
 'use client';
 
 import { useState } from 'react';
@@ -168,7 +154,7 @@ export default function VendorRegisterPage() {
 
             {/* General error */}
             {errors.general && (
-              <p className="rounded-[2px] bg-red-50 px-3 py-2 text-[13px] text-red-600">
+              <p className="rounded-xs bg-red-50 px-3 py-2 text-[13px] text-red-600">
                 {errors.general}
               </p>
             )}
