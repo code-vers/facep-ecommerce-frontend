@@ -41,7 +41,11 @@ export const authApi = {
   },
 
   resetPassword: async (data: { resetToken: string; newPassword: string }) => {
-    const response = await apiClient.post<ApiResponse<null>>('/auth/reset-password', data);
+    // Backend expects { token: string; newPassword: string }
+    const response = await apiClient.post<ApiResponse<null>>('/auth/reset-password', {
+      token: data.resetToken,
+      newPassword: data.newPassword,
+    });
     return response.data;
   },
 };

@@ -7,6 +7,7 @@ import { authApi } from '@/lib/api/auth';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useState } from 'react';
+import { toast } from 'sonner';
 
 interface FormState {
   password: string;
@@ -60,8 +61,10 @@ function SetNewPasswordContent() {
       await authApi.resetPassword({ resetToken: token, newPassword: form.password });
       setSuccess(true);
       setTimeout(() => router.push('/login?password-reset=1'), 1500);
-    } catch {
-      setErrors({ general: 'Failed to update password. Please try again.' });
+    } catch (err: any) {
+      const msg = err?.response?.data?.message || 'Failed to update password. Please try again.';
+      setErrors({ general: msg });
+      toast.error(msg);
     } finally {
       setIsLoading(false);
     }
