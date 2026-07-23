@@ -10,12 +10,8 @@
  */
 
 import { AUTH_KEYS, DEMO_USERS } from './auth.constants';
+import type { AuthSession, RegisterPayload, StoredUser } from './auth.types';
 import { AuthError } from './auth.types';
-import type {
-  AuthSession,
-  RegisterPayload,
-  StoredUser,
-} from './auth.types';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Guard — localStorage is browser-only
@@ -55,9 +51,7 @@ export function setStoredUsers(users: StoredUser[]): void {
  * Finds a user by email address (case-insensitive).
  */
 export function findUserByEmail(email: string): StoredUser | undefined {
-  return getStoredUsers().find(
-    (u) => u.email.toLowerCase() === email.toLowerCase(),
-  );
+  return getStoredUsers().find((u) => u.email.toLowerCase() === email.toLowerCase());
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -127,25 +121,16 @@ export function seedDemoUsers(): void {
  *   the email is not found or the password does not match.
  * @returns A populated {@link AuthSession} on success.
  */
-export function loginWithCredentials(
-  email: string,
-  password: string,
-): AuthSession {
+export function loginWithCredentials(email: string, password: string): AuthSession {
   const user = findUserByEmail(email);
 
   if (!user || user.password !== password) {
-    throw new AuthError(
-      'INVALID_CREDENTIALS',
-      'Invalid email or password. Please try again.',
-    );
+    throw new AuthError('INVALID_CREDENTIALS', 'Invalid email or password. Please try again.');
   }
 
   const session: AuthSession = {
-    userId: user.id,
-    email: user.email,
-    fullName: user.fullName,
-    role: user.role,
-    loginAt: new Date().toISOString(),
+    user: { id: user.id, name: user.fullName, email: user.email, role: user.role },
+    token: 'mock-token',
   };
 
   setStoredSession(session);
@@ -161,10 +146,7 @@ export function loginWithCredentials(
 export function registerUser(payload: RegisterPayload): StoredUser {
   const existing = findUserByEmail(payload.email);
   if (existing) {
-    throw new AuthError(
-      'EMAIL_ALREADY_EXISTS',
-      'An account with this email already exists.',
-    );
+    throw new AuthError('EMAIL_ALREADY_EXISTS', 'An account with this email already exists.');
   }
 
   const newUser: StoredUser = {
@@ -188,9 +170,7 @@ export function registerUser(payload: RegisterPayload): StoredUser {
 export function updateUserPassword(email: string, newPassword: string): void {
   const users = getStoredUsers();
   const updated = users.map((u) =>
-    u.email.toLowerCase() === email.toLowerCase()
-      ? { ...u, password: newPassword }
-      : u,
+    u.email.toLowerCase() === email.toLowerCase() ? { ...u, password: newPassword } : u,
   );
   setStoredUsers(updated);
 }

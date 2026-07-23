@@ -55,16 +55,13 @@ export interface StoredUser {
  * duplicated here.
  */
 export interface AuthSession {
-  /** ID matching a {@link StoredUser}. */
-  userId: string;
-  /** Denormalised email for quick access. */
-  email: string;
-  /** Denormalised display name. */
-  fullName: string;
-  /** Role needed for routing decisions without a separate lookup. */
-  role: UserRole;
-  /** ISO timestamp of when the session was created. */
-  loginAt: string;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    role: string;
+  };
+  token: string;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -100,6 +97,22 @@ export interface RegisterPayload {
   email: string;
   password: string;
   role: UserRole;
+}
+
+export interface LoginPayload {
+  email: string;
+  password: string;
+}
+
+export interface AuthResponse {
+  accessToken: string;
+  refreshToken: string;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    role: string;
+  };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
