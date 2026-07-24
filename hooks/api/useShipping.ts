@@ -10,10 +10,10 @@ import {
 } from '@/lib/api/shipping';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-export const useCouriers = () => {
+export const useCouriers = (page = 1, limit = 4) => {
   return useQuery({
-    queryKey: ['couriers'],
-    queryFn: getCouriers,
+    queryKey: ['couriers', page, limit],
+    queryFn: () => getCouriers(page, limit),
   });
 };
 

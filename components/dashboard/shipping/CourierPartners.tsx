@@ -12,7 +12,13 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 export default function CourierPartners() {
-  const { data: couriers = [], isLoading } = useCouriers();
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4;
+  
+  const { data: couriersData, isLoading } = useCouriers(currentPage, itemsPerPage);
+  const currentCouriers = couriersData?.data || [];
+  const totalPages = couriersData?.meta?.totalPage || 1;
+
   const createCourier = useCreateCourier();
   const updateCourier = useUpdateCourier();
   const deleteCourier = useDeleteCourier();
@@ -115,12 +121,12 @@ export default function CourierPartners() {
 
       {/* Cards Grid */}
       <div className='grid w-full grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5'>
-        {couriers.length === 0 ? (
+        {currentCouriers.length === 0 ? (
           <p className='text-sm text-gray-500 py-4 col-span-full'>
             No courier partners found. Add one to get started.
           </p>
         ) : (
-          couriers.map((courier) => {
+          currentCouriers.map((courier) => {
             const firstWord = courier.name.split(' ')[0] || '';
             const halfIndex = Math.ceil(firstWord.length / 2);
             const firstHalf = firstWord.slice(0, halfIndex);
@@ -190,6 +196,41 @@ export default function CourierPartners() {
           )})
         )}
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="w-full flex items-center justify-center gap-2 mt-6">
+          <button 
+            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            className="text-sm text-[#848995] hover:text-black mr-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            &lt; Previous
+          </button>
+          
+          {Array.from({ length: totalPages }).map((_, i) => (
+            <button
+              key={i + 1}
+              onClick={() => setCurrentPage(i + 1)}
+              className={`w-8 h-8 flex items-center justify-center rounded-sm text-sm ${
+                currentPage === i + 1 
+                  ? 'bg-[#f2f2f3] text-black font-medium' 
+                  : 'bg-white text-[#42454d] hover:bg-gray-50'
+              }`}
+            >
+              {i + 1}
+            </button>
+          ))}
+          
+          <button 
+            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+            className="text-sm text-black hover:opacity-70 ml-2 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Next &gt;
+          </button>
+        </div>
+      )}
 
       {/* Delete Confirmation Modal */}
       {isDeleteModalOpen && (

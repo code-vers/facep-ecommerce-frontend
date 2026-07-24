@@ -27,11 +27,17 @@ export interface ApiResponse<T> {
   success: boolean;
   message: string;
   data: T;
+  meta?: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPage: number;
+  };
 }
 
-export const getCouriers = async (): Promise<Courier[]> => {
-  const { data } = await apiClient.get<ApiResponse<Courier[]>>('/couriers');
-  return data.data;
+export const getCouriers = async (page = 1, limit = 4): Promise<{ data: Courier[]; meta?: ApiResponse<Courier[]>['meta'] }> => {
+  const { data } = await apiClient.get<ApiResponse<Courier[]>>(`/couriers?page=${page}&limit=${limit}`);
+  return { data: data.data, meta: data.meta };
 };
 
 export const createCourier = async (payload: Partial<Courier>): Promise<Courier> => {
