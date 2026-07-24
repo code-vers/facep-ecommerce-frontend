@@ -44,15 +44,16 @@ function VerifyOtpContent() {
 
     try {
       if (flow === 'reset') {
-        const resetCode = otp.join('');
-        const res = await authApi.verifyResetCode({ email, resetCode });
+        const code = otp.join('');
+        const res = await authApi.verifyResetCode({ email, code });
         const resetToken = res.data.resetToken;
         router.push(`/set-new-password?email=${encodeURIComponent(email)}&token=${resetToken}`);
       } else {
         router.push('/login?verified=1');
       }
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message || 'Invalid code. Please try again.');
+    } catch (err: { response?: { data?: { message?: string } } } | unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
+      toast.error(error?.response?.data?.message || 'Invalid code. Please try again.');
     } finally {
       setIsLoading(false);
     }

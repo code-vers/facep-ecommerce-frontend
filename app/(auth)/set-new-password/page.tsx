@@ -58,11 +58,12 @@ function SetNewPasswordContent() {
     await new Promise((r) => setTimeout(r, 600));
 
     try {
-      await authApi.resetPassword({ resetToken: token, newPassword: form.password });
+      await authApi.resetPassword({ token, newPassword: form.password });
       setSuccess(true);
       setTimeout(() => router.push('/login?password-reset=1'), 1500);
-    } catch (err: any) {
-      const msg = err?.response?.data?.message || 'Failed to update password. Please try again.';
+    } catch (err: { response?: { data?: { message?: string } } } | unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
+      const msg = error?.response?.data?.message || 'Failed to update password. Please try again.';
       setErrors({ general: msg });
       toast.error(msg);
     } finally {
