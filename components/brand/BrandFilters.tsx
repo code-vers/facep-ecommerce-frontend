@@ -1,10 +1,3 @@
-/**
- * @fileoverview BrandFilters sub-component for Brand Store Front.
- * Renders the filter options sidebar (Category, price range, review stars, deals).
- *
- * @module components/brand/BrandFilters
- */
-
 import { Filter, Star, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { BRAND_CATEGORIES } from '@/lib/brand-data';

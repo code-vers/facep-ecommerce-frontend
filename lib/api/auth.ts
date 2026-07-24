@@ -31,19 +31,17 @@ export const authApi = {
     return response.data;
   },
 
-  verifyResetCode: async (data: { email: string; resetCode: string }) => {
-    // Backend expects { email: string; code: string }
+  verifyResetCode: async (data: { email: string; code: string }) => {
     const response = await apiClient.post<ApiResponse<{ resetToken: string }>>(
       '/auth/verify-reset-code',
-      { email: data.email, code: data.resetCode },
+      { email: data.email, code: data.code },
     );
     return response.data;
   },
 
-  resetPassword: async (data: { resetToken: string; newPassword: string }) => {
-    // Backend expects { token: string; newPassword: string }
+  resetPassword: async (data: { token: string; newPassword: string }) => {
     const response = await apiClient.post<ApiResponse<null>>('/auth/reset-password', {
-      token: data.resetToken,
+      token: data.token,
       newPassword: data.newPassword,
     });
     return response.data;

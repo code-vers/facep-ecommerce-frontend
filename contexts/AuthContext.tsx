@@ -63,6 +63,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           setIsLoading(false);
         });
     } else {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsLoading(false);
     }
   }, []);
