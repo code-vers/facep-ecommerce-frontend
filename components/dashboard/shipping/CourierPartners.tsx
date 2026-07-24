@@ -120,7 +120,13 @@ export default function CourierPartners() {
             No courier partners found. Add one to get started.
           </p>
         ) : (
-          couriers.map((courier) => (
+          couriers.map((courier) => {
+            const firstWord = courier.name.split(' ')[0] || '';
+            const halfIndex = Math.ceil(firstWord.length / 2);
+            const firstHalf = firstWord.slice(0, halfIndex);
+            const secondHalf = firstWord.slice(halfIndex);
+
+            return (
             <div
               key={courier.id}
               className='flex flex-col gap-4 rounded border border-[#E5E5E6] bg-white p-4 hover:shadow-sm transition-shadow'
@@ -128,10 +134,10 @@ export default function CourierPartners() {
               {/* Mock Logo */}
               <div className='flex items-baseline'>
                 <span className='text-lg font-bold text-[#4D148C] leading-none uppercase'>
-                  {courier.name.slice(0, 3)}
+                  {firstHalf}
                 </span>
                 <span className='text-lg font-bold text-[#FF6600] leading-none uppercase'>
-                  {courier.name.slice(3, 5) || 'EX'}
+                  {secondHalf}
                 </span>
               </div>
 
@@ -181,7 +187,7 @@ export default function CourierPartners() {
                 </button>
               </div>
             </div>
-          ))
+          )})
         )}
       </div>
 
