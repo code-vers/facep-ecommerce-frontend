@@ -98,7 +98,7 @@ const getStatusStyles = (status: OrderStatus) => {
 
 export default function OrdersTable() {
   const { session } = useAuth();
-  const isAdmin = session?.user?.role === 'admin';
+  const isAdmin = session?.user?.role === 'ADMIN';
 
   return (
     <div className='flex w-full shrink-0 flex-col items-start gap-6 rounded-lg border border-[#E5E5E6] p-4 md:p-4'>

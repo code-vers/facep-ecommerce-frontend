@@ -57,7 +57,7 @@ const adminNavItems = [
 export default function DashboardSidebar({ isMobile }: { isMobile?: boolean }) {
   const pathname = usePathname();
   const { session, logout } = useAuth();
-  const isAdmin = session?.user?.role === 'admin';
+  const isAdmin = session?.user?.role === 'ADMIN';
 
   const visibleNavItems = isAdmin ? adminNavItems : vendorNavItems;
 

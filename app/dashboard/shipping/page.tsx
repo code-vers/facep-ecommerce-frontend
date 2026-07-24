@@ -9,7 +9,7 @@ export default function ShippingPage() {
   const { session } = useAuth();
 
   // Default to true for vendors if they are strictly defined
-  const isVendor = session?.user?.role === 'vendor';
+  const isVendor = session?.user?.role === 'VENDOR';
 
   if (isVendor) {
     return (

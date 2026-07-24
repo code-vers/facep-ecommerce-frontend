@@ -6,7 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 
 export default function DashboardOverviewPage() {
   const { session } = useAuth();
-  const isAdmin = session?.user?.role === 'admin';
+  const isAdmin = session?.user?.role === 'ADMIN';
 
   return <div>{isAdmin ? <AdminOverviewPage /> : <VendorOverviewPage />}</div>;
 }
