@@ -3,7 +3,7 @@ import { apiClient } from './axios';
 export interface Category {
   id: string;
   name: string;
-  subcategories: number; // In the table list, it's just a number
+  subcategories: Subcategory[];
   products: number;
   orders: number;
   sales: string;

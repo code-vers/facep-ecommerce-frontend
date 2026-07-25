@@ -11,38 +11,10 @@ interface ViewCategoryModalProps {
   category: Category | null;
 }
 
-const mockSubcategories = [
-  'Electronics',
-  'Electronics',
-  'Electronics',
-  'Electronics',
-  'Electronics',
-  'Furniture',
-  'Furniture',
-  'Furniture',
-  'Furniture',
-  'Furniture',
-  'Clothing',
-  'Clothing',
-  'Clothing',
-  'Clothing',
-  'Clothing',
-  'Appliance',
-  'Appliance',
-  'Appliance',
-  'Appliance',
-  'Appliance',
-];
-
 export default function ViewCategoryModal({ isOpen, onClose, category }: ViewCategoryModalProps) {
   if (!isOpen || !category) return null;
 
-  // Use the count from the category to determine how many mock subcategories to show
-  // Fallback to a minimum of 0 and max of our mock list
-  const displaySubcategories = mockSubcategories.slice(
-    0,
-    Math.min(category.subcategories, mockSubcategories.length),
-  );
+  const displaySubcategories = category.subcategories.map(s => s.name);
 
   return (
     <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4'>
@@ -63,7 +35,7 @@ export default function ViewCategoryModal({ isOpen, onClose, category }: ViewCat
                 Category : {category.name}
               </h2>
               <p className="font-['Open_Sans'] font-normal text-base text-[#5A6573] leading-[1.2]">
-                Subcategory : {category.subcategories}
+                Subcategory : {category.subcategories.length}
               </p>
             </div>
 
@@ -87,7 +59,7 @@ export default function ViewCategoryModal({ isOpen, onClose, category }: ViewCat
             {/* Subcategories Section */}
             <div className='flex flex-col gap-4'>
               <h3 className="font-['Open_Sans'] font-normal text-xl text-[#42454d] leading-[1.2] pb-2 border-b border-[#e5e5e6] w-max pr-6">
-                Subcategory ({category.subcategories})
+                Subcategory ({category.subcategories.length})
               </h3>
 
               {displaySubcategories.length > 0 ? (

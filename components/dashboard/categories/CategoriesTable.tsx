@@ -186,8 +186,8 @@ export default function CategoriesTable() {
                 </p>
               </div>
               <div className='flex-[1_0_0] px-2'>
-                <p className='truncate text-[13px] font-normal leading-[1.3] text-[#42454D]'>
-                  {category.subcategories}
+                <p className="truncate text-[13px] font-normal leading-[1.3] text-[#42454D]">
+                  {category.subcategories.length}
                 </p>
               </div>
               <div className='flex-[1_0_0] px-2'>

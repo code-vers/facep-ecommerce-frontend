@@ -22,9 +22,6 @@ interface EditCategoryModalProps {
   ) => void;
 }
 
-// Same mock subcategories we used in ViewCategoryModal to simulate existing data
-const mockSubcategories = ['Electronics', 'Furniture', 'Clothing', 'Appliance', 'Home', 'Garden'];
-
 export default function EditCategoryModal({
   isOpen,
   onClose,
@@ -38,15 +35,8 @@ export default function EditCategoryModal({
   const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
 
   const initialSubcategories = () => {
-    if (!category) return [];
-    const subcatNames = mockSubcategories.slice(
-      0,
-      Math.min(category.subcategories, mockSubcategories.length),
-    );
-    while (subcatNames.length < category.subcategories) {
-      subcatNames.push(`Subcategory ${subcatNames.length + 1}`);
-    }
-    return subcatNames;
+    if (!category || !category.subcategories) return [];
+    return category.subcategories.map((subcat: any) => subcat.name);
   };
   const [subcategories, setSubcategories] = useState<string[]>(initialSubcategories);
 
