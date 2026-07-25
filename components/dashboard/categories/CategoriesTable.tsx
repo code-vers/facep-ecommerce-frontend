@@ -1,10 +1,11 @@
 'use client';
 
+import React, { useState } from 'react';
 import { ChevronDown, Eye, Pencil, Trash2, PlusCircle } from 'lucide-react';
+import { toast } from 'sonner';
 import Pagination from '@/components/dashboard/orders/Pagination';
+import AddCategoryModal, { CategoryStatus } from './AddCategoryModal';
 import { cn } from '@/lib/utils';
-
-type CategoryStatus = 'Active' | 'Disable';
 
 interface CategoryData {
   id: string;
@@ -81,6 +82,23 @@ const getStatusStyles = (status: CategoryStatus) => {
 };
 
 export default function CategoriesTable() {
+  const [categories, setCategories] = useState<CategoryData[]>(mockCategories);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+  const handleAddCategory = (data: { name: string; subcategories: number; status: CategoryStatus }) => {
+    const newCategory: CategoryData = {
+      id: Math.random().toString(36).substr(2, 9),
+      name: data.name,
+      subcategories: data.subcategories,
+      products: 0,
+      orders: 0,
+      sales: '$ 0',
+      status: data.status,
+    };
+    setCategories([newCategory, ...categories]);
+    toast.success(`Category "${data.name}" created successfully!`);
+  };
+
   return (
     <div className='flex w-full shrink-0 flex-col items-start gap-[24px] rounded-[4px] border border-[#E5E5E6] bg-white p-[16px] md:p-[24px]'>
       
@@ -96,7 +114,10 @@ export default function CategoriesTable() {
             </p>
             <ChevronDown size={16} className='text-[#848995]' />
           </div>
-          <button className='flex h-[36px] w-full sm:w-auto items-center justify-center gap-[8px] rounded-[2px] bg-[#F09000] px-[16px] transition-colors hover:bg-[#D98200] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F09000] focus-visible:ring-offset-1'>
+          <button 
+            onClick={() => setIsAddModalOpen(true)}
+            className='flex h-[36px] w-full sm:w-auto items-center justify-center gap-[8px] rounded-[2px] bg-[#F09000] px-[16px] transition-colors hover:bg-[#D98200] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F09000] focus-visible:ring-offset-1'
+          >
             <span className='text-[14px] font-normal text-black'>Add New Category</span>
             <PlusCircle size={16} className='text-black' />
           </button>
@@ -147,7 +168,7 @@ export default function CategoriesTable() {
           </div>
 
           {/* Table Body rows */}
-          {mockCategories.map((category) => (
+          {categories.map((category) => (
             <div
               key={category.id}
               className='flex w-full shrink-0 items-center border-b border-[#E5E5E6] py-[16px] px-[8px] transition-colors hover:bg-gray-50'
@@ -215,9 +236,15 @@ export default function CategoriesTable() {
           ))}
         </div>
       </div>
-      
       {/* Pagination */}
       <Pagination />
+
+      {/* Modal */}
+      <AddCategoryModal 
+        isOpen={isAddModalOpen} 
+        onClose={() => setIsAddModalOpen(false)} 
+        onAddCategory={handleAddCategory} 
+      />
     </div>
   );
 }
