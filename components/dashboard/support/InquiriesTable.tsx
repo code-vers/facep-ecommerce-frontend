@@ -1,88 +1,17 @@
 'use client';
 
-import { ChevronDown, Eye, Trash2 } from 'lucide-react';
-import Pagination from '../orders/Pagination';
+import { useDeleteInquiry, useInquiries, useUpdateInquiry } from '@/hooks/api/useInquiry';
+import { Inquiry } from '@/lib/api/inquiry';
+import { CheckCircle, ChevronDown, Eye, Trash2, X } from 'lucide-react';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
-type InquiryStatus = 'Replied' | 'Pending';
-
-interface InquiryData {
-  id: string;
-  name: string;
-  email: string;
-  contactNo: string;
-  inquiry: string;
-  date: string;
-  time: string;
-  status: InquiryStatus;
-}
-
-const mockInquiries: InquiryData[] = [
-  {
-    id: '1',
-    name: 'John Smith',
-    email: 'jophn@Resu.com',
-    contactNo: '0123456789',
-    inquiry: 'Delivery delayed for 3 days',
-    date: '2024-01-05',
-    time: '12.00 am',
-    status: 'Replied',
-  },
-  {
-    id: '2',
-    name: 'Alice Johnson',
-    email: 'jophn@Resu.com',
-    contactNo: '0123456789',
-    inquiry: 'Product quality issue',
-    date: '2024-02-12',
-    time: '12.00 am',
-    status: 'Replied',
-  },
-  {
-    id: '3',
-    name: 'Robert Williams',
-    email: 'jophn@Resu.com',
-    contactNo: '0123456789',
-    inquiry: 'How to sign up',
-    date: '2024-03-20',
-    time: '12.00 am',
-    status: 'Replied',
-  },
-  {
-    id: '4',
-    name: 'Emily Brown',
-    email: 'jophn@Resu.com',
-    contactNo: '0123456789',
-    inquiry: 'What is the platform percentage for sellers',
-    date: '2024-04-01',
-    time: '12.00 am',
-    status: 'Pending',
-  },
-  {
-    id: '5',
-    name: 'David Garcia',
-    email: 'jophn@Resu.com',
-    contactNo: '0123456789',
-    inquiry: 'My seller account got suspended',
-    date: '2024-05-15',
-    time: '12.00 am',
-    status: 'Replied',
-  },
-  {
-    id: '6',
-    name: 'Linda Rodriguez',
-    email: 'jophn@Resu.com',
-    contactNo: '0123456789',
-    inquiry: 'My seller account got suspended',
-    date: '2024-06-22',
-    time: '12.00 am',
-    status: 'Replied',
-  },
-];
-
-const getStatusStyles = (status: InquiryStatus) => {
+const getStatusStyles = (status: string) => {
   switch (status) {
+    case 'REPLIED':
     case 'Replied':
       return 'bg-[#E0EBE4] text-[#229A4E]';
+    case 'PENDING':
     case 'Pending':
       return 'bg-[#F9EBD3] text-[#F09000]';
     default:
@@ -91,6 +20,64 @@ const getStatusStyles = (status: InquiryStatus) => {
 };
 
 export default function InquiriesTable() {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [statusFilter, setStatusFilter] = useState<string>('ALL');
+
+  const itemsPerPage = 10;
+
+  const { data: inquiriesData, isLoading } = useInquiries(
+    currentPage,
+    itemsPerPage,
+    statusFilter !== 'ALL' ? statusFilter : undefined,
+  );
+
+  const inquiries = inquiriesData?.data || [];
+  const totalPages = inquiriesData?.meta?.totalPage || 1;
+
+  const updateInquiry = useUpdateInquiry();
+  const deleteInquiry = useDeleteInquiry();
+
+  // Modals state
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [inquiryToDelete, setInquiryToDelete] = useState<string | null>(null);
+
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [inquiryToView, setInquiryToView] = useState<Inquiry | null>(null);
+
+  const handleStatusChange = (id: string, newStatus: 'PENDING' | 'REPLIED') => {
+    updateInquiry.mutate(
+      { id, status: newStatus },
+      {
+        onSuccess: () => {
+          toast.success('Inquiry status updated successfully');
+          if (inquiryToView && inquiryToView.id === id) {
+            setInquiryToView((prev) => (prev ? { ...prev, status: newStatus } : null));
+          }
+        },
+        onError: (error: any) => {
+          const message = error?.response?.data?.message || 'Failed to update status';
+          toast.error(message);
+        },
+      },
+    );
+  };
+
+  const confirmDelete = () => {
+    if (inquiryToDelete) {
+      deleteInquiry.mutate(inquiryToDelete, {
+        onSuccess: () => {
+          setIsDeleteModalOpen(false);
+          setInquiryToDelete(null);
+          toast.success('Inquiry deleted successfully');
+        },
+        onError: (error: any) => {
+          const message = error?.response?.data?.message || 'Failed to delete inquiry';
+          toast.error(message);
+        },
+      });
+    }
+  };
+
   return (
     <div className='flex w-full shrink-0 flex-col items-start gap-[24px] rounded-[4px] border border-[#E5E5E6] bg-white p-4 md:p-[16px]'>
       {/* Header */}
@@ -101,11 +88,23 @@ export default function InquiriesTable() {
           </p>
         </div>
         <div className='flex items-center gap-[12px]'>
-          <div className='flex h-[36px] w-full sm:w-[250px] shrink-0 items-center overflow-hidden rounded-[2px] border border-[#E5E5E6] bg-white pl-[12px] pr-[12px] py-[10px]'>
-            <p className='min-w-0 flex-[1_0_0] overflow-hidden text-ellipsis whitespace-nowrap text-[14px] font-normal leading-[1.3] text-[#848995]'>
-              Filter By Status
-            </p>
-            <ChevronDown size={16} className='text-[#848995]' />
+          <div className='relative flex h-[36px] w-full sm:w-[200px] shrink-0 items-center overflow-hidden rounded-[2px] border border-[#E5E5E6] bg-white px-[12px] py-[8px]'>
+            <select
+              value={statusFilter}
+              onChange={(e) => {
+                setStatusFilter(e.target.value);
+                setCurrentPage(1);
+              }}
+              className='w-full bg-transparent text-[14px] text-black focus:outline-none cursor-pointer appearance-none pr-6'
+            >
+              <option value='ALL'>Filter By Status: All</option>
+              <option value='PENDING'>Pending</option>
+              <option value='REPLIED'>Replied</option>
+            </select>
+            <ChevronDown
+              size={16}
+              className='pointer-events-none absolute right-3 text-[#848995]'
+            />
           </div>
         </div>
       </div>
@@ -120,12 +119,12 @@ export default function InquiriesTable() {
                 Name
               </p>
             </div>
-            <div className='w-[150px] shrink-0 px-[8px]'>
+            <div className='w-[180px] shrink-0 px-[8px]'>
               <p className='whitespace-nowrap text-[14px] font-normal leading-[1.3] text-black'>
                 Email
               </p>
             </div>
-            <div className='w-[150px] shrink-0 px-[8px]'>
+            <div className='w-[140px] shrink-0 px-[8px]'>
               <p className='whitespace-nowrap text-[14px] font-normal leading-[1.3] text-black'>
                 Contact Number
               </p>
@@ -157,67 +156,349 @@ export default function InquiriesTable() {
             </div>
           </div>
 
-          {/* Table Body rows */}
-          {mockInquiries.map((inquiry) => (
-            <div
-              key={inquiry.id}
-              className='flex w-full shrink-0 items-center border-b border-[#E5E5E6] h-[48px] hover:bg-gray-50 transition-colors'
-            >
-              <div className='w-[150px] shrink-0 px-[8px] pl-[16px]'>
-                <p className='truncate text-[12px] font-normal leading-[1.3] text-[#42454D]'>
-                  {inquiry.name}
-                </p>
-              </div>
-              <div className='w-[150px] shrink-0 px-[8px]'>
-                <p className='truncate text-[12px] font-normal leading-[1.3] text-[#42454D]'>
-                  {inquiry.email}
-                </p>
-              </div>
-              <div className='w-[150px] shrink-0 px-[8px]'>
-                <p className='truncate text-[12px] font-normal leading-[1.3] text-[#42454D]'>
-                  {inquiry.contactNo}
-                </p>
-              </div>
-              <div className='min-w-[200px] flex-[1_0_0] px-[8px]'>
-                <p className='truncate text-[12px] font-normal leading-[1.3] text-[#42454D]'>
-                  {inquiry.inquiry}
-                </p>
-              </div>
-              <div className='w-[100px] shrink-0 px-[8px]'>
-                <p className='truncate text-[12px] font-normal leading-[1.3] text-[#42454D]'>
-                  {inquiry.date}
-                </p>
-              </div>
-              <div className='w-[100px] shrink-0 px-[8px]'>
-                <p className='truncate text-[12px] font-normal leading-[1.3] text-[#42454D]'>
-                  {inquiry.time}
-                </p>
-              </div>
-              <div className='w-[120px] shrink-0 px-[8px]'>
-                <div className={`inline-flex h-[24px] items-center justify-between gap-[8px] rounded-[2px] px-[8px] ${getStatusStyles(inquiry.status)}`}>
-                  <span className='text-[12px] font-medium leading-[1.2]'>
-                    {inquiry.status}
-                  </span>
-                  <ChevronDown size={12} />
+          {/* Loading / Empty / Data */}
+          {isLoading ? (
+            <div className='p-8 text-center text-sm text-[#848995]'>Loading inquiries...</div>
+          ) : inquiries.length === 0 ? (
+            <div className='p-8 text-center text-sm text-[#848995]'>
+              No support inquiries found.
+            </div>
+          ) : (
+            inquiries.map((inquiry) => {
+              const createdDate = new Date(inquiry.createdAt);
+              const dateStr = createdDate.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+              });
+              const timeStr = createdDate.toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true,
+              });
+
+              return (
+                <div
+                  key={inquiry.id}
+                  className='flex w-full shrink-0 items-center border-b border-[#E5E5E6] h-[52px] hover:bg-gray-50 transition-colors'
+                >
+                  <div className='w-[150px] shrink-0 px-[8px] pl-[16px]'>
+                    <p className='truncate text-[12px] font-medium leading-[1.3] text-[#0A0A0A]'>
+                      {inquiry.name}
+                    </p>
+                  </div>
+                  <div className='w-[180px] shrink-0 px-[8px]'>
+                    <p className='truncate text-[12px] font-normal leading-[1.3] text-[#42454D]'>
+                      {inquiry.email}
+                    </p>
+                  </div>
+                  <div className='w-[140px] shrink-0 px-[8px]'>
+                    <p className='truncate text-[12px] font-normal leading-[1.3] text-[#42454D]'>
+                      {inquiry.contactNumber || 'N/A'}
+                    </p>
+                  </div>
+                  <div className='min-w-[200px] flex-[1_0_0] px-[8px]'>
+                    <p className='truncate text-[12px] font-normal leading-[1.3] text-[#42454D]'>
+                      {inquiry.message}
+                    </p>
+                  </div>
+                  <div className='w-[100px] shrink-0 px-[8px]'>
+                    <p className='truncate text-[12px] font-normal leading-[1.3] text-[#42454D]'>
+                      {dateStr}
+                    </p>
+                  </div>
+                  <div className='w-[100px] shrink-0 px-[8px]'>
+                    <p className='truncate text-[12px] font-normal leading-[1.3] text-[#42454D]'>
+                      {timeStr}
+                    </p>
+                  </div>
+                  <div className='w-[120px] shrink-0 px-[8px]'>
+                    <div className='relative inline-block'>
+                      <select
+                        value={inquiry.status}
+                        onChange={(e) =>
+                          handleStatusChange(inquiry.id, e.target.value as 'PENDING' | 'REPLIED')
+                        }
+                        className={`h-[26px] appearance-none rounded-[2px] px-[8px] pr-[22px] text-[12px] font-medium leading-[1.2] cursor-pointer focus:outline-none ${getStatusStyles(
+                          inquiry.status,
+                        )}`}
+                      >
+                        <option value='PENDING' className='bg-white text-black'>
+                          Pending
+                        </option>
+                        <option value='REPLIED' className='bg-white text-black'>
+                          Replied
+                        </option>
+                      </select>
+                      <ChevronDown
+                        size={12}
+                        className='pointer-events-none absolute right-[6px] top-1/2 -translate-y-1/2 opacity-75'
+                      />
+                    </div>
+                  </div>
+                  <div className='w-[80px] shrink-0 px-[8px]'>
+                    <div className='flex items-center justify-center gap-[12px]'>
+                      <button
+                        onClick={() => {
+                          setInquiryToView(inquiry);
+                          setIsViewModalOpen(true);
+                        }}
+                        className='text-[#42454D] hover:text-black transition-colors cursor-pointer'
+                        title='View Inquiry'
+                      >
+                        <Eye size={16} />
+                      </button>
+                      <button
+                        onClick={() => {
+                          setInquiryToDelete(inquiry.id);
+                          setIsDeleteModalOpen(true);
+                        }}
+                        className='text-[#CB1B1B] hover:text-red-700 transition-colors cursor-pointer'
+                        title='Delete Inquiry'
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </div>
                 </div>
+              );
+            })
+          )}
+        </div>
+      </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className='w-full flex items-center justify-center gap-2 mt-4'>
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            className='text-sm text-[#848995] hover:text-black mr-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer'
+          >
+            &lt; Previous
+          </button>
+
+          {Array.from({ length: totalPages }).map((_, i) => (
+            <button
+              key={i + 1}
+              onClick={() => setCurrentPage(i + 1)}
+              className={`w-8 h-8 flex items-center justify-center rounded-sm text-sm cursor-pointer ${
+                currentPage === i + 1
+                  ? 'bg-[#f2f2f3] text-black font-medium border border-[#e5e5e6]'
+                  : 'bg-white text-[#42454d] hover:bg-gray-50'
+              }`}
+            >
+              {i + 1}
+            </button>
+          ))}
+
+          <button
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+            className='text-sm text-black hover:opacity-70 ml-2 font-medium disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer'
+          >
+            Next &gt;
+          </button>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {isDeleteModalOpen && (
+        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4'>
+          <div className='w-full  max-w-md rounded border border-gray-400 bg-white p-6 shadow-xl'>
+            <div className='flex items-start justify-between mb-4'>
+              <h3 className='text-lg font-semibold text-black'>Delete Inquiry</h3>
+              <button
+                onClick={() => {
+                  setIsDeleteModalOpen(false);
+                  setInquiryToDelete(null);
+                }}
+                className='text-[#848995] hover:text-black focus-visible:outline-none cursor-pointer'
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <p className='text-sm text-[#42454D] mb-6 leading-normal'>
+              Are you sure you want to delete this support inquiry? This action cannot be undone.
+            </p>
+            <div className='flex justify-end gap-3'>
+              <button
+                onClick={() => {
+                  setIsDeleteModalOpen(false);
+                  setInquiryToDelete(null);
+                }}
+                className='rounded-sm border border-[#E5E5E6] px-4 py-2 text-sm font-medium text-[#42454D] hover:bg-gray-50 focus-visible:outline-none cursor-pointer'
+                disabled={deleteInquiry.isPending}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                className='rounded-sm bg-[#CB1B1B] px-4 py-2 text-sm font-medium text-white hover:bg-red-700 focus-visible:outline-none flex items-center gap-2 cursor-pointer disabled:opacity-60'
+                disabled={deleteInquiry.isPending}
+              >
+                {deleteInquiry.isPending ? 'Deleting...' : 'Delete'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* View Modal */}
+      {isViewModalOpen && inquiryToView && (
+        <div
+          className='fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4'
+          onClick={() => {
+            setIsViewModalOpen(false);
+            setInquiryToView(null);
+          }}
+        >
+          <div
+            className='w-full max-w-[650px] rounded-[4px] bg-white p-[32px] sm:p-[40px] shadow-xl relative'
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Top section: Name and Date/Time */}
+            <div className='flex justify-between items-start mb-[32px]'>
+              <h2 className='text-[22px] sm:text-[24px] font-normal text-[#1A1A1A]'>
+                {inquiryToView.name}
+              </h2>
+              <div className='flex flex-col items-end text-[14px] sm:text-[15px] text-[#848995] gap-[4px]'>
+                <p>
+                  Date :{' '}
+                  {new Date(inquiryToView.createdAt)
+                    .toLocaleDateString('en-GB', {
+                      day: '2-digit',
+                      month: '2-digit',
+                      year: 'numeric',
+                    })
+                    .replace(/\//g, '.')}
+                </p>
+                <p>
+                  Time :{' '}
+                  {new Date(inquiryToView.createdAt).toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true,
+                  })}
+                </p>
               </div>
-              <div className='w-[80px] shrink-0 px-[8px]'>
-                <div className='flex items-center justify-center gap-[12px]'>
-                  <button className='text-[#42454D] hover:text-black transition-colors'>
-                    <Eye size={16} />
-                  </button>
-                  <button className='text-[#CB1B1B] hover:text-red-700 transition-colors'>
-                    <Trash2 size={16} />
-                  </button>
+            </div>
+
+            {/* Info section */}
+            <div className='flex flex-col gap-[12px] mb-[32px]'>
+              <p className='text-[16px] sm:text-[18px] text-[#42454D]'>
+                Email : {inquiryToView.email}
+              </p>
+              <p className='text-[16px] sm:text-[18px] text-[#42454D]'>
+                Contact No : {inquiryToView.contactNumber || 'N/A'}
+              </p>
+              <div className='flex items-center gap-[8px] text-[16px] sm:text-[18px] text-[#42454D]'>
+                Status :
+                <div className='relative inline-block'>
+                  <select
+                    value={inquiryToView.status}
+                    onChange={(e) =>
+                      handleStatusChange(inquiryToView.id, e.target.value as 'PENDING' | 'REPLIED')
+                    }
+                    className={`h-[28px] appearance-none rounded-[4px] px-[12px] pr-[28px] text-[13px] font-medium leading-[1.2] cursor-pointer focus:outline-none ${getStatusStyles(
+                      inquiryToView.status,
+                    )}`}
+                  >
+                    <option value='PENDING' className='bg-white text-black'>
+                      Pending
+                    </option>
+                    <option value='REPLIED' className='bg-white text-black'>
+                      Replied
+                    </option>
+                  </select>
+                  <ChevronDown
+                    size={14}
+                    className='pointer-events-none absolute right-[8px] top-1/2 -translate-y-1/2 opacity-75'
+                  />
                 </div>
               </div>
             </div>
-          ))}
+
+            <div className='h-[1px] w-full bg-[#E5E5E6] mb-[32px]'></div>
+
+            {/* Inquiry Message */}
+            <div className='mb-[40px]'>
+              <h3 className='text-[18px] sm:text-[20px] font-medium text-[#1A1A1A] mb-[12px]'>
+                Inquiry
+              </h3>
+              <p className='text-[16px] text-[#42454D] leading-relaxed whitespace-pre-wrap'>
+                {inquiryToView.message}
+              </p>
+            </div>
+
+            {/* Action Button */}
+            {inquiryToView.status !== 'REPLIED' ? (
+              <button
+                onClick={() => handleStatusChange(inquiryToView.id, 'REPLIED')}
+                disabled={updateInquiry.isPending}
+                className='w-full h-[48px] rounded-[4px] bg-[#F09000] hover:bg-[#D88100] transition-colors text-white font-medium text-[16px] flex items-center justify-center gap-[8px] cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed'
+              >
+                {updateInquiry.isPending ? (
+                  <span className='flex items-center gap-2'>
+                    <svg
+                      className='size-5 animate-spin text-white'
+                      xmlns='http://www.w3.org/2000/svg'
+                      fill='none'
+                      viewBox='0 0 24 24'
+                    >
+                      <circle
+                        className='opacity-25'
+                        cx='12'
+                        cy='12'
+                        r='10'
+                        stroke='currentColor'
+                        strokeWidth='4'
+                      />
+                      <path className='opacity-75' fill='currentColor' d='M4 12a8 8 0 018-8v8z' />
+                    </svg>
+                    Updating...
+                  </span>
+                ) : (
+                  <>
+                    <span>Mark as Replied</span>
+                    <CheckCircle size={18} />
+                  </>
+                )}
+              </button>
+            ) : (
+              <button
+                onClick={() => handleStatusChange(inquiryToView.id, 'PENDING')}
+                disabled={updateInquiry.isPending}
+                className='w-full h-[48px] rounded-[4px] border border-[#E5E5E6] bg-gray-50 hover:bg-gray-100 transition-colors text-[#42454D] font-medium text-[16px] flex items-center justify-center gap-[8px] cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed'
+              >
+                {updateInquiry.isPending ? (
+                  <span className='flex items-center gap-2'>
+                    <svg
+                      className='size-5 animate-spin text-gray-700'
+                      xmlns='http://www.w3.org/2000/svg'
+                      fill='none'
+                      viewBox='0 0 24 24'
+                    >
+                      <circle
+                        className='opacity-25'
+                        cx='12'
+                        cy='12'
+                        r='10'
+                        stroke='currentColor'
+                        strokeWidth='4'
+                      />
+                      <path className='opacity-75' fill='currentColor' d='M4 12a8 8 0 018-8v8z' />
+                    </svg>
+                    Updating...
+                  </span>
+                ) : (
+                  <span>Mark as Pending</span>
+                )}
+              </button>
+            )}
+          </div>
         </div>
-      </div>
-      
-      {/* Pagination */}
-      <Pagination />
+      )}
     </div>
   );
 }
