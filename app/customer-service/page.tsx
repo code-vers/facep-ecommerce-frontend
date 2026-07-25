@@ -20,8 +20,9 @@ import {
   ShieldQuestion,
   Send,
   CheckCircle2,
+  AlertCircle,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { useCreateInquiry } from "@/hooks/api/useInquiry";
 
 interface HelpCategory {
   id: string;
@@ -68,18 +69,28 @@ export default function CustomerServicePage() {
   const [contactNumber, setContactNumber] = useState("");
   const [message, setMessage] = useState("");
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const handleSubmit = (e: FormEvent) => {
+  const { mutateAsync: createInquiryMutate, isPending } = useCreateInquiry();
+
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
+    setErrorMessage(null);
 
-    // Simulate API request
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      await createInquiryMutate({
+        name: fullName.trim(),
+        email: email.trim(),
+        contactNumber: contactNumber.trim() || undefined,
+        message: message.trim(),
+      });
       setIsSuccess(true);
-    }, 1200);
+    } catch (err: any) {
+      const serverMessage =
+        err?.response?.data?.message || err?.message || "Failed to submit inquiry. Please try again.";
+      setErrorMessage(serverMessage);
+    }
   };
 
   const handleReset = () => {
@@ -88,6 +99,7 @@ export default function CustomerServicePage() {
     setContactNumber("");
     setMessage("");
     setIsSuccess(false);
+    setErrorMessage(null);
   };
 
   return (
@@ -180,6 +192,14 @@ export default function CustomerServicePage() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="flex flex-col gap-6 w-full">
+                {/* Global Error Banner */}
+                {errorMessage && (
+                  <div className="bg-red-50 border border-red-200 rounded p-4 text-red-700 flex items-center gap-3 text-[14px]">
+                    <AlertCircle className="w-5 h-5 shrink-0 text-red-600" />
+                    <span>{errorMessage}</span>
+                  </div>
+                )}
+
                 {/* Full Name */}
                 <div className="flex flex-col gap-2">
                   <label htmlFor="fullName" className="text-black text-[15px] sm:text-[16px] font-normal">
@@ -246,11 +266,40 @@ export default function CustomerServicePage() {
                 {/* Submit Button */}
                 <button
                   type="submit"
-                  disabled={isSubmitting}
-                  className="bg-[#dec33a] hover:bg-[#c9b034] active:bg-[#b49a2e] disabled:opacity-50 text-black font-normal text-[16px] px-8 py-3 rounded transition-all w-full sm:w-[211px] h-12 flex items-center justify-center gap-2 cursor-pointer shadow-sm hover:shadow active:shadow-none"
+                  disabled={isPending}
+                  className="bg-[#dec33a] hover:bg-[#c9b034] active:bg-[#b49a2e] disabled:opacity-60 text-black font-normal text-[16px] px-8 py-3 rounded transition-all w-full sm:w-[211px] h-12 flex items-center justify-center gap-2 cursor-pointer shadow-sm hover:shadow active:shadow-none disabled:cursor-not-allowed"
                 >
-                  <Send className="w-4 h-4 shrink-0" />
-                  {isSubmitting ? "Submitting..." : "Submit Inquiry"}
+                  {isPending ? (
+                    <span className="flex items-center gap-2">
+                      <svg
+                        className="size-4 animate-spin text-black"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8v8z"
+                        />
+                      </svg>
+                      Submitting…
+                    </span>
+                  ) : (
+                    <>
+                      <Send className="w-4 h-4 shrink-0" />
+                      <span>Submit Inquiry</span>
+                    </>
+                  )}
                 </button>
               </form>
             )}
@@ -261,3 +310,4 @@ export default function CustomerServicePage() {
     </div>
   );
 }
+
