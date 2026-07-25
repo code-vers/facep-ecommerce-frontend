@@ -13,6 +13,7 @@ interface AddCategoryModalProps {
     name: string;
     subcategories: number;
     status: CategoryStatus;
+    subcategoryNames?: string[];
   }) => void;
 }
 
@@ -71,6 +72,7 @@ export default function AddCategoryModal({
       name: name.trim(),
       subcategories: subcategories.length,
       status,
+      subcategoryNames: subcategories,
     });
 
     // Reset state
