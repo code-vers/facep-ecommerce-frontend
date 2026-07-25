@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import Pagination from '@/components/dashboard/orders/Pagination';
 import AddCategoryModal, { CategoryStatus } from './AddCategoryModal';
 import ViewCategoryModal from './ViewCategoryModal';
+import EditCategoryModal from './EditCategoryModal';
 import { cn } from '@/lib/utils';
 
 interface CategoryData {
@@ -86,6 +87,7 @@ export default function CategoriesTable() {
   const [categories, setCategories] = useState<CategoryData[]>(mockCategories);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [viewCategory, setViewCategory] = useState<CategoryData | null>(null);
+  const [editCategory, setEditCategory] = useState<CategoryData | null>(null);
 
   const handleAddCategory = (data: { name: string; subcategories: number; status: CategoryStatus }) => {
     const newCategory: CategoryData = {
@@ -99,6 +101,17 @@ export default function CategoriesTable() {
     };
     setCategories([newCategory, ...categories]);
     toast.success(`Category "${data.name}" created successfully!`);
+  };
+
+  const handleEditCategory = (categoryId: string, data: { name: string; subcategories: number; status: CategoryStatus }) => {
+    setCategories(
+      categories.map((cat) =>
+        cat.id === categoryId
+          ? { ...cat, name: data.name, subcategories: data.subcategories, status: data.status }
+          : cat
+      )
+    );
+    toast.success(`Category "${data.name}" updated successfully!`);
   };
 
   return (
@@ -222,6 +235,7 @@ export default function CategoriesTable() {
                     <Eye size={16} />
                   </button>
                   <button
+                    onClick={() => setEditCategory(category)}
                     className='text-[#42454D] transition-colors hover:text-black focus-visible:outline-none cursor-pointer'
                     aria-label='Edit Category'
                   >
@@ -253,6 +267,13 @@ export default function CategoriesTable() {
         isOpen={!!viewCategory} 
         onClose={() => setViewCategory(null)} 
         category={viewCategory} 
+      />
+
+      <EditCategoryModal
+        isOpen={!!editCategory}
+        onClose={() => setEditCategory(null)}
+        category={editCategory}
+        onEditCategory={handleEditCategory}
       />
     </div>
   );
