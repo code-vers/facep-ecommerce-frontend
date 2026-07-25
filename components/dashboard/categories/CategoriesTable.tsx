@@ -5,6 +5,7 @@ import { ChevronDown, Eye, Pencil, Trash2, PlusCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import Pagination from '@/components/dashboard/orders/Pagination';
 import AddCategoryModal, { CategoryStatus } from './AddCategoryModal';
+import ViewCategoryModal from './ViewCategoryModal';
 import { cn } from '@/lib/utils';
 
 interface CategoryData {
@@ -84,6 +85,7 @@ const getStatusStyles = (status: CategoryStatus) => {
 export default function CategoriesTable() {
   const [categories, setCategories] = useState<CategoryData[]>(mockCategories);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [viewCategory, setViewCategory] = useState<CategoryData | null>(null);
 
   const handleAddCategory = (data: { name: string; subcategories: number; status: CategoryStatus }) => {
     const newCategory: CategoryData = {
@@ -213,19 +215,20 @@ export default function CategoriesTable() {
               <div className='w-[100px] shrink-0 px-[8px]'>
                 <div className='flex items-center justify-center gap-[12px]'>
                   <button
-                    className='text-[#42454D] transition-colors hover:text-black focus-visible:outline-none'
+                    onClick={() => setViewCategory(category)}
+                    className='text-[#42454D] transition-colors hover:text-black focus-visible:outline-none cursor-pointer'
                     aria-label='View Category'
                   >
                     <Eye size={16} />
                   </button>
                   <button
-                    className='text-[#42454D] transition-colors hover:text-black focus-visible:outline-none'
+                    className='text-[#42454D] transition-colors hover:text-black focus-visible:outline-none cursor-pointer'
                     aria-label='Edit Category'
                   >
                     <Pencil size={16} />
                   </button>
                   <button
-                    className='text-[#CB1B1B] transition-colors hover:text-red-700 focus-visible:outline-none'
+                    className='text-[#CB1B1B] transition-colors hover:text-red-700 focus-visible:outline-none cursor-pointer'
                     aria-label='Delete Category'
                   >
                     <Trash2 size={16} />
@@ -244,6 +247,12 @@ export default function CategoriesTable() {
         isOpen={isAddModalOpen} 
         onClose={() => setIsAddModalOpen(false)} 
         onAddCategory={handleAddCategory} 
+      />
+
+      <ViewCategoryModal 
+        isOpen={!!viewCategory} 
+        onClose={() => setViewCategory(null)} 
+        category={viewCategory} 
       />
     </div>
   );
