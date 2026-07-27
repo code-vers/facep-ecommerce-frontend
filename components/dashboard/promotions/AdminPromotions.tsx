@@ -11,6 +11,7 @@ import { useCategories } from '@/hooks/api/useCategory';
 import { useActiveDeal, useCreateDeal, useUpdateDeal } from '@/hooks/api/useDeal';
 import { apiClient } from '@/lib/api/axios';
 import { Deal } from '@/lib/api/deal';
+import { AxiosError } from 'axios';
 
 interface AdminPromotionsProps {
   dealToEdit?: Deal | null;
@@ -171,9 +172,10 @@ export default function AdminPromotions({ dealToEdit, onBack, onSuccess }: Admin
       if (onSuccess) {
         onSuccess();
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Failed to save deal:', error);
-      toast.error(error?.response?.data?.message || 'Failed to update deal.');
+      const err = error as AxiosError<{ message?: string }>;
+      toast.error(err?.response?.data?.message || 'Failed to update deal.');
     }
   };
 

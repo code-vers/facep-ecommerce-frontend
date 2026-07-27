@@ -2,11 +2,18 @@
 
 import { useDeleteInquiry, useInquiries, useUpdateInquiry } from '@/hooks/api/useInquiry';
 import { Inquiry } from '@/lib/api/inquiry';
+import { AxiosError } from 'axios';
 import { CheckCircle, ChevronDown, Eye, Trash2, X } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-const getStatusStyles = (status: string) => {
+type StatusFilterType = 'ALL' | 'PENDING' | 'REPLIED';
+
+interface ApiErrorResponse {
+  message?: string;
+}
+
+const getStatusStyles = (status: Inquiry['status'] | string) => {
   switch (status) {
     case 'REPLIED':
     case 'Replied':
@@ -21,7 +28,7 @@ const getStatusStyles = (status: string) => {
 
 export default function InquiriesTable() {
   const [currentPage, setCurrentPage] = useState(1);
-  const [statusFilter, setStatusFilter] = useState<string>('ALL');
+  const [statusFilter, setStatusFilter] = useState<StatusFilterType>('ALL');
 
   const itemsPerPage = 10;
 
@@ -54,8 +61,9 @@ export default function InquiriesTable() {
             setInquiryToView((prev) => (prev ? { ...prev, status: newStatus } : null));
           }
         },
-        onError: (error: any) => {
-          const message = error?.response?.data?.message || 'Failed to update status';
+        onError: (error: Error) => {
+          const axiosError = error as AxiosError<ApiErrorResponse>;
+          const message = axiosError?.response?.data?.message || error.message || 'Failed to update status';
           toast.error(message);
         },
       },
@@ -70,8 +78,9 @@ export default function InquiriesTable() {
           setInquiryToDelete(null);
           toast.success('Inquiry deleted successfully');
         },
-        onError: (error: any) => {
-          const message = error?.response?.data?.message || 'Failed to delete inquiry';
+        onError: (error: Error) => {
+          const axiosError = error as AxiosError<ApiErrorResponse>;
+          const message = axiosError?.response?.data?.message || error.message || 'Failed to delete inquiry';
           toast.error(message);
         },
       });
@@ -79,20 +88,20 @@ export default function InquiriesTable() {
   };
 
   return (
-    <div className='flex w-full shrink-0 flex-col items-start gap-[24px] rounded-[4px] border border-[#E5E5E6] bg-white p-4 md:p-[16px]'>
+    <div className='flex w-full shrink-0 flex-col items-start gap-6 rounded-lg border border-[#E5E5E6] bg-white p-4 md:p-4'>
       {/* Header */}
-      <div className='flex w-full shrink-0 flex-col sm:flex-row items-start sm:items-center justify-between gap-[16px] sm:gap-[24px]'>
+      <div className='flex w-full shrink-0 flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6'>
         <div className='flex min-w-0 flex-[1_0_0] items-center justify-between'>
           <p className='whitespace-nowrap text-[20px] font-semibold leading-[1.2] text-black'>
             Inquiries
           </p>
         </div>
-        <div className='flex items-center gap-[12px]'>
-          <div className='relative flex h-[36px] w-full sm:w-[200px] shrink-0 items-center overflow-hidden rounded-[2px] border border-[#E5E5E6] bg-white px-[12px] py-[8px]'>
+        <div className='flex items-center gap-3'>
+          <div className='relative flex h-9 w-full sm:w-50 shrink-0 items-center overflow-hidden rounded-xs border border-[#E5E5E6] bg-white px-3 py-2'>
             <select
               value={statusFilter}
               onChange={(e) => {
-                setStatusFilter(e.target.value);
+                setStatusFilter(e.target.value as StatusFilterType);
                 setCurrentPage(1);
               }}
               className='w-full bg-transparent text-[14px] text-black focus:outline-none cursor-pointer appearance-none pr-6'
@@ -111,45 +120,45 @@ export default function InquiriesTable() {
 
       {/* Table Container */}
       <div className='w-full overflow-x-auto'>
-        <div className='min-w-[1000px] flex w-full flex-col'>
+        <div className='min-w-250 flex w-full flex-col'>
           {/* Table Header */}
-          <div className='flex w-full shrink-0 items-center bg-[#F2F2F3] h-[48px]'>
-            <div className='w-[150px] shrink-0 px-[8px] pl-[16px]'>
+          <div className='flex w-full shrink-0 items-center bg-[#F2F2F3] h-12'>
+            <div className='w-37.5 shrink-0 px-2 pl-4'>
               <p className='whitespace-nowrap text-[14px] font-normal leading-[1.3] text-black'>
                 Name
               </p>
             </div>
-            <div className='w-[180px] shrink-0 px-[8px]'>
+            <div className='w-45 shrink-0 px-2'>
               <p className='whitespace-nowrap text-[14px] font-normal leading-[1.3] text-black'>
                 Email
               </p>
             </div>
-            <div className='w-[140px] shrink-0 px-[8px]'>
+            <div className='w-35 shrink-0 px-2'>
               <p className='whitespace-nowrap text-[14px] font-normal leading-[1.3] text-black'>
                 Contact Number
               </p>
             </div>
-            <div className='min-w-[200px] flex-[1_0_0] px-[8px]'>
+            <div className='min-w-50 flex-[1_0_0] px-2'>
               <p className='whitespace-nowrap text-[14px] font-normal leading-[1.3] text-black'>
                 Inquiry
               </p>
             </div>
-            <div className='w-[100px] shrink-0 px-[8px]'>
+            <div className='w-25 shrink-0 px-2'>
               <p className='whitespace-nowrap text-[14px] font-normal leading-[1.3] text-black'>
                 Date
               </p>
             </div>
-            <div className='w-[100px] shrink-0 px-[8px]'>
+            <div className='w-25 shrink-0 px-2'>
               <p className='whitespace-nowrap text-[14px] font-normal leading-[1.3] text-black'>
                 Time
               </p>
             </div>
-            <div className='w-[120px] shrink-0 px-[8px]'>
+            <div className='w-30 shrink-0 px-2'>
               <p className='whitespace-nowrap text-[14px] font-normal leading-[1.3] text-black'>
                 Status
               </p>
             </div>
-            <div className='w-[80px] shrink-0 px-[8px] text-center'>
+            <div className='w-20 shrink-0 px-2 text-center'>
               <p className='whitespace-nowrap text-[14px] font-normal leading-[1.3] text-black'>
                 Action
               </p>
@@ -180,46 +189,46 @@ export default function InquiriesTable() {
               return (
                 <div
                   key={inquiry.id}
-                  className='flex w-full shrink-0 items-center border-b border-[#E5E5E6] h-[52px] hover:bg-gray-50 transition-colors'
+                  className='flex w-full shrink-0 items-center border-b border-[#E5E5E6] h-13 hover:bg-gray-50 transition-colors'
                 >
-                  <div className='w-[150px] shrink-0 px-[8px] pl-[16px]'>
+                  <div className='w-37.5 shrink-0 px-2 pl-4'>
                     <p className='truncate text-[12px] font-medium leading-[1.3] text-[#0A0A0A]'>
                       {inquiry.name}
                     </p>
                   </div>
-                  <div className='w-[180px] shrink-0 px-[8px]'>
+                  <div className='w-45 shrink-0 px-2'>
                     <p className='truncate text-[12px] font-normal leading-[1.3] text-[#42454D]'>
                       {inquiry.email}
                     </p>
                   </div>
-                  <div className='w-[140px] shrink-0 px-[8px]'>
+                  <div className='w-35 shrink-0 px-2'>
                     <p className='truncate text-[12px] font-normal leading-[1.3] text-[#42454D]'>
                       {inquiry.contactNumber || 'N/A'}
                     </p>
                   </div>
-                  <div className='min-w-[200px] flex-[1_0_0] px-[8px]'>
+                  <div className='min-w-50 flex-[1_0_0] px-2'>
                     <p className='truncate text-[12px] font-normal leading-[1.3] text-[#42454D]'>
                       {inquiry.message}
                     </p>
                   </div>
-                  <div className='w-[100px] shrink-0 px-[8px]'>
+                  <div className='w-25 shrink-0 px-2'>
                     <p className='truncate text-[12px] font-normal leading-[1.3] text-[#42454D]'>
                       {dateStr}
                     </p>
                   </div>
-                  <div className='w-[100px] shrink-0 px-[8px]'>
+                  <div className='w-25 shrink-0 px-2'>
                     <p className='truncate text-[12px] font-normal leading-[1.3] text-[#42454D]'>
                       {timeStr}
                     </p>
                   </div>
-                  <div className='w-[120px] shrink-0 px-[8px]'>
+                  <div className='w-30 shrink-0 px-2'>
                     <div className='relative inline-block'>
                       <select
                         value={inquiry.status}
                         onChange={(e) =>
                           handleStatusChange(inquiry.id, e.target.value as 'PENDING' | 'REPLIED')
                         }
-                        className={`h-[26px] appearance-none rounded-[2px] px-[8px] pr-[22px] text-[12px] font-medium leading-[1.2] cursor-pointer focus:outline-none ${getStatusStyles(
+                        className={`h-6.5 appearance-none rounded-xs px-2 pr-5.5 text-[12px] font-medium leading-[1.2] cursor-pointer focus:outline-none ${getStatusStyles(
                           inquiry.status,
                         )}`}
                       >
@@ -232,12 +241,12 @@ export default function InquiriesTable() {
                       </select>
                       <ChevronDown
                         size={12}
-                        className='pointer-events-none absolute right-[6px] top-1/2 -translate-y-1/2 opacity-75'
+                        className='pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2 opacity-75'
                       />
                     </div>
                   </div>
-                  <div className='w-[80px] shrink-0 px-[8px]'>
-                    <div className='flex items-center justify-center gap-[12px]'>
+                  <div className='w-20 shrink-0 px-2'>
+                    <div className='flex items-center justify-center gap-3'>
                       <button
                         onClick={() => {
                           setInquiryToView(inquiry);
@@ -354,15 +363,15 @@ export default function InquiriesTable() {
           }}
         >
           <div
-            className='w-full max-w-[650px] rounded-[4px] bg-white p-[32px] sm:p-[40px] shadow-xl relative'
+            className='w-full max-w-162.5 rounded-lg bg-white p-8 sm:p-10 shadow-xl relative'
             onClick={(e) => e.stopPropagation()}
           >
             {/* Top section: Name and Date/Time */}
-            <div className='flex justify-between items-start mb-[32px]'>
+            <div className='flex justify-between items-start mb-8'>
               <h2 className='text-[22px] sm:text-[24px] font-normal text-[#1A1A1A]'>
                 {inquiryToView.name}
               </h2>
-              <div className='flex flex-col items-end text-[14px] sm:text-[15px] text-[#848995] gap-[4px]'>
+              <div className='flex flex-col items-end text-[14px] sm:text-[15px] text-[#848995] gap-1'>
                 <p>
                   Date :{' '}
                   {new Date(inquiryToView.createdAt)
@@ -385,14 +394,14 @@ export default function InquiriesTable() {
             </div>
 
             {/* Info section */}
-            <div className='flex flex-col gap-[12px] mb-[32px]'>
+            <div className='flex flex-col gap-3 mb-8'>
               <p className='text-[16px] sm:text-[18px] text-[#42454D]'>
                 Email : {inquiryToView.email}
               </p>
               <p className='text-[16px] sm:text-[18px] text-[#42454D]'>
                 Contact No : {inquiryToView.contactNumber || 'N/A'}
               </p>
-              <div className='flex items-center gap-[8px] text-[16px] sm:text-[18px] text-[#42454D]'>
+              <div className='flex items-center gap-2 text-[16px] sm:text-[18px] text-[#42454D]'>
                 Status :
                 <div className='relative inline-block'>
                   <select
@@ -400,7 +409,7 @@ export default function InquiriesTable() {
                     onChange={(e) =>
                       handleStatusChange(inquiryToView.id, e.target.value as 'PENDING' | 'REPLIED')
                     }
-                    className={`h-[28px] appearance-none rounded-[4px] px-[12px] pr-[28px] text-[13px] font-medium leading-[1.2] cursor-pointer focus:outline-none ${getStatusStyles(
+                    className={`h-7 appearance-none rounded-lg px-3 pr-7 text-[13px] font-medium leading-[1.2] cursor-pointer focus:outline-none ${getStatusStyles(
                       inquiryToView.status,
                     )}`}
                   >
@@ -413,17 +422,17 @@ export default function InquiriesTable() {
                   </select>
                   <ChevronDown
                     size={14}
-                    className='pointer-events-none absolute right-[8px] top-1/2 -translate-y-1/2 opacity-75'
+                    className='pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 opacity-75'
                   />
                 </div>
               </div>
             </div>
 
-            <div className='h-[1px] w-full bg-[#E5E5E6] mb-[32px]'></div>
+            <div className='h-px w-full bg-[#E5E5E6] mb-8'></div>
 
             {/* Inquiry Message */}
-            <div className='mb-[40px]'>
-              <h3 className='text-[18px] sm:text-[20px] font-medium text-[#1A1A1A] mb-[12px]'>
+            <div className='mb-10'>
+              <h3 className='text-[18px] sm:text-[20px] font-medium text-[#1A1A1A] mb-3'>
                 Inquiry
               </h3>
               <p className='text-[16px] text-[#42454D] leading-relaxed whitespace-pre-wrap'>
@@ -436,7 +445,7 @@ export default function InquiriesTable() {
               <button
                 onClick={() => handleStatusChange(inquiryToView.id, 'REPLIED')}
                 disabled={updateInquiry.isPending}
-                className='w-full h-[48px] rounded-[4px] bg-[#F09000] hover:bg-[#D88100] transition-colors text-white font-medium text-[16px] flex items-center justify-center gap-[8px] cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed'
+                className='w-full h-12 rounded-lg bg-[#F09000] hover:bg-[#D88100] transition-colors text-white font-medium text-[16px] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed'
               >
                 {updateInquiry.isPending ? (
                   <span className='flex items-center gap-2'>
@@ -469,7 +478,7 @@ export default function InquiriesTable() {
               <button
                 onClick={() => handleStatusChange(inquiryToView.id, 'PENDING')}
                 disabled={updateInquiry.isPending}
-                className='w-full h-[48px] rounded-[4px] border border-[#E5E5E6] bg-gray-50 hover:bg-gray-100 transition-colors text-[#42454D] font-medium text-[16px] flex items-center justify-center gap-[8px] cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed'
+                className='w-full h-12 rounded-lg border border-[#E5E5E6] bg-gray-50 hover:bg-gray-100 transition-colors text-[#42454D] font-medium text-[16px] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed'
               >
                 {updateInquiry.isPending ? (
                   <span className='flex items-center gap-2'>
