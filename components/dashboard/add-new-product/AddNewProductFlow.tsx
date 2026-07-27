@@ -21,6 +21,14 @@ export default function AddNewProductFlow() {
   const totalSteps = 6;
   const [submitError, setSubmitError] = useState('');
 
+  const stepMapping: Record<string, number> = {
+    brand: 1, productType: 1, shortDescription: 1, categoryId: 1, subcategoryId: 1, tags: 1, condition: 1, availableColors: 1,
+    thumbnail: 2, previewImages: 2, variants: 2,
+    basePrice: 3, oldPrice: 3, discountType: 3, discountValue: 3, dealBadgeText: 3, dealStartDate: 3, dealEndDate: 3, taxAmount: 3, vatGst: 3, importCharges: 3, handlingFee: 3,
+    shipsFrom: 4, minDeliveryDays: 4, maxDeliveryDays: 4, shippingFeeType: 4, shippingCost: 4, shippingZoneId: 4, courierId: 4,
+    specifications: 5, keyFeatures: 5, detailedDescription: 5, returnPolicy: 5, returnTerms: 5, sku: 5, stockQuantity: 5, stockStatus: 5, lowStockAlertQuantity: 5, minOrderQuantity: 5, maxOrderQuantity: 5, inventoryManagedBy: 5, warehouseLocation: 5,
+  };
+
   const submitMutation = useMutation({
     mutationFn: async (payload: any) => {
       const res = await apiClient.post('/products', payload);
@@ -31,7 +39,15 @@ export default function AddNewProductFlow() {
       router.push('/dashboard/products'); // Redirect on success
     },
     onError: (error: any) => {
-      setSubmitError(error.response?.data?.message || 'Failed to add product');
+      const data = error.response?.data;
+      if (data?.errorSources && data.errorSources.length > 0) {
+        const errorPath = data.errorSources[0].path;
+        const targetStep = stepMapping[errorPath] || 6;
+        setSubmitError(`Validation error in Step ${targetStep} (${errorPath}): ${data.errorSources[0].message}`);
+        setCurrentStep(targetStep);
+      } else {
+        setSubmitError(data?.message || 'Failed to add product');
+      }
     },
   });
 

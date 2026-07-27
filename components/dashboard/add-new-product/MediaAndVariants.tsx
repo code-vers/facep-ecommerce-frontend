@@ -1,8 +1,9 @@
 'use client';
 
-import { ImageUp, Trash2 } from 'lucide-react';
+import { ImageUp, Trash2, Edit2 } from 'lucide-react';
 import Image from 'next/image';
 import React, { useRef, useState } from 'react';
+import imageCompression from 'browser-image-compression';
 import { apiClient } from '../../../lib/api/axios';
 import { IVariant, useProductFormStore } from '../../../store/useProductFormStore';
 
@@ -37,12 +38,15 @@ export default function MediaAndVariants() {
     if (!files || files.length === 0) return;
 
     const formData = new FormData();
-    for (let i = 0; i < files.length; i++) {
-      formData.append('files', files[i]);
-    }
+    const options = { maxSizeMB: 1, maxWidthOrHeight: 1920, useWebWorker: true };
 
     try {
       setIsUploading(true);
+      for (let i = 0; i < files.length; i++) {
+        const compressedFile = await imageCompression(files[i], options);
+        formData.append('files', compressedFile);
+      }
+
       const res = await apiClient.post('/uploads', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
@@ -64,11 +68,15 @@ export default function MediaAndVariants() {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
-    const formData = new FormData();
-    formData.append('files', files[0]);
+    const options = { maxSizeMB: 1, maxWidthOrHeight: 1920, useWebWorker: true };
 
     try {
       setIsUploading(true);
+      const compressedFile = await imageCompression(files[0], options);
+      
+      const formData = new FormData();
+      formData.append('files', compressedFile);
+
       const res = await apiClient.post('/uploads', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
