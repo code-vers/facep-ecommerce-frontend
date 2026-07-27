@@ -74,14 +74,14 @@ export default function ProductBasics({}: ProductBasicsProps) {
 
   return (
     <div className='border border-[#e5e5e6] border-solid flex flex-col items-start w-full relative shrink-0'>
-      <div className='flex flex-col gap-4 md:gap-[24px] items-start p-4 md:p-[24px] w-full relative shrink-0'>
+      <div className='flex flex-col gap-4 md:gap-6 items-start p-4 md:p-6 w-full relative shrink-0'>
         {/* Basic Product Information */}
-        <div className='flex flex-col gap-[18px] items-start w-full'>
+        <div className='flex flex-col gap-4.5 items-start w-full'>
           <p className='font-semibold leading-[1.2] text-[20px] text-black'>
             Basic Product Information
           </p>
 
-          <div className='flex flex-col gap-4 md:gap-[18px] w-full'>
+          <div className='flex flex-col gap-4 md:gap-4.5 w-full'>
             <div className='flex flex-col md:flex-row gap-4 md:gap-6 w-full'>
               {/* Store / Brand */}
               <div className='flex flex-col gap-2 flex-1 w-full'>
@@ -117,7 +117,7 @@ export default function ProductBasics({}: ProductBasicsProps) {
               <p className='font-normal leading-[1.2] text-[16px] text-black'>
                 Short Product Summary
               </p>
-              <div className='border border-[#e5e5e6] bg-white flex items-start h-[84px] px-3 py-2.5 rounded-sm w-full'>
+              <div className='border border-[#e5e5e6] bg-white flex items-start h-21 px-3 py-2.5 rounded-sm w-full'>
                 <textarea
                   value={store.shortDescription}
                   onChange={(e) => store.setField('shortDescription', e.target.value)}
@@ -130,12 +130,12 @@ export default function ProductBasics({}: ProductBasicsProps) {
         </div>
 
         {/* Category & Filter Information */}
-        <div className='flex flex-col gap-[18px] items-start w-full mt-2'>
+        <div className='flex flex-col gap-4.5 items-start w-full mt-2'>
           <p className='font-semibold leading-[1.2] text-[20px] text-black'>
             Category & Filter Information
           </p>
 
-          <div className='flex flex-col gap-4 md:gap-[18px] w-full'>
+          <div className='flex flex-col gap-4 md:gap-4.5 w-full'>
             <div className='flex flex-col md:flex-row gap-4 md:gap-6 w-full'>
               {/* Main Category */}
               <div className='flex flex-col gap-2 flex-1 w-full relative'>
@@ -189,7 +189,7 @@ export default function ProductBasics({}: ProductBasicsProps) {
             {/* Product Tags */}
             <div className='flex flex-col gap-2 w-full'>
               <p className='font-normal leading-[1.2] text-[16px] text-black'>Product Tags</p>
-              <div className='flex items-center gap-2 flex-wrap w-full border border-[#e5e5e6] p-2 rounded-sm bg-white min-h-[46px]'>
+              <div className='flex items-center gap-2 flex-wrap w-full border border-[#e5e5e6] p-2 rounded-sm bg-white min-h-11.5'>
                 {store.tags.map((tag, i) => (
                   <div
                     key={i}
@@ -208,7 +208,7 @@ export default function ProductBasics({}: ProductBasicsProps) {
                   onChange={(e) => setTagInput(e.target.value)}
                   onKeyDown={handleKeyDownTag}
                   placeholder={store.tags.length === 0 ? 'Add tags and press enter' : 'Add tag...'}
-                  className='bg-transparent outline-none text-[14px] min-w-[120px] flex-1'
+                  className='bg-transparent outline-none text-[14px] min-w-30 flex-1'
                 />
               </div>
             </div>
@@ -279,7 +279,7 @@ export default function ProductBasics({}: ProductBasicsProps) {
                       value={colorInput}
                       onChange={(e) => setColorInput(e.target.value)}
                       placeholder='#FFFFFF'
-                      className='border border-[#e5e5e6] rounded-sm px-2 py-1 text-[14px] w-[100px] outline-none'
+                      className='border border-[#e5e5e6] rounded-sm px-2 py-1 text-[14px] w-25 outline-none'
                     />
                     <button
                       onClick={handleAddColor}
