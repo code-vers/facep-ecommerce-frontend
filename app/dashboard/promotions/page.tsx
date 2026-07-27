@@ -27,10 +27,7 @@ export default function DashboardPromotionsPage() {
   return (
     <div className='flex w-full flex-col items-center gap-6 bg-white px-4 py-6 md:px-8 md:py-8 2xl:px-11.25 2xl:py-9 min-h-screen'>
       {viewMode === 'table' ? (
-        <PromotionsTable
-          onAddNewDeal={handleAddNewDeal}
-          onEditDeal={handleEditDeal}
-        />
+        <PromotionsTable onAddNewDeal={handleAddNewDeal} onEditDeal={handleEditDeal} />
       ) : (
         <AdminPromotions
           dealToEdit={selectedDealToEdit}
@@ -41,3 +38,4 @@ export default function DashboardPromotionsPage() {
     </div>
   );
 }
+//promiton end!
