@@ -340,7 +340,13 @@ export default function MediaAndVariants() {
                         className='w-full border border-[#e5e5e6] rounded-sm px-2 py-1 text-[12px] bg-white outline-none'
                       />
                     </div>
-                    <div className='flex-[1.5] pr-4'>
+                    <div className='flex-[1.5] pr-4 flex items-center gap-2'>
+                      <input 
+                        type="color" 
+                        value={draftVariant.color?.startsWith('#') ? draftVariant.color : '#ffffff'} 
+                        onChange={(e) => setDraftVariant({ ...draftVariant, color: e.target.value })} 
+                        className="w-6 h-6 cursor-pointer p-0 border-0 shrink-0 bg-transparent rounded-sm"
+                      />
                       <input
                         type='text'
                         placeholder='Color Hex (e.g. #000)'

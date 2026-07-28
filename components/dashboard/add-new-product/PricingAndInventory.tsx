@@ -1,10 +1,26 @@
 'use client';
 
 import { Calendar, ChevronDown } from 'lucide-react';
+import { useEffect } from 'react';
 import { useProductFormStore } from '../../../store/useProductFormStore';
 
 export default function PricingAndInventory() {
   const store = useProductFormStore();
+
+  useEffect(() => {
+    const base = Number(store.basePrice);
+    const old = Number(store.oldPrice);
+
+    if (base > 0 && old > 0 && old > base) {
+      if (store.discountType === 'FIXED') {
+        const diff = old - base;
+        store.setField('discountValue', Number(diff.toFixed(2)));
+      } else if (store.discountType === 'PERCENTAGE') {
+        const percentage = ((old - base) / old) * 100;
+        store.setField('discountValue', Number(percentage.toFixed(2)));
+      }
+    }
+  }, [store.basePrice, store.oldPrice, store.discountType, store]);
 
   return (
     <div className='border border-[#e5e5e6] border-solid bg-white flex flex-col items-start w-full relative shrink-0'>
