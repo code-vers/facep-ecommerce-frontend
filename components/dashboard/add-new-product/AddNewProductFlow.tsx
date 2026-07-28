@@ -74,17 +74,15 @@ export default function AddNewProductFlow() {
         // mapped dynamically for create variants
         variants:
           store.hasVariants && store.variants.length > 0
-            ? {
-                create: store.variants.map((v) => ({
-                  sku: v.sku,
-                  image: v.image || undefined,
-                  color: v.color || undefined,
-                  size: v.size || undefined,
-                  price: v.price,
-                  stock: v.stock,
-                })),
-              }
-            : undefined,
+            ? store.variants.map((v) => ({
+                sku: v.sku,
+                image: v.image || undefined,
+                color: v.color || undefined,
+                size: v.size || undefined,
+                price: v.price,
+                stock: v.stock,
+              }))
+            : [],
 
         basePrice: store.basePrice || 0,
         oldPrice: store.oldPrice || undefined,
@@ -120,13 +118,11 @@ export default function AddNewProductFlow() {
 
         specifications:
           store.specifications.length > 0
-            ? {
-                create: store.specifications.map((s) => ({
-                  name: s.name,
-                  value: s.value,
-                })),
-              }
-            : undefined,
+            ? store.specifications.map((s) => ({
+                name: s.name,
+                value: s.value,
+              }))
+            : [],
 
         keyFeatures: store.keyFeatures || undefined,
         detailedDescription: store.detailedDescription || undefined,

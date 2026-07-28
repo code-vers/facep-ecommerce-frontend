@@ -127,16 +127,13 @@ export default function ProductInventorySection() {
                   Inventory Managed By
                 </p>
                 <div className='bg-white border border-[#e5e5e6] flex items-center overflow-clip px-[12px] py-[10px] rounded-[2px] relative w-full'>
-                  <select
+                  <input
+                    type='text'
                     value={store.inventoryManagedBy}
                     onChange={(e) => store.setField('inventoryManagedBy', e.target.value)}
-                    className='flex-1 bg-transparent outline-none appearance-none font-normal leading-[1.3] text-[14px] text-black cursor-pointer pr-6 w-full'
-                  >
-                    <option value=''>Select Manager</option>
-                    <option value='John Doe'>John Doe</option>
-                    <option value='Jane Smith'>Jane Smith</option>
-                  </select>
-                  <ChevronDown className='size-4 text-[#848995] absolute right-[12px] pointer-events-none' />
+                    placeholder='Enter manager name'
+                    className='flex-1 bg-transparent outline-none font-normal leading-[1.3] text-[14px] text-black placeholder:text-[#848995] w-full'
+                  />
                 </div>
               </div>
 
@@ -145,17 +142,13 @@ export default function ProductInventorySection() {
                   Warehouse Location
                 </p>
                 <div className='bg-white border border-[#e5e5e6] flex items-center overflow-clip px-[12px] py-[10px] rounded-[2px] relative w-full'>
-                  <select
+                  <input
+                    type='text'
                     value={store.warehouseLocation}
                     onChange={(e) => store.setField('warehouseLocation', e.target.value)}
-                    className='flex-1 bg-transparent outline-none appearance-none font-normal leading-[1.3] text-[14px] text-black cursor-pointer pr-6 w-full'
-                  >
-                    <option value=''>Select Location</option>
-                    <option value='Texas'>Texas</option>
-                    <option value='California'>California</option>
-                    <option value='New York'>New York</option>
-                  </select>
-                  <ChevronDown className='size-4 text-[#848995] absolute right-[12px] pointer-events-none' />
+                    placeholder='Enter warehouse location'
+                    className='flex-1 bg-transparent outline-none font-normal leading-[1.3] text-[14px] text-black placeholder:text-[#848995] w-full'
+                  />
                 </div>
               </div>
             </div>
