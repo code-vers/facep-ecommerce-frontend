@@ -1,9 +1,10 @@
 'use client';
 
+import type { ComponentType } from 'react';
 import dynamic from 'next/dynamic';
-import 'react-quill-new/dist/quill.snow.css';
 
-const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
+// @ts-ignore
+const ReactQuill = dynamic(() => import('react-quill-new') as Promise<{ default: ComponentType<any> }>, { ssr: false });
 
 interface QuillEditorProps {
   value: string;

@@ -1,13 +1,6 @@
-/**
- * @fileoverview Main Layout container for the Vendor Product Management layout.
- * Integrates the StatsCards metrics bar and the ProductTable lists.
- *
- * @module components/dashboard/vendor/product-management/ProductManagementLayout
- */
-
 'use client';
 
-import { VENDOR_PRODUCTS, VENDOR_STATS } from '@/lib/vendor-data';
+import { VENDOR_STATS } from '@/lib/vendor-data';
 import StatsCards from './StatsCards';
 import ProductTable from './ProductTable';
 
@@ -20,8 +13,8 @@ export default function ProductManagementLayout() {
       </section>
 
       {/* ── Section 2: Products Catalog Table ── */}
-      <section aria-label="Vendor Products Catalog" className="w-full overflow-hidden">
-        <ProductTable products={VENDOR_PRODUCTS} />
+      <section aria-label="Products Catalog" className="w-full overflow-hidden">
+        <ProductTable />
       </section>
     </div>
   );
