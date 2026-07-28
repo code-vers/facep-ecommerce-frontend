@@ -55,8 +55,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
         .then((res) => {
           setSession({ user: res.data, token });
         })
-        .catch(() => {
-          localStorage.removeItem('accessToken');
+        .catch((error) => {
+          // Only remove token if the backend explicitly rejects it (e.g. expired/invalid)
+          if (error.response?.status === 401 || error.response?.status === 403) {
+            localStorage.removeItem('accessToken');
+          }
           setSession(null);
         })
         .finally(() => {

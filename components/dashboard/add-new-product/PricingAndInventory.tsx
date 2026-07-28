@@ -13,14 +13,25 @@ export default function PricingAndInventory() {
 
     if (base > 0 && old > 0 && old > base) {
       if (store.discountType === 'FIXED') {
-        const diff = old - base;
-        store.setField('discountValue', Number(diff.toFixed(2)));
+        const diff = Number((old - base).toFixed(2));
+        if (store.discountValue !== diff) {
+          store.setField('discountValue', diff);
+        }
       } else if (store.discountType === 'PERCENTAGE') {
-        const percentage = ((old - base) / old) * 100;
-        store.setField('discountValue', Number(percentage.toFixed(2)));
+        const percentage = Number((((old - base) / old) * 100).toFixed(2));
+        if (store.discountValue !== percentage) {
+          store.setField('discountValue', percentage);
+        }
       }
     }
-  }, [store.basePrice, store.oldPrice, store.discountType, store]);
+  }, [
+    store.basePrice,
+    store.oldPrice,
+    store.discountType,
+    store.discountValue,
+    store.setField,
+    store,
+  ]);
 
   return (
     <div className='border border-[#e5e5e6] border-solid bg-white flex flex-col items-start w-full relative shrink-0'>
