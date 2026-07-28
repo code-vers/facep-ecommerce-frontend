@@ -32,14 +32,14 @@ export default function ShippingStep() {
 
   return (
     <div className='border border-[#e5e5e6] border-solid bg-white flex flex-col items-start w-full relative shrink-0'>
-      <div className='flex flex-col gap-6 md:gap-[24px] items-start p-4 md:p-[24px] w-full relative shrink-0'>
+      <div className='flex flex-col gap-6 md:gap-6 items-start p-4 md:p-6 w-full relative shrink-0'>
         {/* ── SECTION: Shipping & Delivery ── */}
-        <div className='flex flex-col gap-[18px] items-start w-full'>
+        <div className='flex flex-col gap-4.5 items-start w-full'>
           <h3 className='font-semibold leading-[1.2] text-[20px] text-black font-sans'>
             Shipping & Delivery
           </h3>
 
-          <div className='flex flex-col gap-4 md:gap-[18px] w-full'>
+          <div className='flex flex-col gap-4 md:gap-4.5 w-full'>
             {/* Ships From */}
             <div className='flex flex-col gap-2 w-full'>
               <p className='font-normal leading-[1.2] text-[16px] text-black'>Ships From</p>
@@ -116,7 +116,7 @@ export default function ShippingStep() {
                       className='sr-only'
                     />
                     <div
-                      className={`size-[18px] rounded-full border flex items-center justify-center transition-all ${
+                      className={`size-4.5 rounded-full border flex items-center justify-center transition-all ${
                         store.shippingFeeType === feeType ? 'border-[#f09000]' : 'border-black'
                       }`}
                     >
@@ -170,7 +170,7 @@ export default function ShippingStep() {
                         <option value=''>Select Zone (Optional)</option>
                         {shippingZonesData?.map((zone: any) => (
                           <option key={zone.id} value={zone.id}>
-                            {zone.name}
+                            {zone.zoneName}
                           </option>
                         ))}
                       </select>
@@ -225,7 +225,7 @@ export default function ShippingStep() {
                       className='sr-only'
                     />
                     <div
-                      className={`size-4 rounded-[4px] border flex items-center justify-center transition-all ${
+                      className={`size-4 rounded-lg border flex items-center justify-center transition-all ${
                         store[option.key]
                           ? 'bg-[#f09000] border-[#f09000] text-white'
                           : 'border-black bg-white'
