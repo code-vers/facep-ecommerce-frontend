@@ -73,7 +73,7 @@ export default function MediaAndVariants() {
     try {
       setIsUploading(true);
       const compressedFile = await imageCompression(files[0], options);
-      
+
       const formData = new FormData();
       formData.append('files', compressedFile);
 
@@ -139,6 +139,7 @@ export default function MediaAndVariants() {
                   <Image
                     height={500}
                     width={500}
+                    unoptimized
                     src={getFullImageUrl(store.thumbnail)}
                     alt='Thumbnail'
                     className='absolute inset-0 w-full h-full object-cover'
@@ -195,6 +196,7 @@ export default function MediaAndVariants() {
                         alt={`preview-${i}`}
                         width={500}
                         height={500}
+                        unoptimized
                         className='w-full h-full object-cover'
                       />
                       <div
