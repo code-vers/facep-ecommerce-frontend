@@ -1,7 +1,9 @@
 'use client';
 
+import { useAuth } from '@/contexts/AuthContext';
 import { ChevronDown, Eye, Pencil, PlusCircle, Trash2, X } from 'lucide-react';
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import { cn } from '@/lib/utils';
@@ -28,6 +30,15 @@ export default function CategoriesTable() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
+  const router = useRouter();
+  const { session } = useAuth();
+
+  useEffect(() => {
+    if (session && session.user?.role !== 'ADMIN') {
+      router.replace('/dashboard/products');
+    }
+  }, [session, router]);
+
   const { data: categoriesData, isLoading } = useCategories(currentPage, itemsPerPage);
   const categories = categoriesData?.data || [];
   const totalPages = categoriesData?.meta?.totalPage || 1;
@@ -40,6 +51,10 @@ export default function CategoriesTable() {
   const [viewCategory, setViewCategory] = useState<Category | null>(null);
   const [editCategory, setEditCategory] = useState<Category | null>(null);
   const [categoryToDelete, setCategoryToDelete] = useState<string | null>(null);
+
+  if (session && session.user?.role !== 'ADMIN') {
+    return null;
+  }
 
   const handleAddCategory = (data: {
     name: string;
@@ -186,7 +201,7 @@ export default function CategoriesTable() {
                 </p>
               </div>
               <div className='flex-[1_0_0] px-2'>
-                <p className="truncate text-[13px] font-normal leading-[1.3] text-[#42454D]">
+                <p className='truncate text-[13px] font-normal leading-[1.3] text-[#42454D]'>
                   {category.subcategories.length}
                 </p>
               </div>
