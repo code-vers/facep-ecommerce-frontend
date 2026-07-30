@@ -186,25 +186,26 @@ export default function ProductTable() {
             </div>
           </div>
 
-          {/* Category & Add New Product Buttons - Shown for Vendor, hidden for Admin */}
-          {!isAdmin && (
-            <>
-              <Link
-                href="/dashboard/categories"
-                className="flex h-9 items-center justify-center gap-1.5 bg-white hover:bg-gray-50 border border-[#E5E5E6] text-[#42454D] font-sans font-normal text-[14px] rounded-[2px] px-3 py-2 transition-all active:scale-[0.98] select-none whitespace-nowrap"
-              >
-                <FolderKanban size={16} />
-                <span>Categories</span>
-              </Link>
+          {/* Category Button - Shown for Admin only */}
+          {isAdmin && (
+            <Link
+              href="/dashboard/categories"
+              className="flex h-9 items-center justify-center gap-1.5 bg-white hover:bg-gray-50 border border-[#E5E5E6] text-[#42454D] font-sans font-normal text-[14px] rounded-[2px] px-3 py-2 transition-all active:scale-[0.98] select-none whitespace-nowrap"
+            >
+              <FolderKanban size={16} />
+              <span>Categories</span>
+            </Link>
+          )}
 
-              <Link
-                href="/dashboard/add-new-products"
-                className="flex h-9 items-center justify-center gap-1 bg-[#F09000] hover:bg-[#d88200] border border-[#F09000] text-black font-sans font-normal text-[14px] leading-[1.2] rounded-[2px] px-3.5 py-2 transition-all active:scale-[0.98] select-none whitespace-nowrap"
-              >
-                <span>Add New Product</span>
-                <Plus size={16} />
-              </Link>
-            </>
+          {/* Add New Product Button - Shown for Vendor only */}
+          {!isAdmin && (
+            <Link
+              href="/dashboard/add-new-products"
+              className="flex h-9 items-center justify-center gap-1 bg-[#F09000] hover:bg-[#d88200] border border-[#F09000] text-black font-sans font-normal text-[14px] leading-[1.2] rounded-[2px] px-3.5 py-2 transition-all active:scale-[0.98] select-none whitespace-nowrap"
+            >
+              <span>Add New Product</span>
+              <Plus size={16} />
+            </Link>
           )}
         </div>
       </div>
