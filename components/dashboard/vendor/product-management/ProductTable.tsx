@@ -16,7 +16,7 @@ import {
   Loader2,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useVendorProducts, useDeleteProduct } from '@/hooks/api/useProduct';
+import { useVendorProducts, useAdminProducts, useDeleteProduct } from '@/hooks/api/useProduct';
 import { useCategories } from '@/hooks/api/useCategory';
 import type { Product } from '@/lib/api/product';
 
@@ -65,13 +65,18 @@ export default function ProductTable() {
   const limit = 10;
 
   // Fetch real product data via TanStack Query hook
-  const { data, isLoading, isError, refetch } = useVendorProducts({
+  const queryParams = {
     page: currentPage,
     limit,
     searchTerm: searchTerm || undefined,
     categoryId: selectedCategory || undefined,
     status: selectedStatus !== 'All' ? selectedStatus : undefined,
-  });
+  };
+
+  const vendorQuery = useVendorProducts(queryParams, !isAdmin);
+  const adminQuery = useAdminProducts(queryParams, isAdmin);
+
+  const { data, isLoading, isError, refetch } = isAdmin ? adminQuery : vendorQuery;
 
   // Fetch categories for category filter dropdown
   const { data: categoryData } = useCategories(1, 100);

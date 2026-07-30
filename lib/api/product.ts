@@ -160,6 +160,14 @@ export const getVendorProducts = async (params?: ProductQueryParams) => {
   return unwrapList(data);
 };
 
+export const getAdminProducts = async (params?: ProductQueryParams) => {
+  const query = buildQuery(params);
+  const { data } = await apiClient.get<ApiResponse<Product[]>>(
+    `/products/admin${query ? `?${query}` : ''}`,
+  );
+  return unwrapList(data);
+};
+
 export const getProductBySlug = async (slug: string) => {
   const { data } = await apiClient.get<ApiResponse<Product>>(`/products/${slug}`);
   return data.data;

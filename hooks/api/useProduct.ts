@@ -7,6 +7,7 @@ import {
   getRelatedProducts,
   getVendorProductById,
   getVendorProducts,
+  getAdminProducts,
   getVendorProductStats,
   updateProduct,
   updateProductStatus,
@@ -17,10 +18,18 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 export const useProducts = (params?: ProductQueryParams) =>
   useQuery({ queryKey: ['products', 'public', params], queryFn: () => getProducts(params) });
 
-export const useVendorProducts = (params?: ProductQueryParams) =>
+export const useVendorProducts = (params?: ProductQueryParams, enabled: boolean = true) =>
   useQuery({
     queryKey: ['products', 'vendor', params],
     queryFn: () => getVendorProducts(params),
+    enabled,
+  });
+
+export const useAdminProducts = (params?: ProductQueryParams, enabled: boolean = true) =>
+  useQuery({
+    queryKey: ['products', 'admin', params],
+    queryFn: () => getAdminProducts(params),
+    enabled,
   });
 
 export const useProduct = (slug: string) =>
