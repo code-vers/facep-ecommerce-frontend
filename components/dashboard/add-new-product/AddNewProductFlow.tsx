@@ -4,7 +4,14 @@ import { useMutation } from '@tanstack/react-query';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { toast } from 'sonner';
+import type { AxiosError } from 'axios';
 import { apiClient } from '../../../lib/api/axios';
+import {
+  buildProductPayload,
+  PRODUCT_STEP_BY_FIELD,
+  validateProductStep,
+} from '../../../lib/product-form';
 import { useProductFormStore } from '../../../store/useProductFormStore';
 import MediaAndVariants from './MediaAndVariants';
 import PricingAndInventory from './PricingAndInventory';
@@ -14,143 +21,70 @@ import ReviewAndSubmitStep from './ReviewAndSubmitStep';
 import ShippingStep from './ShippingStep';
 import Stepper from './Stepper';
 
-export default function AddNewProductFlow() {
+interface AddNewProductFlowProps {
+  productId?: string;
+}
+
+export default function AddNewProductFlow({ productId }: AddNewProductFlowProps) {
   const router = useRouter();
   const store = useProductFormStore();
   const [currentStep, setCurrentStep] = useState(1);
-  const totalSteps = 6;
   const [submitError, setSubmitError] = useState('');
-
-  const stepMapping: Record<string, number> = {
-    brand: 1, productType: 1, shortDescription: 1, categoryId: 1, subcategoryId: 1, tags: 1, condition: 1, availableColors: 1,
-    thumbnail: 2, previewImages: 2, variants: 2,
-    basePrice: 3, oldPrice: 3, discountType: 3, discountValue: 3, dealBadgeText: 3, dealStartDate: 3, dealEndDate: 3, taxAmount: 3, vatGst: 3, importCharges: 3, handlingFee: 3,
-    shipsFrom: 4, minDeliveryDays: 4, maxDeliveryDays: 4, shippingFeeType: 4, shippingCost: 4, shippingZoneId: 4, courierId: 4,
-    specifications: 5, keyFeatures: 5, detailedDescription: 5, returnPolicy: 5, returnTerms: 5, sku: 5, stockQuantity: 5, stockStatus: 5, lowStockAlertQuantity: 5, minOrderQuantity: 5, maxOrderQuantity: 5, inventoryManagedBy: 5, warehouseLocation: 5,
-  };
+  const totalSteps = 6;
 
   const submitMutation = useMutation({
-    mutationFn: async (payload: any) => {
-      const res = await apiClient.post('/products', payload);
-      return res.data;
+    mutationFn: async () => {
+      const payload = buildProductPayload(store);
+      const response = productId
+        ? await apiClient.patch(`/products/${productId}`, payload)
+        : await apiClient.post('/products', payload);
+      return response.data;
     },
     onSuccess: () => {
       store.resetForm();
-      router.push('/dashboard/products'); // Redirect on success
+      toast.success(productId ? 'Product updated successfully' : 'Product added successfully');
+      router.push('/dashboard/products');
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<{ errorSources?: Array<{ path: string; message: string }>; message?: string }>) => {
       const data = error.response?.data;
-      if (data?.errorSources && data.errorSources.length > 0) {
-        const errorPath = data.errorSources[0].path;
-        const targetStep = stepMapping[errorPath] || 6;
-        setSubmitError(`Validation error in Step ${targetStep} (${errorPath}): ${data.errorSources[0].message}`);
+      const source = data?.errorSources?.[0];
+      if (source) {
+        const path = String(source.path).split('.').pop() ?? '';
+        const targetStep = PRODUCT_STEP_BY_FIELD[path] || 6;
+        setSubmitError(source.message);
         setCurrentStep(targetStep);
       } else {
-        setSubmitError(data?.message || 'Failed to add product');
+        setSubmitError(data?.message || `Failed to ${productId ? 'update' : 'add'} product`);
       }
     },
   });
 
   const handleNext = () => {
+    setSubmitError('');
     if (currentStep < totalSteps) {
-      setCurrentStep(currentStep + 1);
-    } else {
-      // Submit form
-      setSubmitError('');
-
-      const payload = {
-        name: store.brand, // mapping brand to name, or we can use shortDescription
-        shortDescription: store.shortDescription,
-        productType: store.productType,
-        categoryId: store.categoryId,
-        subcategoryId: store.subcategoryId || undefined,
-        tags: store.tags,
-        condition: store.condition,
-        availableColors: store.availableColors,
-        thumbnail: store.thumbnail,
-        previewImages: store.previewImages,
-        hasVariants: store.hasVariants,
-
-        // mapped dynamically for create variants
-        variants:
-          store.hasVariants && store.variants.length > 0
-            ? store.variants.map((v) => ({
-                sku: v.sku,
-                image: v.image || undefined,
-                color: v.color || undefined,
-                size: v.size || undefined,
-                price: v.price,
-                stock: v.stock,
-              }))
-            : [],
-
-        basePrice: store.basePrice || 0,
-        oldPrice: store.oldPrice || undefined,
-        discountType: store.discountType || undefined,
-        discountValue: store.discountValue || undefined,
-        dealBadgeText: store.dealBadgeText || undefined,
-        dealStartDate: store.dealStartDate
-          ? new Date(store.dealStartDate).toISOString()
-          : undefined,
-        dealEndDate: store.dealEndDate ? new Date(store.dealEndDate).toISOString() : undefined,
-
-        taxAmount: store.taxAmount || undefined,
-        vatGst: store.vatGst || undefined,
-        importCharges: store.importCharges || undefined,
-        handlingFee: store.handlingFee || undefined,
-
-        shipsFrom: store.shipsFrom || undefined,
-        minDeliveryDays: store.minDeliveryDays || undefined,
-        maxDeliveryDays: store.maxDeliveryDays || undefined,
-        shippingFeeType: store.shippingFeeType,
-        shippingCost: store.shippingFeeType === 'STANDARD' ? store.shippingCost || 0 : 0,
-        shippingZoneId:
-          store.shippingFeeType === 'PREDEFINED' && store.shippingZoneId
-            ? store.shippingZoneId
-            : undefined,
-        courierId:
-          store.shippingFeeType === 'PREDEFINED' && store.courierId ? store.courierId : undefined,
-
-        deliveryStandard: store.deliveryStandard,
-        deliveryCod: store.deliveryCod,
-        deliveryExpress: store.deliveryExpress,
-        deliveryReturnPickup: store.deliveryReturnPickup,
-
-        specifications:
-          store.specifications.length > 0
-            ? store.specifications.map((s) => ({
-                name: s.name,
-                value: s.value,
-              }))
-            : [],
-
-        keyFeatures: store.keyFeatures || undefined,
-        detailedDescription: store.detailedDescription || undefined,
-        returnPolicy: store.returnPolicy || undefined,
-        returnTerms: store.returnTerms || undefined,
-
-        sku: store.sku,
-        stockQuantity: store.stockQuantity || 0,
-        stockStatus: store.stockStatus,
-        lowStockAlertQuantity: store.lowStockAlertQuantity || undefined,
-        minOrderQuantity: store.minOrderQuantity || 1,
-        maxOrderQuantity: store.maxOrderQuantity || undefined,
-        inventoryManagedBy: store.inventoryManagedBy || undefined,
-        warehouseLocation: store.warehouseLocation || undefined,
-      };
-
-      submitMutation.mutate(payload);
+      const error = validateProductStep(store, currentStep);
+      if (error) {
+        setSubmitError(error);
+        return;
+      }
+      setCurrentStep((step) => step + 1);
+      return;
     }
-  };
-
-  const handleBack = () => {
-    if (currentStep > 1) setCurrentStep(currentStep - 1);
+    for (let step = 1; step <= 5; step += 1) {
+      const error = validateProductStep(store, step);
+      if (error) {
+        setSubmitError(error);
+        setCurrentStep(step);
+        return;
+      }
+    }
+    submitMutation.mutate();
   };
 
   const renderStep = () => {
     switch (currentStep) {
       case 1:
-        return <ProductBasics onNext={handleNext} onBack={handleBack} />;
+        return <ProductBasics onNext={handleNext} onBack={() => undefined} />;
       case 2:
         return <MediaAndVariants />;
       case 3:
@@ -160,7 +94,7 @@ export default function AddNewProductFlow() {
       case 5:
         return <ProductDetailsStep />;
       case 6:
-        return <ReviewAndSubmitStep />;
+        return <ReviewAndSubmitStep onEditStep={setCurrentStep} />;
       default:
         return null;
     }
@@ -171,8 +105,6 @@ export default function AddNewProductFlow() {
       <div className='flex flex-col items-start w-full'>
         <Stepper currentStep={currentStep} />
       </div>
-
-      {/* Form Content */}
       <div className='w-full'>
         {renderStep()}
         {submitError && (
@@ -181,10 +113,9 @@ export default function AddNewProductFlow() {
           </div>
         )}
       </div>
-
       <div className='flex gap-[16px] items-center'>
         <button
-          onClick={handleBack}
+          onClick={() => currentStep > 1 && setCurrentStep((step) => step - 1)}
           disabled={currentStep === 1 || submitMutation.isPending}
           className='bg-white border-[0.75px] border-[#686f7d] flex items-center justify-center min-w-[80px] px-[16px] py-[12px] rounded-[2px] disabled:opacity-50'
         >
@@ -198,7 +129,9 @@ export default function AddNewProductFlow() {
           {submitMutation.isPending ? (
             <span className='font-normal text-[16px] text-white'>Submitting...</span>
           ) : currentStep === 6 ? (
-            <span className='font-normal text-[16px] text-white'>Submit</span>
+            <span className='font-normal text-[16px] text-white'>
+              {productId ? 'Update' : 'Submit'}
+            </span>
           ) : (
             <ArrowRight size={24} className='text-white' />
           )}

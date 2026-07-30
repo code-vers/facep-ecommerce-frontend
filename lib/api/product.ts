@@ -22,13 +22,18 @@ export interface ProductSpecification {
 export interface ProductVendor {
   id: string;
   name: string;
-  email: string;
+  email?: string;
 }
 
 export interface Product {
   id: string;
+  name: string;
+  slug: string;
   sku: string;
   vendorId?: string | null;
+  vendor?: ProductVendor | null;
+  isActive: boolean;
+  publishedAt: string;
   brand?: string | null;
   productType?: string | null;
   shortDescription?: string | null;
@@ -36,14 +41,14 @@ export interface Product {
   category?: Category | null;
   subcategoryId?: string | null;
   subcategory?: Subcategory | null;
-  vendor?: ProductVendor | null;
-  tags?: string[];
-  condition?: 'NEW' | 'RENEWED' | 'USED';
-  availableColors?: string[];
+  tags: string[];
+  condition: 'NEW' | 'RENEWED' | 'USED';
+  availableColors: string[];
   thumbnail: string;
-  previewImages?: string[];
-  hasVariants?: boolean;
-  variants?: ProductVariant[];
+  previewImages: string[];
+  hasVariants: boolean;
+  variants: ProductVariant[];
+  specifications: ProductSpecification[];
   basePrice: number | string;
   oldPrice?: number | string | null;
   discountType?: 'PERCENTAGE' | 'FIXED' | null;
@@ -55,26 +60,26 @@ export interface Product {
   vatGst?: number | string | null;
   importCharges?: number | string | null;
   handlingFee?: number | string | null;
-  shipsFrom?: string | null;
-  minDeliveryDays?: number | null;
-  maxDeliveryDays?: number | null;
-  shippingFeeType?: 'FREE' | 'STANDARD' | 'PREDEFINED';
+  shipsFrom: string;
+  minDeliveryDays: number;
+  maxDeliveryDays: number;
+  shippingFeeType: 'FREE' | 'STANDARD' | 'PREDEFINED';
   shippingCost?: number | string | null;
   shippingZoneId?: string | null;
   courierId?: string | null;
-  deliveryStandard?: boolean;
-  deliveryCod?: boolean;
-  deliveryExpress?: boolean;
-  deliveryReturnPickup?: boolean;
+  deliveryStandard: boolean;
+  deliveryCod: boolean;
+  deliveryExpress: boolean;
+  deliveryReturnPickup: boolean;
   keyFeatures?: string | null;
   detailedDescription?: string | null;
   returnPolicy?: string | null;
   returnTerms?: string | null;
   stockQuantity: number;
   stockStatus: 'AVAILABLE' | 'OUT_OF_STOCK';
-  lowStockAlertQuantity?: number | null;
-  minOrderQuantity?: number | null;
-  maxOrderQuantity?: number | null;
+  lowStockAlertQuantity: number;
+  minOrderQuantity: number;
+  maxOrderQuantity: number;
   inventoryManagedBy?: string | null;
   warehouseLocation?: string | null;
   createdAt: string;
@@ -84,10 +89,36 @@ export interface Product {
 export interface ProductQueryParams {
   page?: number;
   limit?: number;
+  search?: string;
   searchTerm?: string;
+  category?: string;
   categoryId?: string;
-  vendorId?: string;
+  subcategory?: string;
+  condition?: string;
+  color?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  hasDiscount?: boolean;
+  inStock?: boolean;
   status?: string;
+  sort?: string;
+}
+
+export interface ProductStats {
+  total: number;
+  active: number;
+  inactive: number;
+  inStock: number;
+  outOfStock: number;
+  lowStock: number;
+}
+
+export interface ProductFacets {
+  categories: Array<Category & { _count?: { products: number } }>;
+  vendors: Array<{ id: string; name: string; _count: { products: number } }>;
+  price: { min: number | string; max: number | string };
+  colors: string[];
+  conditions: string[];
 }
 
 export interface ApiResponse<T> {
@@ -102,46 +133,76 @@ export interface ApiResponse<T> {
   };
 }
 
-export const getProducts = async (
-  params?: ProductQueryParams,
-): Promise<{ data: Product[]; meta?: ApiResponse<Product[]>['meta'] }> => {
+const buildQuery = (params?: ProductQueryParams) => {
   const query = new URLSearchParams();
-
-  if (params?.page) query.append('page', params.page.toString());
-  if (params?.limit) query.append('limit', params.limit.toString());
-  if (params?.searchTerm) query.append('searchTerm', params.searchTerm);
-  if (params?.categoryId) query.append('categoryId', params.categoryId);
-  if (params?.vendorId) query.append('vendorId', params.vendorId);
-  if (params?.status) query.append('status', params.status);
-
-  const queryString = query.toString();
-  const endpoint = `/products${queryString ? `?${queryString}` : ''}`;
-
-  const { data } = await apiClient.get<ApiResponse<Product[]>>(endpoint);
-  return { data: data.data, meta: data.meta };
+  Object.entries(params ?? {}).forEach(([key, value]) => {
+    if (value !== undefined && value !== '' && value !== false) query.set(key, String(value));
+  });
+  return query.toString();
 };
 
-export const getProductById = async (id: string): Promise<Product> => {
-  const { data } = await apiClient.get<ApiResponse<Product>>(`/products/${id}`);
+const unwrapList = (response: ApiResponse<Product[]>) => ({
+  data: response.data,
+  meta: response.meta,
+});
+
+export const getProducts = async (params?: ProductQueryParams) => {
+  const query = buildQuery(params);
+  const { data } = await apiClient.get<ApiResponse<Product[]>>(`/products${query ? `?${query}` : ''}`);
+  return unwrapList(data);
+};
+
+export const getVendorProducts = async (params?: ProductQueryParams) => {
+  const query = buildQuery(params);
+  const { data } = await apiClient.get<ApiResponse<Product[]>>(
+    `/products/vendor/mine${query ? `?${query}` : ''}`,
+  );
+  return unwrapList(data);
+};
+
+export const getProductBySlug = async (slug: string) => {
+  const { data } = await apiClient.get<ApiResponse<Product>>(`/products/${slug}`);
   return data.data;
 };
 
-export const createProduct = async (payload: Partial<Product>): Promise<Product> => {
+export const getVendorProductById = async (id: string) => {
+  const { data } = await apiClient.get<ApiResponse<Product>>(`/products/vendor/${id}`);
+  return data.data;
+};
+
+export const getRelatedProducts = async (slug: string) => {
+  const { data } = await apiClient.get<ApiResponse<Product[]>>(`/products/${slug}/related`);
+  return data.data;
+};
+
+export const getProductFacets = async () => {
+  const { data } = await apiClient.get<ApiResponse<ProductFacets>>('/products/facets');
+  return data.data;
+};
+
+export const getVendorProductStats = async () => {
+  const { data } = await apiClient.get<ApiResponse<ProductStats>>('/products/vendor/stats');
+  return data.data;
+};
+
+export const createProduct = async (payload: Partial<Product>) => {
   const { data } = await apiClient.post<ApiResponse<Product>>('/products', payload);
   return data.data;
 };
 
-export const updateProduct = async ({
-  id,
-  ...payload
-}: {
-  id: string;
-} & Partial<Product>): Promise<Product> => {
+export const updateProduct = async ({ id, ...payload }: { id: string } & Partial<Product>) => {
   const { data } = await apiClient.patch<ApiResponse<Product>>(`/products/${id}`, payload);
   return data.data;
 };
 
-export const deleteProduct = async (id: string): Promise<Product> => {
+export const updateProductStatus = async ({ id, isActive }: { id: string; isActive: boolean }) => {
+  const { data } = await apiClient.patch<ApiResponse<Product>>(`/products/${id}/status`, {
+    isActive,
+  });
+  return data.data;
+};
+
+export const deleteProduct = async (id: string) => {
   const { data } = await apiClient.delete<ApiResponse<Product>>(`/products/${id}`);
   return data.data;
 };

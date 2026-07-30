@@ -21,6 +21,7 @@ export interface ISpecification {
 
 export interface ProductFormState {
   // Step 1: Basics
+  name: string;
   sku: string;
   brand: string;
   productType: string;
@@ -82,9 +83,11 @@ export interface ProductFormState {
 interface ProductFormStore extends ProductFormState {
   setField: <K extends keyof ProductFormState>(field: K, value: ProductFormState[K]) => void;
   resetForm: () => void;
+  loadProduct: (product: Partial<ProductFormState>) => void;
 }
 
 const initialState: ProductFormState = {
+  name: '',
   sku: '',
   brand: '',
   productType: '',
@@ -145,9 +148,11 @@ export const useProductFormStore = create<ProductFormStore>()(
       ...initialState,
       setField: (field, value) => set((state) => ({ ...state, [field]: value })),
       resetForm: () => set(initialState),
+      loadProduct: (product) => set((state) => ({ ...state, ...product })),
     }),
     {
       name: 'add-new-product-draft', // localStorage key
+      version: 2,
       partialize: (state) => Object.fromEntries(
         Object.entries(state).filter(([key]) => typeof state[key as keyof ProductFormState] !== 'function')
       ),

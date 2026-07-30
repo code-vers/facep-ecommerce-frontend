@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { ChevronDown, X } from 'lucide-react';
 import React, { useState } from 'react';
 import { apiClient } from '../../../lib/api/axios';
+import type { Category } from '../../../lib/api/category';
 import { useProductFormStore } from '../../../store/useProductFormStore';
 
 interface ProductBasicsProps {
@@ -20,11 +21,11 @@ export default function ProductBasics({}: ProductBasicsProps) {
   const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
 
   // Fetch Categories
-  const { data: categoriesData } = useQuery({
+  const { data: categoriesData } = useQuery<Category[]>({
     queryKey: ['categories'],
     queryFn: async () => {
       const res = await apiClient.get('/categories');
-      return res.data?.data || [];
+      return (res.data?.data || []) as Category[];
     },
   });
 
@@ -69,7 +70,7 @@ export default function ProductBasics({}: ProductBasicsProps) {
     );
   };
 
-  const activeCategory = categoriesData?.find((c: any) => c.id === store.categoryId);
+  const activeCategory = categoriesData?.find((category) => category.id === store.categoryId);
   const subcategories = activeCategory?.subcategories || [];
 
   return (
@@ -83,32 +84,45 @@ export default function ProductBasics({}: ProductBasicsProps) {
 
           <div className='flex flex-col gap-4 md:gap-4.5 w-full'>
             <div className='flex flex-col md:flex-row gap-4 md:gap-6 w-full'>
-              {/* Store / Brand */}
+              {/* Product Name */}
               <div className='flex flex-col gap-2 flex-1 w-full'>
-                <p className='font-normal leading-[1.2] text-[16px] text-black'>Store / Brand</p>
+                <p className='font-normal leading-[1.2] text-[16px] text-black'>Product Name</p>
                 <div className='border border-[#e5e5e6] bg-white flex items-center justify-between px-3 py-2.5 rounded-sm w-full relative'>
                   <input
                     type='text'
-                    value={store.brand}
-                    onChange={(e) => store.setField('brand', e.target.value)}
-                    placeholder='e.g. Plant House'
+                    value={store.name}
+                    onChange={(e) => store.setField('name', e.target.value)}
+                    placeholder='e.g. Aloe Vera Plant'
                     className='w-full bg-transparent outline-none font-normal leading-[1.3] text-[14px] text-black placeholder:text-[#848995] pr-6'
                   />
                 </div>
               </div>
 
-              {/* Product Type */}
+              {/* Store / Brand */}
               <div className='flex flex-col gap-2 flex-1 w-full'>
-                <p className='font-normal leading-[1.2] text-[16px] text-black'>Product Type</p>
+                <p className='font-normal leading-[1.2] text-[16px] text-black'>Store / Brand</p>
                 <div className='border border-[#e5e5e6] bg-white flex items-center px-3 py-2.5 rounded-sm w-full'>
                   <input
                     type='text'
-                    value={store.productType}
-                    onChange={(e) => store.setField('productType', e.target.value)}
-                    placeholder='e.g. Plant'
+                    value={store.brand}
+                    onChange={(e) => store.setField('brand', e.target.value)}
+                    placeholder='e.g. Plant House'
                     className='w-full bg-transparent outline-none font-normal leading-[1.3] text-[14px] text-black placeholder:text-[#848995]'
                   />
                 </div>
+              </div>
+            </div>
+
+            <div className='flex flex-col gap-2 w-full'>
+              <p className='font-normal leading-[1.2] text-[16px] text-black'>Product Type</p>
+              <div className='border border-[#e5e5e6] bg-white flex items-center px-3 py-2.5 rounded-sm w-full'>
+                <input
+                  type='text'
+                  value={store.productType}
+                  onChange={(e) => store.setField('productType', e.target.value)}
+                  placeholder='e.g. Plant'
+                  className='w-full bg-transparent outline-none font-normal leading-[1.3] text-[14px] text-black placeholder:text-[#848995]'
+                />
               </div>
             </div>
 
@@ -152,7 +166,7 @@ export default function ProductBasics({}: ProductBasicsProps) {
                     <option value='' disabled>
                       Select Category
                     </option>
-                    {categoriesData?.map((cat: any) => (
+                    {categoriesData?.map((cat) => (
                       <option key={cat.id} value={cat.id}>
                         {cat.name}
                       </option>
@@ -175,7 +189,7 @@ export default function ProductBasics({}: ProductBasicsProps) {
                     <option value='' disabled>
                       Select Subcategory
                     </option>
-                    {subcategories.map((sub: any) => (
+                    {subcategories.map((sub) => (
                       <option key={sub.id} value={sub.id}>
                         {sub.name}
                       </option>
@@ -217,13 +231,13 @@ export default function ProductBasics({}: ProductBasicsProps) {
             <div className='flex flex-col gap-3 w-full mt-2'>
               <p className='font-normal leading-[1.2] text-[16px] text-black'>Condition</p>
               <div className='flex items-center gap-6 w-full'>
-                {['NEW', 'RENEWED', 'USED'].map((status) => (
+                {(['NEW', 'RENEWED', 'USED'] as const).map((status) => (
                   <label key={status} className='flex items-center gap-2 cursor-pointer'>
                     <input
                       type='radio'
                       name='condition'
                       checked={store.condition === status}
-                      onChange={() => store.setField('condition', status as any)}
+                      onChange={() => store.setField('condition', status)}
                       className='w-4 h-4 border-gray-300 focus:ring-[#f09000] text-[#f09000]'
                     />
                     <span className='text-[14px] text-[#42454d] capitalize'>

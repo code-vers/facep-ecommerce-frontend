@@ -16,7 +16,7 @@ import {
   Loader2,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useProducts, useDeleteProduct } from '@/hooks/api/useProduct';
+import { useVendorProducts, useDeleteProduct } from '@/hooks/api/useProduct';
 import { useCategories } from '@/hooks/api/useCategory';
 import type { Product } from '@/lib/api/product';
 
@@ -32,6 +32,7 @@ const getImageUrl = (path?: string | null) => {
 
 // Helper to format title accurately from API response fields
 const getProductTitle = (product: Product) => {
+  if (product.name && product.name.trim()) return product.name;
   if (product.brand && product.brand.trim()) return product.brand;
   if (product.productType && product.productType.trim()) return product.productType;
   if (product.shortDescription && product.shortDescription.trim()) return product.shortDescription;
@@ -63,16 +64,12 @@ export default function ProductTable() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const limit = 10;
 
-  // Determine vendor filter (vendor only gets their products, admin gets all)
-  const vendorId = isAdmin ? undefined : session?.user?.id;
-
   // Fetch real product data via TanStack Query hook
-  const { data, isLoading, isError, refetch } = useProducts({
+  const { data, isLoading, isError, refetch } = useVendorProducts({
     page: currentPage,
     limit,
     searchTerm: searchTerm || undefined,
     categoryId: selectedCategory || undefined,
-    vendorId,
     status: selectedStatus !== 'All' ? selectedStatus : undefined,
   });
 
@@ -346,20 +343,19 @@ export default function ProductTable() {
                     <td className="px-4 py-2 whitespace-nowrap">
                       <div className="flex items-center justify-center gap-3 text-[#42454D]">
                         <Link
-                          href={`/product/${product.id}`}
+                          href={`/products/${product.slug}`}
                           className="hover:text-[#165DD0] active:scale-95 transition-all p-0.5"
                           title="View Details"
                         >
                           <Eye size={16} />
                         </Link>
-                        <button
-                          type="button"
-                          onClick={() => alert(`Edit product ${product.id}`)}
+                        <Link
+                          href={`/dashboard/products/${product.id}/edit`}
                           className="hover:text-[#F09000] active:scale-95 transition-all p-0.5"
                           title="Edit Product"
                         >
                           <PenLine size={16} />
-                        </button>
+                        </Link>
                         <button
                           type="button"
                           onClick={() => handleDelete(product.id, title)}
