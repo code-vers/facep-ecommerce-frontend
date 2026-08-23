@@ -3,8 +3,10 @@ import {
   deleteDeal,
   getActiveDeal,
   getDeals,
+  getUnavailableDealCategoryIds,
   updateDeal,
 } from '@/lib/api/deal';
+import { useAuth } from '@/contexts/AuthContext';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export const useDeals = (page = 1, limit = 10) => {
@@ -21,6 +23,18 @@ export const useActiveDeal = () => {
   });
 };
 
+export const useUnavailableDealCategoryIds = (excludeDealId?: string) => {
+  const { session } = useAuth();
+  const userId = session?.user.id;
+
+  return useQuery({
+    // Availability is role/user-specific: never reuse an admin result for a vendor.
+    queryKey: ['deals', 'unavailable-categories', userId, excludeDealId],
+    queryFn: () => getUnavailableDealCategoryIds(excludeDealId),
+    enabled: Boolean(userId),
+  });
+};
+
 export const useCreateDeal = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -28,6 +42,7 @@ export const useCreateDeal = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['deals'] });
       queryClient.invalidateQueries({ queryKey: ['activeDeal'] });
+      queryClient.invalidateQueries({ queryKey: ['deals', 'unavailable-categories'] });
     },
   });
 };
@@ -39,6 +54,7 @@ export const useUpdateDeal = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['deals'] });
       queryClient.invalidateQueries({ queryKey: ['activeDeal'] });
+      queryClient.invalidateQueries({ queryKey: ['deals', 'unavailable-categories'] });
     },
   });
 };
@@ -50,6 +66,7 @@ export const useDeleteDeal = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['deals'] });
       queryClient.invalidateQueries({ queryKey: ['activeDeal'] });
+      queryClient.invalidateQueries({ queryKey: ['deals', 'unavailable-categories'] });
     },
   });
 };

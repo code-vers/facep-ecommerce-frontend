@@ -10,7 +10,9 @@ import {
   getAdminProducts,
   getVendorProductStats,
   updateProduct,
+  updateProductPromotion,
   updateProductStatus,
+  removeProductPromotion,
   type ProductQueryParams,
 } from '@/lib/api/product';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -72,4 +74,6 @@ const useProductMutation = <TVariables,>(
 export const useCreateProduct = () => useProductMutation(createProduct);
 export const useUpdateProduct = () => useProductMutation(updateProduct);
 export const useUpdateProductStatus = () => useProductMutation(updateProductStatus);
+export const useUpdateProductPromotion = () => useProductMutation(updateProductPromotion);
+export const useRemoveProductPromotion = () => useProductMutation(removeProductPromotion);
 export const useDeleteProduct = () => useProductMutation(deleteProduct);
