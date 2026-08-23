@@ -10,9 +10,15 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export const useDeals = (page = 1, limit = 10) => {
+  const { session } = useAuth();
+  const userId = session?.user.id;
+
   return useQuery({
-    queryKey: ['deals', page, limit],
+    // Deals are permission-scoped. Keep each user's result in a separate cache entry
+    // so changing accounts cannot briefly show the previous vendor's promotions.
+    queryKey: ['deals', userId, page, limit],
     queryFn: () => getDeals(page, limit),
+    enabled: Boolean(userId),
   });
 };
 

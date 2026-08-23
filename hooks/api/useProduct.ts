@@ -15,17 +15,23 @@ import {
   removeProductPromotion,
   type ProductQueryParams,
 } from '@/lib/api/product';
+import { useAuth } from '@/contexts/AuthContext';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export const useProducts = (params?: ProductQueryParams) =>
   useQuery({ queryKey: ['products', 'public', params], queryFn: () => getProducts(params) });
 
-export const useVendorProducts = (params?: ProductQueryParams, enabled: boolean = true) =>
-  useQuery({
-    queryKey: ['products', 'vendor', params],
+export const useVendorProducts = (params?: ProductQueryParams, enabled: boolean = true) => {
+  const { session } = useAuth();
+  const userId = session?.user.id;
+
+  return useQuery({
+    // Vendor product data belongs to the logged-in vendor, not just the route.
+    queryKey: ['products', 'vendor', userId, params],
     queryFn: () => getVendorProducts(params),
-    enabled,
+    enabled: enabled && Boolean(userId),
   });
+};
 
 export const useAdminProducts = (params?: ProductQueryParams, enabled: boolean = true) =>
   useQuery({
@@ -41,12 +47,16 @@ export const useProduct = (slug: string) =>
     enabled: Boolean(slug),
   });
 
-export const useVendorProduct = (id: string) =>
-  useQuery({
-    queryKey: ['products', 'vendor-detail', id],
+export const useVendorProduct = (id: string) => {
+  const { session } = useAuth();
+  const userId = session?.user.id;
+
+  return useQuery({
+    queryKey: ['products', 'vendor-detail', userId, id],
     queryFn: () => getVendorProductById(id),
-    enabled: Boolean(id),
+    enabled: Boolean(userId && id),
   });
+};
 
 export const useRelatedProducts = (slug: string) =>
   useQuery({
@@ -58,8 +68,16 @@ export const useRelatedProducts = (slug: string) =>
 export const useProductFacets = () =>
   useQuery({ queryKey: ['products', 'facets'], queryFn: getProductFacets });
 
-export const useVendorProductStats = () =>
-  useQuery({ queryKey: ['products', 'vendor-stats'], queryFn: getVendorProductStats });
+export const useVendorProductStats = () => {
+  const { session } = useAuth();
+  const userId = session?.user.id;
+
+  return useQuery({
+    queryKey: ['products', 'vendor-stats', userId],
+    queryFn: getVendorProductStats,
+    enabled: Boolean(userId),
+  });
+};
 
 const useProductMutation = <TVariables,>(
   mutationFn: (variables: TVariables) => Promise<unknown>,
