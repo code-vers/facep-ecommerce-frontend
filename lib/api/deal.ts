@@ -8,6 +8,10 @@ export interface Deal {
   bannerImage?: string;
   bannerBgColor?: string;
   categoryIds: string[];
+  categoryDetails?: Array<{ id: string; name: string }>;
+  createdById?: string | null;
+  createdBy?: { id: string; name: string; email: string } | null;
+  addedBy?: 'ADMIN' | 'VENDOR' | null;
   discountStartPercent?: number;
   discountEndPercent?: number;
   startDate?: string;
@@ -23,7 +27,7 @@ export interface CreateDealPayload {
   bannerSubheading?: string;
   bannerImage?: string;
   bannerBgColor?: string;
-  categoryIds?: string[];
+  categoryIds: string[];
   discountStartPercent?: number;
   discountEndPercent?: number;
   startDate?: string;
@@ -57,6 +61,12 @@ export const getDeals = async (
 
 export const getActiveDeal = async (): Promise<Deal | null> => {
   const { data } = await apiClient.get<ApiResponse<Deal | null>>('/deals/active');
+  return data.data;
+};
+
+export const getUnavailableDealCategoryIds = async (excludeDealId?: string): Promise<string[]> => {
+  const query = excludeDealId ? `?excludeDealId=${encodeURIComponent(excludeDealId)}` : '';
+  const { data } = await apiClient.get<ApiResponse<string[]>>(`/deals/category-availability${query}`);
   return data.data;
 };
 
