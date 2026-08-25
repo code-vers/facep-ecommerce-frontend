@@ -8,7 +8,7 @@ import imageCompression from 'browser-image-compression';
 import { toast } from 'sonner';
 
 import { useCategories } from '@/hooks/api/useCategory';
-import { useActiveDeal, useCreateDeal, useUpdateDeal } from '@/hooks/api/useDeal';
+import { useCreateDeal, useUnavailableDealCategoryIds, useUpdateDeal } from '@/hooks/api/useDeal';
 import { apiClient } from '@/lib/api/axios';
 import { Deal } from '@/lib/api/deal';
 import { AxiosError } from 'axios';
@@ -19,10 +19,19 @@ interface AdminPromotionsProps {
   onSuccess?: () => void;
 }
 
+type UnavailableCategoryTooltip = {
+  name: string;
+  x: number;
+  y: number;
+};
+
 export default function AdminPromotions({ dealToEdit, onBack, onSuccess }: AdminPromotionsProps) {
   // Queries & Mutations
   const { data: categoriesData, isLoading: isLoadingCategories } = useCategories(1, 100);
-  const { data: activeDeal } = useActiveDeal();
+  const { data: unavailableCategoryIdsResponse } = useUnavailableDealCategoryIds(dealToEdit?.id);
+  const unavailableCategoryIds = Array.isArray(unavailableCategoryIdsResponse)
+    ? unavailableCategoryIdsResponse
+    : [];
   const createDealMutation = useCreateDeal();
   const updateDealMutation = useUpdateDeal();
 
@@ -39,6 +48,7 @@ export default function AdminPromotions({ dealToEdit, onBack, onSuccess }: Admin
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [categorySearch, setCategorySearch] = useState('');
+  const [unavailableTooltip, setUnavailableTooltip] = useState<UnavailableCategoryTooltip | null>(null);
 
   // Banner Modal & Upload State
   const [isBannerModalOpen, setIsBannerModalOpen] = useState(false);
@@ -127,9 +137,13 @@ export default function AdminPromotions({ dealToEdit, onBack, onSuccess }: Admin
 
   // Toggle category selection
   const toggleCategory = (id: string) => {
-    setSelectedCategoryIds((prev) =>
-      prev.includes(id) ? prev.filter((catId) => catId !== id) : [...prev, id]
-    );
+    setSelectedCategoryIds((prev) => {
+      // Removing a current category must always be possible while editing.
+      if (prev.includes(id)) return prev.filter((catId) => catId !== id);
+      // Only prevent adding a category reserved by another deal in this actor's scope.
+      if (unavailableCategoryIds.includes(id)) return prev;
+      return [...prev, id];
+    });
   };
 
   // Filter categories by search keyword
@@ -142,6 +156,10 @@ export default function AdminPromotions({ dealToEdit, onBack, onSuccess }: Admin
   const handleSubmit = async () => {
     if (!dealTitle.trim()) {
       toast.error('Please enter a Deal Name before saving');
+      return;
+    }
+    if (!selectedCategoryIds.length) {
+      toast.error('Select at least one category for this deal.');
       return;
     }
 
@@ -352,25 +370,53 @@ export default function AdminPromotions({ dealToEdit, onBack, onSuccess }: Admin
             <div className='w-full grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-y-4 gap-x-2 mt-4 max-h-60 overflow-y-auto p-1 border border-[#f2f2f3] rounded-xs'>
               {filteredCategories.map((category) => {
                 const isSelected = selectedCategoryIds.includes(category.id);
+                // A category already selected in the current edit form remains removable.
+                const isUnavailable =
+                  unavailableCategoryIds.includes(category.id) && !isSelected;
                 return (
-                  <label
-                    key={category.id}
-                    onClick={() => toggleCategory(category.id)}
-                    className='flex items-center gap-2 cursor-pointer w-fit select-none py-1 px-1 rounded hover:bg-gray-50'
-                  >
-                    {isSelected ? (
-                      <div className='w-3.5 h-3.5 rounded-xs bg-[#f09000] flex items-center justify-center shrink-0'>
-                        <Check size={10} className='text-white' strokeWidth={3} />
-                      </div>
-                    ) : (
-                      <div className='w-3.5 h-3.5 rounded-xs border border-[#dcdce0] bg-white shrink-0' />
-                    )}
-                    <span
-                      className={`text-[12px] ${isSelected ? 'font-semibold text-[#f09000]' : 'text-[#42454d]'}`}
+                  <div key={category.id} className='relative w-fit'>
+                    <button
+                      type='button'
+                      onClick={() => toggleCategory(category.id)}
+                      disabled={isUnavailable}
+                      title={isUnavailable ? undefined : `Select ${category.name}`}
+                      className={`flex items-center gap-2 w-fit select-none py-1 px-1 rounded text-left transition-colors ${
+                        isUnavailable
+                          ? 'cursor-not-allowed opacity-40 grayscale'
+                          : 'cursor-pointer hover:bg-gray-50'
+                      }`}
                     >
-                      {category.name}
-                    </span>
-                  </label>
+                      {isSelected ? (
+                        <div className='w-3.5 h-3.5 rounded-xs bg-[#f09000] flex items-center justify-center shrink-0'>
+                          <Check size={10} className='text-white' strokeWidth={3} />
+                        </div>
+                      ) : (
+                        <div className='w-3.5 h-3.5 rounded-xs border border-[#dcdce0] bg-white shrink-0' />
+                      )}
+                      <span
+                        className={`text-[12px] ${isSelected ? 'font-semibold text-[#f09000]' : 'text-[#42454d]'}`}
+                      >
+                        {category.name}
+                      </span>
+                    </button>
+                    {isUnavailable && (
+                      <>
+                        <span
+                          aria-hidden='true'
+                          className='absolute inset-0 z-10 cursor-not-allowed'
+                          onMouseEnter={(event) => {
+                            const rect = event.currentTarget.getBoundingClientRect();
+                            setUnavailableTooltip({
+                              name: category.name,
+                              x: rect.left + rect.width / 2,
+                              y: rect.bottom + 8,
+                            });
+                          }}
+                          onMouseLeave={() => setUnavailableTooltip(null)}
+                        />
+                      </>
+                    )}
+                  </div>
                 );
               })}
             </div>
@@ -508,6 +554,15 @@ export default function AdminPromotions({ dealToEdit, onBack, onSuccess }: Admin
               </button>
             </div>
           </div>
+        </div>
+      )}
+      {unavailableTooltip && (
+        <div
+          role='tooltip'
+          className='pointer-events-none fixed z-[100] w-max max-w-64 -translate-x-1/2 rounded bg-[#171717] px-3 py-2 text-center text-xs leading-snug text-white shadow-xl'
+          style={{ left: unavailableTooltip.x, top: unavailableTooltip.y }}
+        >
+          {unavailableTooltip.name} already has a deal or promotion.
         </div>
       )}
     </div>

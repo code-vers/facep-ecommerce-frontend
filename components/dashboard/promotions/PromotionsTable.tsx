@@ -2,6 +2,7 @@
 
 import { useDeals, useDeleteDeal, useUpdateDeal } from '@/hooks/api/useDeal';
 import { Deal } from '@/lib/api/deal';
+import { useAuth } from '@/contexts/AuthContext';
 import { AxiosError } from 'axios';
 import {
   ChevronLeft,
@@ -29,6 +30,7 @@ interface PromotionsTableProps {
 }
 
 export default function PromotionsTable({ onAddNewDeal, onEditDeal }: PromotionsTableProps) {
+  const { session } = useAuth();
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<StatusFilterType>('ALL');
   const [viewModalDeal, setViewModalDeal] = useState<Deal | null>(null);
@@ -51,6 +53,10 @@ export default function PromotionsTable({ onAddNewDeal, onEditDeal }: Promotions
     if (statusFilter === 'Disabled') return !deal.isActive;
     return true;
   });
+
+  const canManageDeal = (deal: Deal) =>
+    (session?.user.role === 'ADMIN' && deal.addedBy !== 'VENDOR') ||
+    (deal.addedBy === 'VENDOR' && deal.createdById === session?.user.id);
 
   const getFullImageUrl = (path?: string) => {
     if (!path) return '';
@@ -135,7 +141,7 @@ export default function PromotionsTable({ onAddNewDeal, onEditDeal }: Promotions
         {/* Table Section */}
         <div className='w-full flex flex-col overflow-hidden border-t border-[#e5e5e6]'>
           <div className='w-full overflow-x-auto'>
-            <div className='min-w-275 w-full flex flex-col'>
+            <div className='min-w-310 w-full flex flex-col'>
               {/* Table Header */}
               <div className='bg-[#f2f2f3] border-b border-[#e5e5e6] flex items-center px-6 py-3'>
                 <div className='w-20 shrink-0 text-[14px] text-[#42454d] font-semibold'>Banner</div>
@@ -143,6 +149,7 @@ export default function PromotionsTable({ onAddNewDeal, onEditDeal }: Promotions
                   Deal ID
                 </div>
                 <div className='flex-[1.5] text-[14px] text-[#42454d] font-semibold'>Deal Name</div>
+                <div className='w-40 shrink-0 text-[14px] text-[#42454d] font-semibold'>Added By / Date</div>
                 <div className='flex-1 text-[14px] text-[#42454d] font-semibold'>
                   Banner Heading
                 </div>
@@ -214,6 +221,15 @@ export default function PromotionsTable({ onAddNewDeal, onEditDeal }: Promotions
                       {deal.title}
                     </div>
 
+                    <div className='w-40 shrink-0 pr-2 text-[12px]'>
+                      <p className='font-medium text-[#42454d]'>
+                        {deal.addedBy === 'VENDOR' ? 'Vendor' : 'Admin'} · {deal.createdBy?.name || 'Legacy deal'}
+                      </p>
+                      <p className='mt-0.5 text-[#848995]'>
+                        {new Date(deal.createdAt).toLocaleDateString()}
+                      </p>
+                    </div>
+
                     {/* Heading */}
                     <div className='flex-1 text-[13px] text-[#42454d] truncate pr-2'>
                       {deal.bannerHeading || '--'}
@@ -231,7 +247,7 @@ export default function PromotionsTable({ onAddNewDeal, onEditDeal }: Promotions
                           {deal.categoryIds.length} Categories
                         </span>
                       ) : (
-                        <span className='text-[#848995]'>All Categories</span>
+                        <span className='text-[#848995]'>No categories</span>
                       )}
                     </div>
 
@@ -239,9 +255,13 @@ export default function PromotionsTable({ onAddNewDeal, onEditDeal }: Promotions
                     <div className='w-27.5 shrink-0 flex items-center justify-center'>
                       <button
                         onClick={() => handleToggleStatus(deal)}
-                        disabled={updateDealMutation.isPending}
-                        title='Click to toggle status (Active / Disabled)'
-                        className={`inline-flex items-center gap-1.5 text-[12px] font-medium border rounded-xs px-2.5 py-1 transition-all cursor-pointer hover:shadow-xs active:scale-95 disabled:opacity-50 ${
+                        disabled={!canManageDeal(deal) || updateDealMutation.isPending}
+                        title={
+                          canManageDeal(deal)
+                            ? 'Click to toggle status (Active / Disabled)'
+                            : 'Admin deals are read-only for vendors.'
+                        }
+                        className={`inline-flex items-center gap-1.5 text-[12px] font-medium border rounded-xs px-2.5 py-1 transition-all disabled:cursor-not-allowed disabled:opacity-60 ${
                           deal.isActive
                             ? 'border-[#c6e5d0] bg-[#eef8f0] text-[#229a4e] hover:bg-[#e2f3e5]'
                             : 'border-[#d0e1ff] bg-[#f0f5ff] text-[#165dd0] hover:bg-[#e4edff]'
@@ -264,21 +284,25 @@ export default function PromotionsTable({ onAddNewDeal, onEditDeal }: Promotions
                         <Eye className='size-4' />
                       </button>
 
-                      <button
-                        onClick={() => onEditDeal(deal)}
-                        title='Edit Deal'
-                        className='p-1 hover:bg-orange-50 rounded text-[#f09000] hover:text-[#e08600] cursor-pointer'
-                      >
-                        <Edit2 className='size-3.75' />
-                      </button>
+                      {canManageDeal(deal) && (
+                        <>
+                          <button
+                            onClick={() => onEditDeal(deal)}
+                            title='Edit Deal'
+                            className='p-1 hover:bg-orange-50 rounded text-[#f09000] hover:text-[#e08600] cursor-pointer'
+                          >
+                            <Edit2 className='size-3.75' />
+                          </button>
 
-                      <button
-                        onClick={() => handleOpenDeleteModal(deal)}
-                        title='Delete Deal'
-                        className='p-1 hover:bg-red-50 rounded text-[#cb1b1b] hover:text-red-700 cursor-pointer'
-                      >
-                        <Trash2 className='size-3.75' />
-                      </button>
+                          <button
+                            onClick={() => handleOpenDeleteModal(deal)}
+                            title='Delete Deal'
+                            className='p-1 hover:bg-red-50 rounded text-[#cb1b1b] hover:text-red-700 cursor-pointer'
+                          >
+                            <Trash2 className='size-3.75' />
+                          </button>
+                        </>
+                      )}
                     </div>
                   </div>
                 ))
@@ -383,19 +407,29 @@ export default function PromotionsTable({ onAddNewDeal, onEditDeal }: Promotions
                     : 'N/A'}
                 </p>
               </div>
+              <div className='col-span-2'>
+                <span className='text-[#848995]'>Created by:</span>
+                <p className='font-medium text-black'>
+                  {viewModalDeal.addedBy === 'VENDOR' ? 'Vendor' : 'Admin'} ·{' '}
+                  {viewModalDeal.createdBy?.name || 'Legacy deal'} ·{' '}
+                  {new Date(viewModalDeal.createdAt).toLocaleString()}
+                </p>
+              </div>
             </div>
 
             <div className='flex justify-end gap-2 border-t border-[#e5e5e6] pt-3 mt-2'>
-              <button
-                onClick={() => {
-                  const deal = viewModalDeal;
-                  setViewModalDeal(null);
-                  onEditDeal(deal);
-                }}
-                className='px-4 h-9 bg-[#f09000] text-white text-[13px] font-medium rounded-xs hover:bg-[#e08600] flex items-center gap-1.5 cursor-pointer shadow-xs'
-              >
-                <Edit2 size={14} /> Edit This Deal
-              </button>
+              {canManageDeal(viewModalDeal) && (
+                <button
+                  onClick={() => {
+                    const deal = viewModalDeal;
+                    setViewModalDeal(null);
+                    onEditDeal(deal);
+                  }}
+                  className='px-4 h-9 bg-[#f09000] text-white text-[13px] font-medium rounded-xs hover:bg-[#e08600] flex items-center gap-1.5 cursor-pointer shadow-xs'
+                >
+                  <Edit2 size={14} /> Edit This Deal
+                </button>
+              )}
               <button
                 onClick={() => setViewModalDeal(null)}
                 className='px-4 h-9 bg-[#f2f2f3] text-black text-[13px] font-medium rounded-xs hover:bg-gray-200 cursor-pointer'
