@@ -113,6 +113,15 @@ export interface ProductStats {
   lowStock: number;
 }
 
+export interface ProductPromotionPayload {
+  id: string;
+  discountType: 'PERCENTAGE' | 'FIXED';
+  discountValue: number;
+  dealBadgeText?: string;
+  dealStartDate?: string;
+  dealEndDate?: string;
+}
+
 export interface ProductFacets {
   categories: Array<Category & { _count?: { products: number } }>;
   vendors: Array<{ id: string; name: string; _count: { products: number } }>;
@@ -207,6 +216,16 @@ export const updateProductStatus = async ({ id, isActive }: { id: string; isActi
   const { data } = await apiClient.patch<ApiResponse<Product>>(`/products/${id}/status`, {
     isActive,
   });
+  return data.data;
+};
+
+export const updateProductPromotion = async ({ id, ...payload }: ProductPromotionPayload) => {
+  const { data } = await apiClient.patch<ApiResponse<Product>>(`/products/${id}/promotion`, payload);
+  return data.data;
+};
+
+export const removeProductPromotion = async (id: string) => {
+  const { data } = await apiClient.delete<ApiResponse<Product>>(`/products/${id}/promotion`);
   return data.data;
 };
 
