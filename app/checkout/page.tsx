@@ -11,15 +11,16 @@
 import { CheckCircle2, ChevronRight, Home } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import CheckoutOrderSummary from '@/components/checkout/CheckoutOrderSummary';
 import CheckoutPaymentDetails from '@/components/checkout/CheckoutPaymentDetails';
 import CheckoutShippingDetails from '@/components/checkout/CheckoutShippingDetails';
 import CheckoutUserDetails from '@/components/checkout/CheckoutUserDetails';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCartStore } from '@/contexts/CartContext';
 import type { AuthSession } from '@/lib/auth/auth.types';
-import { CHECKOUT_ITEMS, SAVED_CARDS } from '@/lib/checkout-data';
+import { SAVED_CARDS } from '@/lib/checkout-data';
 
 interface CheckoutFormProps {
   session: AuthSession | null;
@@ -37,7 +38,7 @@ interface CheckoutFormState {
   location: string;
   note: string;
   // Payment details
-  paymentMethod: 'COD' | 'CARD';
+  paymentMethod: 'CARD';
   selectedCardId: string;
   cardNumber: string;
   cardExpiry: string;
@@ -51,6 +52,17 @@ interface CheckoutFormState {
  */
 function CheckoutForm({ session }: CheckoutFormProps) {
   const router = useRouter();
+  const { items, selectedItems } = useCartStore();
+
+  // Compute selected items
+  const selectedItemsData = items.filter((item) => selectedItems.includes(item.cartItemId));
+
+  // Redirect to cart if no items selected
+  useEffect(() => {
+    if (items.length > 0 && selectedItems.length === 0) {
+      router.push('/cart');
+    }
+  }, [items.length, selectedItems.length, router]);
 
   // Initial Form State populated directly from session if present
   const [formData, setFormData] = useState<CheckoutFormState>(() => ({
@@ -62,7 +74,7 @@ function CheckoutForm({ session }: CheckoutFormProps) {
     city: '',
     location: '',
     note: '',
-    paymentMethod: 'COD',
+    paymentMethod: 'CARD',
     selectedCardId: SAVED_CARDS[0]?.id || 'new',
     cardNumber: '',
     cardExpiry: '',
@@ -111,7 +123,7 @@ function CheckoutForm({ session }: CheckoutFormProps) {
     if (!formData.location.trim()) nextErrors.location = 'Location (State/Zip) is required';
 
     // Payment Card details validation
-    if (formData.paymentMethod === 'CARD' && formData.selectedCardId === 'new') {
+    if (formData.selectedCardId === 'new') {
       if (!formData.cardNumber.trim()) {
         nextErrors.cardNumber = 'Card number is required';
       } else if (!/^\d{16}$/.test(formData.cardNumber.replace(/\s+/g, ''))) {
@@ -159,9 +171,15 @@ function CheckoutForm({ session }: CheckoutFormProps) {
   };
 
   // Compute final pricing summary elements
-  const subtotal = CHECKOUT_ITEMS.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const shippingFee = 16.48;
-  const total = subtotal + shippingFee;
+  const subtotal = selectedItemsData.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+  const totalShipping = selectedItemsData.reduce((acc, item) => acc + ((item.shippingCost || 0) * item.quantity), 0);
+  const totalTax = selectedItemsData.reduce((acc, item) => acc + ((item.taxAmount || 0) * item.quantity), 0);
+  const totalVatGst = selectedItemsData.reduce((acc, item) => acc + ((item.vatGst || 0) * item.quantity), 0);
+  const totalImportCharges = selectedItemsData.reduce((acc, item) => acc + ((item.importCharges || 0) * item.quantity), 0);
+  const totalHandlingFee = selectedItemsData.reduce((acc, item) => acc + ((item.handlingFee || 0) * item.quantity), 0);
+  
+  const extraFees = totalTax + totalVatGst + totalImportCharges + totalHandlingFee;
+  const total = subtotal + totalShipping + extraFees;
 
   return (
     <main className='min-h-screen bg-white'>
@@ -213,7 +231,6 @@ function CheckoutForm({ session }: CheckoutFormProps) {
 
             <CheckoutPaymentDetails
               formData={{
-                paymentMethod: formData.paymentMethod,
                 selectedCardId: formData.selectedCardId,
                 cardNumber: formData.cardNumber,
                 cardExpiry: formData.cardExpiry,
@@ -228,8 +245,11 @@ function CheckoutForm({ session }: CheckoutFormProps) {
           {/* Right Column: Order Summary */}
           <div className='w-full lg:w-auto shrink-0'>
             <CheckoutOrderSummary
-              items={CHECKOUT_ITEMS}
-              shippingFee={shippingFee}
+              items={selectedItemsData}
+              subtotal={subtotal}
+              totalShipping={totalShipping}
+              extraFees={extraFees}
+              total={total}
               onPlaceOrder={handlePlaceOrder}
               isSubmitting={isSubmitting}
             />
@@ -261,10 +281,10 @@ function CheckoutForm({ session }: CheckoutFormProps) {
 
               {/* Items loop summary */}
               <div className='max-h-35 overflow-y-auto space-y-2.5 pr-2'>
-                {CHECKOUT_ITEMS.map((item) => (
+                {selectedItemsData.map((item) => (
                   <div key={item.id} className='flex justify-between items-center text-[14px]'>
                     <span className='text-[#42454d] truncate max-w-60'>
-                      {item.title} <span className='text-gray-400'>x{item.quantity}</span>
+                      {item.name} <span className='text-gray-400'>x{item.quantity}</span>
                     </span>
                     <span className='text-black font-semibold'>
                       {new Intl.NumberFormat('en-US', {
@@ -289,7 +309,7 @@ function CheckoutForm({ session }: CheckoutFormProps) {
                 <div className='flex justify-between items-center'>
                   <span className='text-gray-500'>Payment:</span>
                   <span className='text-black font-medium'>
-                    {formData.paymentMethod === 'COD' ? 'Cash on Delivery' : 'Credit Card'}
+                    Credit Card
                   </span>
                 </div>
 

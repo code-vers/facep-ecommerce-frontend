@@ -8,11 +8,14 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { CheckoutItem } from '@/lib/checkout-data';
+import { CartItem } from '@/contexts/CartContext';
 
 interface CheckoutOrderSummaryProps {
-  items: CheckoutItem[];
-  shippingFee: number;
+  items: CartItem[];
+  subtotal: number;
+  totalShipping: number;
+  extraFees: number;
+  total: number;
   onPlaceOrder: () => void;
   isSubmitting: boolean;
 }
@@ -27,18 +30,26 @@ const formatPrice = (amount: number) => {
   }).format(amount);
 };
 
+const apiOrigin = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1').replace(
+  /\/api\/v1\/?$/,
+  '',
+);
+const imageUrl = (value: string) =>
+  value.startsWith('http') ? value : `${apiOrigin}${value.startsWith('/') ? '' : '/'}${value}`;
+
 /**
  * CheckoutOrderSummary component.
  * Displays final pricing layout.
  */
 export default function CheckoutOrderSummary({
   items,
-  shippingFee,
+  subtotal,
+  totalShipping,
+  extraFees,
+  total,
   onPlaceOrder,
   isSubmitting,
 }: CheckoutOrderSummaryProps) {
-  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const total = subtotal + shippingFee;
 
   return (
     <div className="w-full lg:w-[450px] border border-[#e5e5e6] rounded bg-[#f2f2f3] p-6 flex flex-col gap-8 shrink-0">
@@ -50,13 +61,13 @@ export default function CheckoutOrderSummary({
       {/* Cart Items List */}
       <div className="divide-y divide-[#e5e5e6] border-b border-[#e5e5e6]">
         {items.map((item) => (
-          <div key={item.id} className="py-4 flex gap-4 items-center">
+          <div key={item.cartItemId} className="py-4 flex gap-4 items-center">
             {/* Product Image */}
             <div className="w-[100px] h-[100px] bg-white border border-[#e5e5e6] rounded-sm overflow-hidden shrink-0 flex items-center justify-center">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={item.imageSrc}
-                alt={item.title}
+                src={imageUrl(item.image)}
+                alt={item.name}
                 className="w-full h-full object-cover pointer-events-none"
               />
             </div>
@@ -65,7 +76,7 @@ export default function CheckoutOrderSummary({
             <div className="flex flex-col gap-4 items-start text-left flex-1 min-w-0">
               <div className="w-full">
                 <p className="text-[18px] text-black font-normal leading-snug break-words">
-                  {item.title}{' '}
+                  {item.name}{' '}
                   <span className="text-[12px] font-normal text-gray-500 whitespace-nowrap ml-1">
                     x {item.quantity}
                   </span>
@@ -85,10 +96,16 @@ export default function CheckoutOrderSummary({
           <span>Subtotal</span>
           <span className="font-bold">{formatPrice(subtotal)}</span>
         </div>
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center text-[16px] text-gray-700">
           <span>Shipping</span>
-          <span className="font-bold">{formatPrice(shippingFee)}</span>
+          <span className="font-bold">{totalShipping === 0 ? 'Free' : formatPrice(totalShipping)}</span>
         </div>
+        {extraFees > 0 && (
+          <div className="flex justify-between items-center text-[16px] text-gray-700">
+            <span>Extra Fees & Taxes</span>
+            <span className="font-bold">{formatPrice(extraFees)}</span>
+          </div>
+        )}
       </div>
 
       {/* Total Order Cost */}
