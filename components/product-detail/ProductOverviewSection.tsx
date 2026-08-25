@@ -110,10 +110,10 @@ function ProductGallery() {
 
 function ProductMeta() {
   return (
-    <div className='flex w-full flex-col gap-4 border-b border-[#E5E5E6] pb-[18px]'>
+    <div className='flex w-full flex-col gap-4 border-b border-[#E5E5E6] pb-4.5'>
       <Link
         href="/brand/plant-house"
-        className='flex flex-wrap items-center gap-[7px] w-fit hover:opacity-85 transition-opacity group'
+        className='flex flex-wrap items-center gap-1.75 w-fit hover:opacity-85 transition-opacity group'
       >
         <p className='text-[16px] leading-[1.2] text-[#165DD0] font-semibold group-hover:underline'>
           Brand: Plant House
@@ -233,7 +233,7 @@ function AboutSection() {
       <h2 className='text-[22px] leading-[1.2] text-black'>About this item</h2>
 
       <div className='flex flex-col gap-1.5'>
-        <ul className='list-disc pl-[21px] text-[14px] leading-[1.3] text-black'>
+        <ul className='list-disc pl-5.25 text-[14px] leading-[1.3] text-black'>
           {aboutItems.map((item) => (
             <li key={item}>{item}</li>
           ))}
@@ -280,15 +280,15 @@ function PurchaseCard({ quantity, setQuantity, onAddToCart, onBuyNow }: { quanti
           </div>
         </div>
 
-        <div className='flex items-center justify-between border border-[#E5E5E6] bg-white rounded-[2px] h-12 px-4'>
-          <button 
+        <div className='flex items-center justify-between border border-[#E5E5E6] bg-white rounded-xs h-12 px-4'>
+          <button
             onClick={() => setQuantity(Math.max(1, quantity - 1))}
             className='text-[20px] text-[#42454D] hover:text-black w-8'
           >
             -
           </button>
           <span className='text-[16px] text-black font-semibold'>{quantity}</span>
-          <button 
+          <button
             onClick={() => setQuantity(quantity + 1)}
             className='text-[20px] text-[#42454D] hover:text-black w-8'
           >
@@ -300,14 +300,14 @@ function PurchaseCard({ quantity, setQuantity, onAddToCart, onBuyNow }: { quanti
           <button
             type='button'
             onClick={onBuyNow}
-            className='h-12 rounded-[2px] border border-[#DEC33A] bg-[#DEC33A] text-[16px] leading-[1.2] text-black font-semibold hover:bg-[#c9b134] transition-colors'
+            className='h-12 rounded-xs border border-[#DEC33A] bg-[#DEC33A] text-[16px] leading-[1.2] text-black font-semibold hover:bg-[#c9b134] transition-colors'
           >
             Buy Now
           </button>
           <button
             type='button'
             onClick={onAddToCart}
-            className='h-12 rounded-[2px] border border-[#686F7D] bg-transparent text-[16px] leading-[1.2] text-black hover:bg-gray-100 transition-colors'
+            className='h-12 rounded-xs border border-[#686F7D] bg-transparent text-[16px] leading-[1.2] text-black hover:bg-gray-100 transition-colors'
           >
             Add to Cart
           </button>
@@ -365,12 +365,15 @@ export default function ProductOverviewSection() {
       id: 'prod-3',
       cartItemId: `prod-3-${selectedColor}`,
       name: 'Oraimo AirBuds Pro 2 Earphones',
+      slug: 'oraimo-airbuds-pro-2-earphones',
       price: 26,
       quantity,
       color: selectedColor,
-      image: productImages[0].src
+      image: productImages[0].src,
+      sellerName: 'Monatik LLC',
+      availableColors: [...colorOptions],
     });
-    
+
     toast.success('Added to Cart', {
       description: `${quantity}x Oraimo AirBuds Pro 2 Earphones (${selectedColor}) added to your cart.`
     });
@@ -384,7 +387,7 @@ export default function ProductOverviewSection() {
   return (
     <>
       <section className='w-full'>
-        <div className='mx-auto flex max-w-[1920px] flex-col gap-8 px-4 py-6 sm:px-5 sm:py-8 lg:px-10 xl:px-20 xl:py-[50px]'>
+        <div className='mx-auto flex max-w-[1920px] flex-col gap-8 px-4 py-6 sm:px-5 sm:py-8 lg:px-10 xl:px-20 xl:py-12.5'>
           <div className='grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-12 xl:gap-14'>
             {/* Gallery */}
             <div className='md:col-span-1 lg:col-span-5 xl:col-span-5'>

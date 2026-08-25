@@ -10,6 +10,9 @@ import { ExternalLink, MapPin, Star } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
+import { useCartStore } from '@/contexts/CartContext';
 
 const apiOrigin = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1').replace(
   /\/api\/v1\/?$/,
@@ -44,6 +47,14 @@ const splitFeatures = (value?: string | null) => {
   return parts.length > 1 ? parts : [text];
 };
 
+const colorNameMap: Record<string, string> = {
+  '#F09000': 'Yellow/Orange', '#1F8394': 'Teal', '#EAB308': 'Yellow',
+  '#29941F': 'Green', '#941F21': 'Red', '#86941F': 'Olive',
+  '#231F94': 'Blue', '#121212': 'Black', '#FBFEFF': 'White',
+  '#A45496': 'Purple', '#989A98': 'Gray', '#3DC4C4': 'Cyan',
+  '#BF97CF': 'Lavender', '#8B8AA4': 'Slate'
+};
+
 export default function PublicProductDetail({ product }: { product: Product }) {
   const [selectedImage, setSelectedImage] = useState(product.thumbnail);
   const [selectedVariantId, setSelectedVariantId] = useState(product.variants[0]?.id ?? '');
@@ -68,6 +79,41 @@ export default function PublicProductDetail({ product }: { product: Product }) {
   };
 
   const isOutOfStock = product.stockStatus === 'OUT_OF_STOCK' || product.stockQuantity <= 0 || (selectedVariant && selectedVariant.stock <= 0);
+
+  const router = useRouter();
+  const { addToCart } = useCartStore();
+
+  const handleAddToCart = (redirect: boolean) => {
+    if (isOutOfStock) return;
+
+    addToCart({
+      id: product.id,
+      cartItemId: `${product.id}-${selectedVariant?.color||''}-${selectedVariant?.size||''}-${selectedVariant?.storage||''}-${selectedVariant?.material||''}`,
+      name: product.name,
+      slug: product.slug,
+      price: price,
+      quantity: 1,
+      image: selectedVariant?.image || selectedImage || product.thumbnail,
+      sellerName: seller,
+      color: selectedVariant?.color || undefined,
+      size: selectedVariant?.size || undefined,
+      storage: selectedVariant?.storage || undefined,
+      material: selectedVariant?.material || undefined,
+      availableVariants: product.variants,
+      availableColors: product.availableColors,
+      taxAmount: Number(product.taxAmount) || 0,
+      vatGst: Number(product.vatGst) || 0,
+      importCharges: Number(product.importCharges) || 0,
+      handlingFee: Number(product.handlingFee) || 0,
+      shippingCost: product.shippingFeeType === 'FREE' ? 0 : (Number(product.shippingCost) || 0),
+    });
+
+    if (redirect) {
+      router.push('/cart');
+    } else {
+      toast.success('Added to Cart', { description: `${product.name} has been added to your cart.` });
+    }
+  };
 
   const images = useMemo(
     () =>
@@ -153,7 +199,9 @@ export default function PublicProductDetail({ product }: { product: Product }) {
 
                   {(colors.length > 0 || product.availableColors.length > 0) && (
                     <div className='flex flex-col gap-2'>
-                      <strong className='font-semibold text-[16px] text-black'>Color: {selectedVariant?.color || product.availableColors[0] || '—'}</strong>
+                      <strong className='font-semibold text-[16px] text-black'>
+                        Color: {colorNameMap[selectedVariant?.color || product.availableColors[0]] || selectedVariant?.color || product.availableColors[0] || '—'}
+                      </strong>
                       <div className='flex flex-wrap gap-2'>
                         {(colors.length ? colors : product.availableColors).map((color) => (
                           <button
@@ -329,6 +377,7 @@ export default function PublicProductDetail({ product }: { product: Product }) {
                   <button
                     type='button'
                     disabled={isOutOfStock}
+                    onClick={() => handleAddToCart(true)}
                     className={`h-12 rounded-xs border text-[16px] font-medium transition-colors ${
                       isOutOfStock ? 'bg-gray-300 text-gray-500 border-gray-300 cursor-not-allowed' : 'border-[#DEC33A] bg-[#DEC33A] hover:bg-[#c9b135] text-black'
                     }`}
@@ -338,6 +387,7 @@ export default function PublicProductDetail({ product }: { product: Product }) {
                   <button
                     type='button'
                     disabled={isOutOfStock}
+                    onClick={() => handleAddToCart(false)}
                     className={`h-12 rounded-xs border text-[16px] font-medium transition-colors ${
                       isOutOfStock ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed' : 'border-[#686F7D] text-[#42454D] hover:bg-gray-50'
                     }`}
