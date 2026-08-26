@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCartStore } from "@/contexts/CartContext";
 
 const canadaFlag = "https://www.figma.com/api/mcp/asset/b672379d-0c27-4040-a593-1da330971f36";
 
@@ -48,7 +49,7 @@ function AccountBlock() {
   const [isOpen, setIsOpen] = useState(false);
   const { session, logout } = useAuth();
   const isLoggedIn = !!session;
-  
+
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
@@ -70,8 +71,8 @@ function AccountBlock() {
 
   return (
     <div className="relative" ref={dropdownRef}>
-      <button 
-        type="button" 
+      <button
+        type="button"
         onClick={() => setIsOpen(!isOpen)}
         className="flex shrink-0 flex-col items-start gap-1 text-left"
       >
@@ -85,7 +86,7 @@ function AccountBlock() {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-full mt-2 w-48 rounded-[4px] bg-white py-2 shadow-lg ring-1 ring-black/5 z-50">
+        <div className="absolute right-0 top-full mt-2 w-48 rounded-lg bg-white py-2 shadow-lg ring-1 ring-black/5 z-50">
           {!isLoggedIn ? (
             <>
               <Link
@@ -128,6 +129,14 @@ function AccountBlock() {
 }
 
 export default function Navbar() {
+  const { items } = useCartStore();
+  const [cartItemsCount, setCartItemsCount] = useState(0);
+
+  // Prevent hydration mismatch by calculating count only after initial client render
+  useEffect(() => {
+    setCartItemsCount(items.reduce((acc, item) => acc + item.quantity, 0));
+  }, [items]);
+
   return (
     <header className="w-full bg-black text-white">
       <div className="mx-auto flex w-full max-w-[1760px] flex-col gap-4 px-4 py-4 sm:px-6 md:px-8 lg:flex-row lg:items-center lg:gap-6 lg:px-10 xl:px-16 2xl:px-20">
@@ -143,12 +152,12 @@ export default function Navbar() {
               CA
               <ChevronDownIcon />
             </button>
-            <button type="button" className="flex items-center gap-1 text-white">
+            <Link href="/cart" className="flex items-center gap-1 text-white hover:text-[#dec33a] transition-all">
               <CartIcon />
-              <span className="flex h-5 w-5 items-center justify-center rounded-[10px] bg-[#dec33a] text-[12px] leading-[1.3] font-normal text-black">
-                0
+              <span className="flex h-5 min-w-5 items-center justify-center rounded-[10px] bg-[#dec33a] px-1.5 text-[12px] leading-[1.3] font-normal text-black">
+                {cartItemsCount}
               </span>
-            </button>
+            </Link>
           </div>
         </div>
 
@@ -203,13 +212,13 @@ export default function Navbar() {
               </Link>
             </div>
 
-            <button type="button" className="flex shrink-0 items-center justify-center gap-1 text-white">
+              <Link href="/cart" className="flex shrink-0 items-center justify-center gap-1 text-white hover:text-[#dec33a] transition-all">
               <CartIcon />
               <span className="hidden text-[15px] leading-[1.2] font-bold xl:inline xl:text-[16px]">Cart</span>
-              <span className="flex h-5 w-5 items-center justify-center rounded-[10px] bg-[#dec33a] px-1.5 py-0.75 text-[12px] leading-[1.3] font-normal text-black">
-                0
+              <span className="flex h-5 min-w-5 items-center justify-center rounded-[10px] bg-[#dec33a] px-1.5 py-0.75 text-[12px] leading-[1.3] font-normal text-black">
+                {cartItemsCount}
               </span>
-            </button>
+            </Link>
           </div>
         </div>
       </div>
