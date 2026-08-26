@@ -18,6 +18,10 @@ import { useEffect, useState, useMemo } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 
+
+const apiOrigin = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1').replace('/api/v1', '');
+const imageUrl = (value: string) => value ? (value.startsWith('http') ? value : `${apiOrigin}${value.startsWith('/') ? '' : '/'}${value}`) : '/images/placeholder.png';
+
 interface OrderItem {
   id: string;
   name: string;
@@ -288,7 +292,7 @@ export default function ReturnsAndOrdersPage() {
             style: "currency",
             currency: "USD",
           }).format(Number(item.price)),
-          imageSrc: item.image || "/images/placeholder.png",
+          imageSrc: imageUrl(item.image),
         })),
       };
     });
@@ -417,7 +421,7 @@ export default function ReturnsAndOrdersPage() {
                               <Image
                                 src={item.imageSrc}
                                 alt={item.name}
-                                fill
+                                fill unoptimized
                                 className="object-cover"
                               />
                             </div>
