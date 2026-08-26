@@ -52,7 +52,7 @@ export default function CheckoutOrderSummary({
 }: CheckoutOrderSummaryProps) {
 
   return (
-    <div className="w-full lg:w-[450px] border border-[#e5e5e6] rounded bg-[#f2f2f3] p-6 flex flex-col gap-8 shrink-0">
+    <div className="w-full lg:w-112.5 border border-[#e5e5e6] rounded bg-[#f2f2f3] p-6 flex flex-col gap-8 shrink-0">
       {/* Title */}
       <h3 className="text-[22px] font-normal text-black text-left">
         Order Summary
@@ -63,7 +63,7 @@ export default function CheckoutOrderSummary({
         {items.map((item) => (
           <div key={item.cartItemId} className="py-4 flex gap-4 items-center">
             {/* Product Image */}
-            <div className="w-[100px] h-[100px] bg-white border border-[#e5e5e6] rounded-sm overflow-hidden shrink-0 flex items-center justify-center">
+            <div className="w-25 h-25 bg-white border border-[#e5e5e6] rounded-sm overflow-hidden shrink-0 flex items-center justify-center">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={imageUrl(item.image)}
@@ -75,7 +75,7 @@ export default function CheckoutOrderSummary({
             {/* Product Information */}
             <div className="flex flex-col gap-4 items-start text-left flex-1 min-w-0">
               <div className="w-full">
-                <p className="text-[18px] text-black font-normal leading-snug break-words">
+                <p className="text-[18px] text-black font-normal leading-snug wrap-break-word">
                   {item.name}{' '}
                   <span className="text-[12px] font-normal text-gray-500 whitespace-nowrap ml-1">
                     x {item.quantity}
@@ -123,7 +123,7 @@ export default function CheckoutOrderSummary({
           disabled={isSubmitting}
           className="w-full bg-[#dec33a] border border-[#dec33a] hover:bg-[#c9b030] hover:border-[#c9b030] text-black text-[16px] font-semibold py-3.5 px-4 rounded transition-all flex items-center justify-center cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isSubmitting ? 'Placing Order...' : 'Place Order'}
+          {isSubmitting ? 'Processing...' : 'Pay Now'}
         </button>
 
         {/* Continue Shopping */}

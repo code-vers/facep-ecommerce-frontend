@@ -8,13 +8,12 @@
 
 'use client';
 
-import { CheckCircle2, ChevronRight, Home } from 'lucide-react';
+import { ChevronRight, Home } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
 import CheckoutOrderSummary from '@/components/checkout/CheckoutOrderSummary';
-import CheckoutPaymentDetails from '@/components/checkout/CheckoutPaymentDetails';
 import CheckoutShippingDetails from '@/components/checkout/CheckoutShippingDetails';
 import CheckoutUserDetails from '@/components/checkout/CheckoutUserDetails';
 import { useAuth } from '@/contexts/AuthContext';
@@ -84,8 +83,6 @@ function CheckoutForm({ session }: CheckoutFormProps) {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [orderId, setOrderId] = useState('');
 
   // Generic state updater
   const handleFieldChange = (field: string, value: string) => {
@@ -122,34 +119,11 @@ function CheckoutForm({ session }: CheckoutFormProps) {
     if (!formData.city.trim()) nextErrors.city = 'City is required';
     if (!formData.location.trim()) nextErrors.location = 'Location (State/Zip) is required';
 
-    // Payment Card details validation
-    if (formData.selectedCardId === 'new') {
-      if (!formData.cardNumber.trim()) {
-        nextErrors.cardNumber = 'Card number is required';
-      } else if (!/^\d{16}$/.test(formData.cardNumber.replace(/\s+/g, ''))) {
-        nextErrors.cardNumber = 'Card number must be 16 digits';
-      }
-
-      if (!formData.cardExpiry.trim()) {
-        nextErrors.cardExpiry = 'Expiry date is required';
-      } else if (!/^(0[1-9]|1[0-2])\/?([0-9]{2})$/.test(formData.cardExpiry)) {
-        nextErrors.cardExpiry = 'Expiry must be in MM/YY format';
-      }
-
-      if (!formData.cardHolder.trim()) nextErrors.cardHolder = 'Cardholder name is required';
-
-      if (!formData.cardCvv.trim()) {
-        nextErrors.cardCvv = 'CVV is required';
-      } else if (!/^\d{3,4}$/.test(formData.cardCvv)) {
-        nextErrors.cardCvv = 'CVV must be 3 or 4 digits';
-      }
-    }
-
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
 
-  const handlePlaceOrder = () => {
+  const handlePlaceOrder = async () => {
     if (!validateForm()) {
       // Scroll to the first error
       const firstErrorKey = Object.keys(errors)[0];
@@ -162,12 +136,39 @@ function CheckoutForm({ session }: CheckoutFormProps) {
 
     setIsSubmitting(true);
 
-    // Simulate database placement call
-    setTimeout(() => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1'}/checkout/create-session`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(session?.token ? { Authorization: `Bearer ${session.token}` } : {})
+        },
+        body: JSON.stringify({
+          items: selectedItemsData,
+          formData,
+          subtotal,
+          shippingCost: totalShipping,
+          taxAmount: totalTax,
+          vatGst: totalVatGst,
+          importCharges: totalImportCharges,
+          handlingFee: totalHandlingFee,
+          total
+        })
+      });
+
+      const result = await response.json();
+
+      if (result.success && result.data?.url) {
+        window.location.assign(result.data.url);
+      } else {
+        alert(result.message || 'Failed to create checkout session');
+        setIsSubmitting(false);
+      }
+    } catch (error) {
+      console.error('Checkout error:', error);
+      alert('An error occurred during checkout. Please try again.');
       setIsSubmitting(false);
-      setOrderId(`FCP-${Math.floor(100000 + Math.random() * 900000)}`);
-      setShowSuccessModal(true);
-    }, 1500);
+    }
   };
 
   // Compute final pricing summary elements
@@ -177,7 +178,7 @@ function CheckoutForm({ session }: CheckoutFormProps) {
   const totalVatGst = selectedItemsData.reduce((acc, item) => acc + ((item.vatGst || 0) * item.quantity), 0);
   const totalImportCharges = selectedItemsData.reduce((acc, item) => acc + ((item.importCharges || 0) * item.quantity), 0);
   const totalHandlingFee = selectedItemsData.reduce((acc, item) => acc + ((item.handlingFee || 0) * item.quantity), 0);
-  
+
   const extraFees = totalTax + totalVatGst + totalImportCharges + totalHandlingFee;
   const total = subtotal + totalShipping + extraFees;
 
@@ -228,18 +229,6 @@ function CheckoutForm({ session }: CheckoutFormProps) {
               onChange={handleFieldChange}
               errors={errors}
             />
-
-            <CheckoutPaymentDetails
-              formData={{
-                selectedCardId: formData.selectedCardId,
-                cardNumber: formData.cardNumber,
-                cardExpiry: formData.cardExpiry,
-                cardHolder: formData.cardHolder,
-                cardCvv: formData.cardCvv,
-              }}
-              onChange={handleFieldChange}
-              errors={errors}
-            />
           </div>
 
           {/* Right Column: Order Summary */}
@@ -256,97 +245,6 @@ function CheckoutForm({ session }: CheckoutFormProps) {
           </div>
         </div>
       </div>
-
-      {/* ── 3. Success Modal Backdrop Blur Overlay ── */}
-      {showSuccessModal && (
-        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto'>
-          <div className='bg-white rounded-lg shadow-2xl max-w-lg w-full p-8 text-center animate-in zoom-in-95 duration-200 relative border border-[#e5e5e6]'>
-            {/* Animated Success Checkmark Icon */}
-            <div className='mx-auto w-16 h-16 bg-[#eefcf3] rounded-full flex items-center justify-center mb-6'>
-              <CheckCircle2 className='w-10 h-10 text-[#22c55e]' />
-            </div>
-
-            {/* Modal Heading */}
-            <h2 className='text-[24px] font-bold text-black mb-2'>Order Placed Successfully!</h2>
-            <p className='text-[14px] text-[#848995] mb-6'>
-              Thank you for shopping with us. Your order{' '}
-              <span className='font-semibold text-black'>{orderId}</span> has been confirmed.
-            </p>
-
-            {/* Order Overview Panel */}
-            <div className='bg-[#f2f2f3] rounded p-5 mb-8 text-left space-y-4 border border-[#e5e5e6]'>
-              <h4 className='text-[14px] uppercase tracking-wider font-bold text-gray-500 border-b border-gray-200 pb-2'>
-                Order details
-              </h4>
-
-              {/* Items loop summary */}
-              <div className='max-h-35 overflow-y-auto space-y-2.5 pr-2'>
-                {selectedItemsData.map((item) => (
-                  <div key={item.id} className='flex justify-between items-center text-[14px]'>
-                    <span className='text-[#42454d] truncate max-w-60'>
-                      {item.name} <span className='text-gray-400'>x{item.quantity}</span>
-                    </span>
-                    <span className='text-black font-semibold'>
-                      {new Intl.NumberFormat('en-US', {
-                        style: 'currency',
-                        currency: 'USD',
-                      }).format(item.price * item.quantity)}
-                    </span>
-                  </div>
-                ))}
-              </div>
-
-              <div className='border-t border-gray-200 pt-3 space-y-2 text-[14px]'>
-                {/* Delivery Address */}
-                <div className='flex justify-between items-start'>
-                  <span className='text-gray-500'>Shipping To:</span>
-                  <span className='text-black font-medium text-right max-w-50 truncate'>
-                    {formData.city}, {formData.country}
-                  </span>
-                </div>
-
-                {/* Payment method info */}
-                <div className='flex justify-between items-center'>
-                  <span className='text-gray-500'>Payment:</span>
-                  <span className='text-black font-medium'>
-                    Credit Card
-                  </span>
-                </div>
-
-                {/* Final Total */}
-                <div className='flex justify-between items-center border-t border-dashed border-gray-200 pt-2 text-[15px] font-bold'>
-                  <span className='text-black'>Total Paid:</span>
-                  <span className='text-black text-[16px]'>
-                    {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(
-                      total,
-                    )}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Modal Actions */}
-            <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
-              <Link
-                href='/products'
-                className='w-full bg-[#dec33a] hover:bg-[#c9b030] text-black text-[15px] font-semibold py-3 px-4 rounded transition-all text-center flex items-center justify-center cursor-pointer'
-              >
-                Continue Shopping
-              </Link>
-              <button
-                type='button'
-                onClick={() => {
-                  setShowSuccessModal(false);
-                  router.push('/orders');
-                }}
-                className='w-full border border-[#686f7d] hover:bg-[#686f7d]/5 text-black text-[15px] font-medium py-3 px-4 rounded transition-all text-center flex items-center justify-center cursor-pointer'
-              >
-                View Orders
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </main>
   );
 }
