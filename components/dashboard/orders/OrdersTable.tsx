@@ -2,8 +2,9 @@
 
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ChevronDown, Eye, FileDown, Search } from "lucide-react";
+import { ChevronDown, Eye, FileDown, Search, Trash2, X } from "lucide-react";
 import { useState, useMemo, useEffect } from "react";
+import Image from "next/image";
 
 type OrderStatus =
   | "PENDING_PAYMENT"
@@ -44,6 +45,9 @@ const getStatusLabel = (status: OrderStatus) => {
   return STATUS_OPTIONS.find((s) => s.value === status)?.label || status;
 };
 
+const apiOrigin = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1').replace('/api/v1', '');
+const imageUrl = (value: string) => value ? (value.startsWith('http') ? value : `${apiOrigin}${value.startsWith('/') ? '' : '/'}${value}`) : '/images/placeholder.png';
+
 export default function OrdersTable() {
   const { session } = useAuth();
   const isAdmin = session?.user?.role === "ADMIN";
@@ -54,9 +58,9 @@ export default function OrdersTable() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchInput, setSearchInput] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [openStatusDropdown, setOpenStatusDropdown] = useState<string | null>(
-    null,
-  );
+  const [openStatusDropdown, setOpenStatusDropdown] = useState<string | null>(null);
+
+  const [selectedOrderForView, setSelectedOrderForView] = useState<any | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -67,7 +71,6 @@ export default function OrdersTable() {
   }, [searchInput]);
 
   const fetchOrders = async (page: number, search: string) => {
-    // Let's use vendor-orders for VENDOR and ADMIN (admin bypasses vendorId check in backend)
     const url = new URL(
       `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1"}/checkout/vendor-orders`,
     );
@@ -86,33 +89,20 @@ export default function OrdersTable() {
   };
 
   const { data: apiData, isLoading } = useQuery({
-    queryKey: [
-      "dashboard-orders",
-      currentPage,
-      debouncedSearch,
-      session?.user?.role,
-    ],
+    queryKey: ["dashboard-orders", currentPage, debouncedSearch, session?.user?.role],
     queryFn: () => fetchOrders(currentPage, debouncedSearch),
     enabled: !!session?.token && (isVendor || isAdmin),
   });
 
   const updateStatusMutation = useMutation({
-    mutationFn: async ({
-      orderId,
-      status,
-    }: {
-      orderId: string;
-      status: OrderStatus;
-    }) => {
+    mutationFn: async ({ orderId, status }: { orderId: string; status: OrderStatus }) => {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1"}/checkout/vendor-orders/${orderId}/status`,
         {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
-            ...(session?.token
-              ? { Authorization: `Bearer ${session.token}` }
-              : {}),
+            ...(session?.token ? { Authorization: `Bearer ${session.token}` } : {}),
           },
           body: JSON.stringify({ status }),
         },
@@ -127,19 +117,53 @@ export default function OrdersTable() {
     },
   });
 
+  const deleteOrderMutation = useMutation({
+    mutationFn: async (orderId: string) => {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1"}/checkout/vendor-orders/${orderId}`,
+        {
+          method: "DELETE",
+          headers: {
+            ...(session?.token ? { Authorization: `Bearer ${session.token}` } : {}),
+          },
+        },
+      );
+      const json = await res.json();
+      if (!json.success) throw new Error(json.message);
+      return json;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["dashboard-orders"] });
+    },
+  });
+
+  const handleDelete = (orderId: string) => {
+    if (window.confirm("Are you sure you want to delete this order?")) {
+      deleteOrderMutation.mutate(orderId);
+    }
+  };
+
   const orders = useMemo(() => {
     if (!apiData?.data) return [];
     return apiData.data.map((dbOrder: any) => {
-      const items = dbOrder.items
-        .map((item: any) => item.productName)
-        .join(", ");
-      const store = dbOrder.items[0]?.vendorName || "N/A";
+      const items = dbOrder.items.map((item: any) => item.productName).join(", ");
+      let store = dbOrder.items[0]?.vendorName || "N/A";
+
+      let shippingInfo = null;
+      try {
+        if (dbOrder.shippingAddress) {
+          shippingInfo = JSON.parse(dbOrder.shippingAddress);
+        }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch(e) {}
 
       return {
         id: dbOrder.id,
         orderNumber: dbOrder.orderNumber,
-        customer: dbOrder.fullName,
-        contactNo: dbOrder.contactNumber,
+        customer: dbOrder.fullName || (shippingInfo?.fullName) || "Unknown",
+        contactNo: dbOrder.contactNumber || (shippingInfo?.phoneNumber) || "Unknown",
+        address: dbOrder.address || (shippingInfo?.address) || "Unknown",
+        email: dbOrder.email || (shippingInfo?.email) || "Unknown",
         product: items,
         amount: new Intl.NumberFormat("en-US", {
           style: "currency",
@@ -148,6 +172,8 @@ export default function OrdersTable() {
         date: new Date(dbOrder.createdAt).toLocaleDateString(),
         status: dbOrder.status as OrderStatus,
         store: store,
+        rawItems: dbOrder.items,
+        shippingMethod: dbOrder.shippingMethod
       };
     });
   }, [apiData]);
@@ -334,8 +360,18 @@ export default function OrdersTable() {
                 </div>
                 <div className="w-25 shrink-0 px-2">
                   <div className="flex items-center justify-center gap-3">
-                    <button className="text-[#42454D] hover:text-black transition-colors">
+                    <button
+                      onClick={() => setSelectedOrderForView(order)}
+                      className="text-[#42454D] hover:text-black transition-colors"
+                    >
                       <Eye size={14} />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(order.id)}
+                      disabled={deleteOrderMutation.isPending && deleteOrderMutation.variables === order.id}
+                      className="text-[#CB1B1B] hover:text-red-700 transition-colors disabled:opacity-50"
+                    >
+                      <Trash2 size={14} />
                     </button>
                   </div>
                 </div>
@@ -372,6 +408,109 @@ export default function OrdersTable() {
           </div>
         )}
       </div>
+
+      {/* Responsive View Modal */}
+      {selectedOrderForView && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 sm:p-6">
+          <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-lg bg-white p-6 shadow-xl">
+            <button
+              onClick={() => setSelectedOrderForView(null)}
+              className="absolute right-4 top-4 text-gray-500 hover:text-black transition-colors"
+            >
+              <X size={20} />
+            </button>
+
+            <h3 className="text-xl font-bold mb-6 text-black border-b pb-4">
+              Order Details
+            </h3>
+
+            <div className="space-y-6">
+              {/* Basic Info */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                <div>
+                  <p className="text-gray-500 mb-1">Order ID</p>
+                  <p className="font-semibold">{selectedOrderForView.orderNumber}</p>
+                </div>
+                <div>
+                  <p className="text-gray-500 mb-1">Date Placed</p>
+                  <p className="font-semibold">{selectedOrderForView.date}</p>
+                </div>
+                <div>
+                  <p className="text-gray-500 mb-1">Status</p>
+                  <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getStatusStyles(selectedOrderForView.status)}`}>
+                    {getStatusLabel(selectedOrderForView.status)}
+                  </span>
+                </div>
+                <div>
+                  <p className="text-gray-500 mb-1">Total Amount</p>
+                  <p className="font-semibold text-lg text-[#F09000]">{selectedOrderForView.amount}</p>
+                </div>
+              </div>
+
+              {/* Customer Info */}
+              <div className="bg-gray-50 p-4 rounded-md">
+                <h4 className="font-semibold mb-3 text-sm uppercase tracking-wider text-gray-700">Customer Information</h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <p className="text-gray-500 mb-1">Name</p>
+                    <p className="font-medium">{selectedOrderForView.customer}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500 mb-1">Email</p>
+                    <p className="font-medium">{selectedOrderForView.email}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500 mb-1">Contact No</p>
+                    <p className="font-medium">{selectedOrderForView.contactNo}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500 mb-1">Shipping Method</p>
+                    <p className="font-medium">{selectedOrderForView.shippingMethod || 'Standard'}</p>
+                  </div>
+                  <div className="sm:col-span-2">
+                    <p className="text-gray-500 mb-1">Shipping Address</p>
+                    <p className="font-medium">{selectedOrderForView.address}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Order Items */}
+              <div>
+                <h4 className="font-semibold mb-3 text-sm uppercase tracking-wider text-gray-700">Order Items</h4>
+                <div className="space-y-3">
+                  {selectedOrderForView.rawItems?.map((item: any) => (
+                    <div key={item.id} className="flex gap-4 items-center p-3 border border-gray-100 rounded-md bg-white">
+                      <div className="relative w-16 h-16 shrink-0 bg-gray-50 rounded border border-gray-100 overflow-hidden">
+                         <Image
+                           src={imageUrl(item.image)}
+                           alt={item.productName}
+                           fill
+                           unoptimized={imageUrl(item.image).startsWith("http")}
+                           className="object-cover"
+                         />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm truncate">{item.productName}</p>
+                        <div className="flex flex-wrap gap-x-3 mt-1 text-xs text-gray-500">
+                          {item.color && <span>Color: {item.color}</span>}
+                          {item.size && <span>Size: {item.size}</span>}
+                          <span>Qty: {item.quantity}</span>
+                        </div>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <p className="font-semibold text-sm">
+                          {new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(Number(item.price))}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
