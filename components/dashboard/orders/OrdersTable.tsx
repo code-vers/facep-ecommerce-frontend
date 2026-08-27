@@ -1,8 +1,17 @@
+/* eslint-disable */
 "use client";
 
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ChevronDown, Eye, FileDown, Search, Trash2, X } from "lucide-react";
+import {
+  ChevronDown,
+  Eye,
+  FileDown,
+  Search,
+  Trash2,
+  X,
+  AlertTriangle,
+} from "lucide-react";
 import { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
 
@@ -45,8 +54,15 @@ const getStatusLabel = (status: OrderStatus) => {
   return STATUS_OPTIONS.find((s) => s.value === status)?.label || status;
 };
 
-const apiOrigin = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1').replace('/api/v1', '');
-const imageUrl = (value: string) => value ? (value.startsWith('http') ? value : `${apiOrigin}${value.startsWith('/') ? '' : '/'}${value}`) : '/images/placeholder.png';
+const apiOrigin = (
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1"
+).replace("/api/v1", "");
+const imageUrl = (value: string) =>
+  value
+    ? value.startsWith("http")
+      ? value
+      : `${apiOrigin}${value.startsWith("/") ? "" : "/"}${value}`
+    : "/images/placeholder.png";
 
 export default function OrdersTable() {
   const { session } = useAuth();
@@ -58,9 +74,15 @@ export default function OrdersTable() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchInput, setSearchInput] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [openStatusDropdown, setOpenStatusDropdown] = useState<string | null>(null);
+  const [openStatusDropdown, setOpenStatusDropdown] = useState<string | null>(
+    null,
+  );
 
-  const [selectedOrderForView, setSelectedOrderForView] = useState<any | null>(null);
+  const [selectedOrderForView, setSelectedOrderForView] = useState<Record<
+    string,
+    any
+  > | null>(null);
+  const [orderToDelete, setOrderToDelete] = useState<string | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -89,20 +111,33 @@ export default function OrdersTable() {
   };
 
   const { data: apiData, isLoading } = useQuery({
-    queryKey: ["dashboard-orders", currentPage, debouncedSearch, session?.user?.role],
+    queryKey: [
+      "dashboard-orders",
+      currentPage,
+      debouncedSearch,
+      session?.user?.role,
+    ],
     queryFn: () => fetchOrders(currentPage, debouncedSearch),
     enabled: !!session?.token && (isVendor || isAdmin),
   });
 
   const updateStatusMutation = useMutation({
-    mutationFn: async ({ orderId, status }: { orderId: string; status: OrderStatus }) => {
+    mutationFn: async ({
+      orderId,
+      status,
+    }: {
+      orderId: string;
+      status: OrderStatus;
+    }) => {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1"}/checkout/vendor-orders/${orderId}/status`,
         {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
-            ...(session?.token ? { Authorization: `Bearer ${session.token}` } : {}),
+            ...(session?.token
+              ? { Authorization: `Bearer ${session.token}` }
+              : {}),
           },
           body: JSON.stringify({ status }),
         },
@@ -124,7 +159,9 @@ export default function OrdersTable() {
         {
           method: "DELETE",
           headers: {
-            ...(session?.token ? { Authorization: `Bearer ${session.token}` } : {}),
+            ...(session?.token
+              ? { Authorization: `Bearer ${session.token}` }
+              : {}),
           },
         },
       );
@@ -134,36 +171,39 @@ export default function OrdersTable() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["dashboard-orders"] });
+      setOrderToDelete(null);
     },
   });
 
-  const handleDelete = (orderId: string) => {
-    if (window.confirm("Are you sure you want to delete this order?")) {
-      deleteOrderMutation.mutate(orderId);
+  const confirmDelete = () => {
+    if (orderToDelete) {
+      deleteOrderMutation.mutate(orderToDelete);
     }
   };
 
   const orders = useMemo(() => {
     if (!apiData?.data) return [];
     return apiData.data.map((dbOrder: any) => {
-      const items = dbOrder.items.map((item: any) => item.productName).join(", ");
-      let store = dbOrder.items[0]?.vendorName || "N/A";
+      const items = dbOrder.items
+        .map((item: any) => item.productName)
+        .join(", ");
+      const store = dbOrder.items[0]?.vendorName || "N/A";
 
       let shippingInfo = null;
       try {
         if (dbOrder.shippingAddress) {
           shippingInfo = JSON.parse(dbOrder.shippingAddress);
         }
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      } catch(e) {}
+      } catch (e) {}
 
       return {
         id: dbOrder.id,
         orderNumber: dbOrder.orderNumber,
-        customer: dbOrder.fullName || (shippingInfo?.fullName) || "Unknown",
-        contactNo: dbOrder.contactNumber || (shippingInfo?.phoneNumber) || "Unknown",
-        address: dbOrder.address || (shippingInfo?.address) || "Unknown",
-        email: dbOrder.email || (shippingInfo?.email) || "Unknown",
+        customer: dbOrder.fullName || shippingInfo?.fullName || "Unknown",
+        contactNo:
+          dbOrder.contactNumber || shippingInfo?.phoneNumber || "Unknown",
+        address: dbOrder.address || shippingInfo?.address || "Unknown",
+        email: dbOrder.email || shippingInfo?.email || "Unknown",
         product: items,
         amount: new Intl.NumberFormat("en-US", {
           style: "currency",
@@ -173,7 +213,7 @@ export default function OrdersTable() {
         status: dbOrder.status as OrderStatus,
         store: store,
         rawItems: dbOrder.items,
-        shippingMethod: dbOrder.shippingMethod
+        shippingMethod: dbOrder.shippingMethod,
       };
     });
   }, [apiData]);
@@ -367,9 +407,8 @@ export default function OrdersTable() {
                       <Eye size={14} />
                     </button>
                     <button
-                      onClick={() => handleDelete(order.id)}
-                      disabled={deleteOrderMutation.isPending && deleteOrderMutation.variables === order.id}
-                      className="text-[#CB1B1B] hover:text-red-700 transition-colors disabled:opacity-50"
+                      onClick={() => setOrderToDelete(order.id)}
+                      className="text-[#CB1B1B] hover:text-red-700 transition-colors"
                     >
                       <Trash2 size={14} />
                     </button>
@@ -409,15 +448,55 @@ export default function OrdersTable() {
         )}
       </div>
 
+      {/* Delete Confirmation Modal */}
+      {orderToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 sm:p-6 animate-in fade-in duration-200">
+          <div className="w-full max-w-sm rounded-xl bg-white p-6 shadow-2xl">
+            <div className="flex flex-col items-center text-center">
+              <div className="mb-4 rounded-full bg-red-100 p-3">
+                <AlertTriangle className="h-6 w-6 text-red-600" />
+              </div>
+              <h3 className="mb-2 text-lg font-bold text-gray-900">
+                Delete Order?
+              </h3>
+              <p className="mb-6 text-sm text-gray-500">
+                Are you sure you want to delete this order? This action cannot
+                be undone.
+              </p>
+              <div className="flex w-full gap-3">
+                <button
+                  onClick={() => setOrderToDelete(null)}
+                  disabled={deleteOrderMutation.isPending}
+                  className="flex-1 rounded-lg border border-gray-300 bg-white py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDelete}
+                  disabled={deleteOrderMutation.isPending}
+                  className="flex-1 rounded-lg bg-red-600 py-2.5 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-50 flex items-center justify-center"
+                >
+                  {deleteOrderMutation.isPending ? (
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  ) : (
+                    "Delete Order"
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Responsive View Modal */}
       {selectedOrderForView && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 sm:p-6">
-          <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-lg bg-white p-6 shadow-xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 sm:p-6 animate-in fade-in duration-200">
+          <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl bg-white p-6 shadow-2xl">
             <button
               onClick={() => setSelectedOrderForView(null)}
-              className="absolute right-4 top-4 text-gray-500 hover:text-black transition-colors"
+              className="absolute right-4 top-4 rounded-full bg-gray-100 p-1.5 text-gray-500 hover:bg-gray-200 hover:text-black transition-colors"
             >
-              <X size={20} />
+              <X size={18} />
             </button>
 
             <h3 className="text-xl font-bold mb-6 text-black border-b pb-4">
@@ -429,84 +508,127 @@ export default function OrdersTable() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                 <div>
                   <p className="text-gray-500 mb-1">Order ID</p>
-                  <p className="font-semibold">{selectedOrderForView.orderNumber}</p>
+                  <p className="font-semibold text-gray-900">
+                    {selectedOrderForView.orderNumber}
+                  </p>
                 </div>
                 <div>
                   <p className="text-gray-500 mb-1">Date Placed</p>
-                  <p className="font-semibold">{selectedOrderForView.date}</p>
+                  <p className="font-semibold text-gray-900">
+                    {selectedOrderForView.date}
+                  </p>
                 </div>
                 <div>
                   <p className="text-gray-500 mb-1">Status</p>
-                  <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getStatusStyles(selectedOrderForView.status)}`}>
+                  <span
+                    className={`inline-block px-2.5 py-1 rounded-full text-xs font-semibold ${getStatusStyles(selectedOrderForView.status)}`}
+                  >
                     {getStatusLabel(selectedOrderForView.status)}
                   </span>
                 </div>
                 <div>
                   <p className="text-gray-500 mb-1">Total Amount</p>
-                  <p className="font-semibold text-lg text-[#F09000]">{selectedOrderForView.amount}</p>
+                  <p className="font-bold text-lg text-[#F09000]">
+                    {selectedOrderForView.amount}
+                  </p>
                 </div>
               </div>
 
               {/* Customer Info */}
-              <div className="bg-gray-50 p-4 rounded-md">
-                <h4 className="font-semibold mb-3 text-sm uppercase tracking-wider text-gray-700">Customer Information</h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+              <div className="bg-gray-50 p-5 rounded-lg border border-gray-100">
+                <h4 className="font-bold mb-4 text-xs uppercase tracking-wider text-gray-500">
+                  Customer Information
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-sm">
                   <div>
-                    <p className="text-gray-500 mb-1">Name</p>
-                    <p className="font-medium">{selectedOrderForView.customer}</p>
+                    <p className="text-gray-500 mb-1 text-xs">Name</p>
+                    <p className="font-medium text-gray-900">
+                      {selectedOrderForView.customer}
+                    </p>
                   </div>
                   <div>
-                    <p className="text-gray-500 mb-1">Email</p>
-                    <p className="font-medium">{selectedOrderForView.email}</p>
+                    <p className="text-gray-500 mb-1 text-xs">Email</p>
+                    <p className="font-medium text-gray-900">
+                      {selectedOrderForView.email}
+                    </p>
                   </div>
                   <div>
-                    <p className="text-gray-500 mb-1">Contact No</p>
-                    <p className="font-medium">{selectedOrderForView.contactNo}</p>
+                    <p className="text-gray-500 mb-1 text-xs">Contact No</p>
+                    <p className="font-medium text-gray-900">
+                      {selectedOrderForView.contactNo}
+                    </p>
                   </div>
                   <div>
-                    <p className="text-gray-500 mb-1">Shipping Method</p>
-                    <p className="font-medium">{selectedOrderForView.shippingMethod || 'Standard'}</p>
+                    <p className="text-gray-500 mb-1 text-xs">
+                      Shipping Method
+                    </p>
+                    <p className="font-medium text-gray-900">
+                      {selectedOrderForView.shippingMethod || "Standard"}
+                    </p>
                   </div>
                   <div className="sm:col-span-2">
-                    <p className="text-gray-500 mb-1">Shipping Address</p>
-                    <p className="font-medium">{selectedOrderForView.address}</p>
+                    <p className="text-gray-500 mb-1 text-xs">
+                      Shipping Address
+                    </p>
+                    <p className="font-medium text-gray-900">
+                      {selectedOrderForView.address}
+                    </p>
                   </div>
                 </div>
               </div>
 
               {/* Order Items */}
               <div>
-                <h4 className="font-semibold mb-3 text-sm uppercase tracking-wider text-gray-700">Order Items</h4>
+                <h4 className="font-bold mb-4 text-xs uppercase tracking-wider text-gray-500">
+                  Purchased Items
+                </h4>
                 <div className="space-y-3">
                   {selectedOrderForView.rawItems?.map((item: any) => (
-                    <div key={item.id} className="flex gap-4 items-center p-3 border border-gray-100 rounded-md bg-white">
-                      <div className="relative w-16 h-16 shrink-0 bg-gray-50 rounded border border-gray-100 overflow-hidden">
-                         <Image
-                           src={imageUrl(item.image)}
-                           alt={item.productName}
-                           fill
-                           unoptimized={imageUrl(item.image).startsWith("http")}
-                           className="object-cover"
-                         />
+                    <div
+                      key={item.id}
+                      className="flex gap-4 items-center p-3 border border-gray-200 rounded-lg bg-white shadow-sm hover:shadow transition-shadow"
+                    >
+                      <div className="relative w-16 h-16 shrink-0 bg-gray-50 rounded-md border border-gray-100 overflow-hidden">
+                        <Image
+                          src={imageUrl(item.image)}
+                          alt={item.productName}
+                          fill
+                          unoptimized={imageUrl(item.image).startsWith("http")}
+                          className="object-cover"
+                        />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium text-sm truncate">{item.productName}</p>
-                        <div className="flex flex-wrap gap-x-3 mt-1 text-xs text-gray-500">
-                          {item.color && <span>Color: {item.color}</span>}
-                          {item.size && <span>Size: {item.size}</span>}
-                          <span>Qty: {item.quantity}</span>
+                        <p className="font-bold text-sm text-gray-900 truncate">
+                          {item.productName}
+                        </p>
+                        <div className="flex flex-wrap gap-x-3 mt-1.5 text-[11px] font-medium text-gray-500">
+                          {item.color && (
+                            <span className="bg-gray-100 px-2 py-0.5 rounded">
+                              Color: {item.color}
+                            </span>
+                          )}
+                          {item.size && (
+                            <span className="bg-gray-100 px-2 py-0.5 rounded">
+                              Size: {item.size}
+                            </span>
+                          )}
+                          <span className="bg-gray-100 px-2 py-0.5 rounded">
+                            Qty: {item.quantity}
+                          </span>
                         </div>
                       </div>
                       <div className="text-right shrink-0">
-                        <p className="font-semibold text-sm">
-                          {new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(Number(item.price))}
+                        <p className="font-bold text-[15px] text-gray-900">
+                          {new Intl.NumberFormat("en-US", {
+                            style: "currency",
+                            currency: "USD",
+                          }).format(Number(item.price))}
                         </p>
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
-
             </div>
           </div>
         </div>
