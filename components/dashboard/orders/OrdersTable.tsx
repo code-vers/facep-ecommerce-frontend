@@ -3,15 +3,7 @@
 
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  ChevronDown,
-  Eye,
-  FileDown,
-  Search,
-  Trash2,
-  X,
-  AlertTriangle,
-} from "lucide-react";
+import { ChevronDown, Eye, FileDown, Search, Trash2, X, AlertTriangle } from "lucide-react";
 import { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
 
@@ -54,15 +46,8 @@ const getStatusLabel = (status: OrderStatus) => {
   return STATUS_OPTIONS.find((s) => s.value === status)?.label || status;
 };
 
-const apiOrigin = (
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1"
-).replace("/api/v1", "");
-const imageUrl = (value: string) =>
-  value
-    ? value.startsWith("http")
-      ? value
-      : `${apiOrigin}${value.startsWith("/") ? "" : "/"}${value}`
-    : "/images/placeholder.png";
+const apiOrigin = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1').replace('/api/v1', '');
+const imageUrl = (value: string) => value ? (value.startsWith('http') ? value : `${apiOrigin}${value.startsWith('/') ? '' : '/'}${value}`) : '/images/placeholder.png';
 
 export default function OrdersTable() {
   const { session } = useAuth();
@@ -74,14 +59,8 @@ export default function OrdersTable() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchInput, setSearchInput] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [openStatusDropdown, setOpenStatusDropdown] = useState<string | null>(
-    null,
-  );
 
-  const [selectedOrderForView, setSelectedOrderForView] = useState<Record<
-    string,
-    any
-  > | null>(null);
+  const [selectedOrderForView, setSelectedOrderForView] = useState<any | null>(null);
   const [orderToDelete, setOrderToDelete] = useState<string | null>(null);
 
   useEffect(() => {
@@ -111,33 +90,20 @@ export default function OrdersTable() {
   };
 
   const { data: apiData, isLoading } = useQuery({
-    queryKey: [
-      "dashboard-orders",
-      currentPage,
-      debouncedSearch,
-      session?.user?.role,
-    ],
+    queryKey: ["dashboard-orders", currentPage, debouncedSearch, session?.user?.role],
     queryFn: () => fetchOrders(currentPage, debouncedSearch),
     enabled: !!session?.token && (isVendor || isAdmin),
   });
 
   const updateStatusMutation = useMutation({
-    mutationFn: async ({
-      orderId,
-      status,
-    }: {
-      orderId: string;
-      status: OrderStatus;
-    }) => {
+    mutationFn: async ({ orderId, status }: { orderId: string; status: OrderStatus }) => {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1"}/checkout/vendor-orders/${orderId}/status`,
         {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
-            ...(session?.token
-              ? { Authorization: `Bearer ${session.token}` }
-              : {}),
+            ...(session?.token ? { Authorization: `Bearer ${session.token}` } : {}),
           },
           body: JSON.stringify({ status }),
         },
@@ -148,7 +114,7 @@ export default function OrdersTable() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["dashboard-orders"] });
-      setOpenStatusDropdown(null);
+      queryClient.invalidateQueries({ queryKey: ["dashboard-orders-stats"] });
     },
   });
 
@@ -159,9 +125,7 @@ export default function OrdersTable() {
         {
           method: "DELETE",
           headers: {
-            ...(session?.token
-              ? { Authorization: `Bearer ${session.token}` }
-              : {}),
+            ...(session?.token ? { Authorization: `Bearer ${session.token}` } : {}),
           },
         },
       );
@@ -171,6 +135,7 @@ export default function OrdersTable() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["dashboard-orders"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-orders-stats"] });
       setOrderToDelete(null);
     },
   });
@@ -184,26 +149,23 @@ export default function OrdersTable() {
   const orders = useMemo(() => {
     if (!apiData?.data) return [];
     return apiData.data.map((dbOrder: any) => {
-      const items = dbOrder.items
-        .map((item: any) => item.productName)
-        .join(", ");
-      const store = dbOrder.items[0]?.vendorName || "N/A";
+      const items = dbOrder.items.map((item: any) => item.productName).join(", ");
+      let store = dbOrder.items[0]?.vendorName || "N/A";
 
       let shippingInfo = null;
       try {
         if (dbOrder.shippingAddress) {
           shippingInfo = JSON.parse(dbOrder.shippingAddress);
         }
-      } catch (e) {}
+      } catch(error) {}
 
       return {
         id: dbOrder.id,
         orderNumber: dbOrder.orderNumber,
-        customer: dbOrder.fullName || shippingInfo?.fullName || "Unknown",
-        contactNo:
-          dbOrder.contactNumber || shippingInfo?.phoneNumber || "Unknown",
-        address: dbOrder.address || shippingInfo?.address || "Unknown",
-        email: dbOrder.email || shippingInfo?.email || "Unknown",
+        customer: dbOrder.fullName || (shippingInfo?.fullName) || "Unknown",
+        contactNo: dbOrder.contactNumber || (shippingInfo?.phoneNumber) || "Unknown",
+        address: dbOrder.address || (shippingInfo?.address) || "Unknown",
+        email: dbOrder.email || (shippingInfo?.email) || "Unknown",
         product: items,
         amount: new Intl.NumberFormat("en-US", {
           style: "currency",
@@ -213,7 +175,7 @@ export default function OrdersTable() {
         status: dbOrder.status as OrderStatus,
         store: store,
         rawItems: dbOrder.items,
-        shippingMethod: dbOrder.shippingMethod,
+        shippingMethod: dbOrder.shippingMethod
       };
     });
   }, [apiData]);
@@ -256,7 +218,7 @@ export default function OrdersTable() {
       </div>
 
       <div className="w-full overflow-x-auto">
-        <div className="flex min-w-250 flex-col pb-4">
+        <div className="flex min-w-250 flex-col pb-4 min-h-75">
           <div className="flex w-full shrink-0 items-center bg-[#F9F9F9] h-12">
             <div className="w-25 shrink-0 px-2">
               <p className="whitespace-nowrap text-[14px] font-normal leading-[1.3] text-black">
@@ -319,7 +281,8 @@ export default function OrdersTable() {
               No orders found.
             </div>
           ) : (
-            orders.map((order: any, idx: number) => (
+            orders.map((order: any, idx: number) => {
+              return (
               <div
                 key={idx}
                 className="flex w-full shrink-0 items-center border-b border-[#E5E5E6] h-14 hover:bg-gray-50 transition-colors"
@@ -365,38 +328,28 @@ export default function OrdersTable() {
                   </div>
                 )}
                 <div className="w-40 shrink-0 px-2 relative">
-                  <div
-                    onClick={() =>
-                      setOpenStatusDropdown(
-                        openStatusDropdown === order.id ? null : order.id,
-                      )
-                    }
-                    className={`inline-flex h-7 items-center justify-between gap-2 rounded-xs px-2 cursor-pointer select-none ${getStatusStyles(order.status)} ${updateStatusMutation.isPending && updateStatusMutation.variables?.orderId === order.id ? "opacity-50" : ""}`}
-                  >
-                    <span className="text-[11px] font-medium leading-[1.2]">
-                      {getStatusLabel(order.status)}
-                    </span>
-                    <ChevronDown size={12} />
-                  </div>
-
-                  {openStatusDropdown === order.id && (
-                    <div className="absolute top-9 left-2 w-35 bg-white shadow-lg border border-gray-100 rounded-md py-1 z-50">
+                  <div className="relative inline-block">
+                    <select
+                      value={order.status}
+                      disabled={updateStatusMutation.isPending && updateStatusMutation.variables?.orderId === order.id}
+                      onChange={(e) => {
+                        updateStatusMutation.mutate({
+                          orderId: order.id,
+                          status: e.target.value as OrderStatus,
+                        });
+                      }}
+                      className={`appearance-none outline-none inline-flex h-7 items-center justify-between gap-2 rounded-xs pl-2 pr-6 cursor-pointer select-none text-[11px] font-medium leading-[1.2] ${getStatusStyles(order.status)} ${updateStatusMutation.isPending && updateStatusMutation.variables?.orderId === order.id ? "opacity-50 cursor-not-allowed" : ""}`}
+                    >
                       {STATUS_OPTIONS.map((opt) => (
-                        <div
-                          key={opt.value}
-                          onClick={() => {
-                            updateStatusMutation.mutate({
-                              orderId: order.id,
-                              status: opt.value,
-                            });
-                          }}
-                          className={`px-3 py-1.5 text-[12px] hover:bg-gray-50 cursor-pointer ${order.status === opt.value ? "font-bold bg-gray-50" : "text-gray-700"}`}
-                        >
+                        <option key={opt.value} value={opt.value} className="bg-white text-black text-sm">
                           {opt.label}
-                        </div>
+                        </option>
                       ))}
+                    </select>
+                    <div className="pointer-events-none absolute inset-y-0 right-2 flex items-center">
+                      <ChevronDown size={12} className="currentColor" />
                     </div>
-                  )}
+                  </div>
                 </div>
                 <div className="w-25 shrink-0 px-2">
                   <div className="flex items-center justify-center gap-3">
@@ -415,7 +368,7 @@ export default function OrdersTable() {
                   </div>
                 </div>
               </div>
-            ))
+            );})
           )}
         </div>
 
@@ -460,8 +413,7 @@ export default function OrdersTable() {
                 Delete Order?
               </h3>
               <p className="mb-6 text-sm text-gray-500">
-                Are you sure you want to delete this order? This action cannot
-                be undone.
+                Are you sure you want to delete this order? This action cannot be undone.
               </p>
               <div className="flex w-full gap-3">
                 <button
@@ -477,7 +429,7 @@ export default function OrdersTable() {
                   className="flex-1 rounded-lg bg-red-600 py-2.5 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-50 flex items-center justify-center"
                 >
                   {deleteOrderMutation.isPending ? (
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                   ) : (
                     "Delete Order"
                   )}
@@ -508,127 +460,84 @@ export default function OrdersTable() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                 <div>
                   <p className="text-gray-500 mb-1">Order ID</p>
-                  <p className="font-semibold text-gray-900">
-                    {selectedOrderForView.orderNumber}
-                  </p>
+                  <p className="font-semibold text-gray-900">{selectedOrderForView.orderNumber}</p>
                 </div>
                 <div>
                   <p className="text-gray-500 mb-1">Date Placed</p>
-                  <p className="font-semibold text-gray-900">
-                    {selectedOrderForView.date}
-                  </p>
+                  <p className="font-semibold text-gray-900">{selectedOrderForView.date}</p>
                 </div>
                 <div>
                   <p className="text-gray-500 mb-1">Status</p>
-                  <span
-                    className={`inline-block px-2.5 py-1 rounded-full text-xs font-semibold ${getStatusStyles(selectedOrderForView.status)}`}
-                  >
+                  <span className={`inline-block px-2.5 py-1 rounded-full text-xs font-semibold ${getStatusStyles(selectedOrderForView.status)}`}>
                     {getStatusLabel(selectedOrderForView.status)}
                   </span>
                 </div>
                 <div>
                   <p className="text-gray-500 mb-1">Total Amount</p>
-                  <p className="font-bold text-lg text-[#F09000]">
-                    {selectedOrderForView.amount}
-                  </p>
+                  <p className="font-bold text-lg text-[#F09000]">{selectedOrderForView.amount}</p>
                 </div>
               </div>
 
               {/* Customer Info */}
               <div className="bg-gray-50 p-5 rounded-lg border border-gray-100">
-                <h4 className="font-bold mb-4 text-xs uppercase tracking-wider text-gray-500">
-                  Customer Information
-                </h4>
+                <h4 className="font-bold mb-4 text-xs uppercase tracking-wider text-gray-500">Customer Information</h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-sm">
                   <div>
                     <p className="text-gray-500 mb-1 text-xs">Name</p>
-                    <p className="font-medium text-gray-900">
-                      {selectedOrderForView.customer}
-                    </p>
+                    <p className="font-medium text-gray-900">{selectedOrderForView.customer}</p>
                   </div>
                   <div>
                     <p className="text-gray-500 mb-1 text-xs">Email</p>
-                    <p className="font-medium text-gray-900">
-                      {selectedOrderForView.email}
-                    </p>
+                    <p className="font-medium text-gray-900">{selectedOrderForView.email}</p>
                   </div>
                   <div>
                     <p className="text-gray-500 mb-1 text-xs">Contact No</p>
-                    <p className="font-medium text-gray-900">
-                      {selectedOrderForView.contactNo}
-                    </p>
+                    <p className="font-medium text-gray-900">{selectedOrderForView.contactNo}</p>
                   </div>
                   <div>
-                    <p className="text-gray-500 mb-1 text-xs">
-                      Shipping Method
-                    </p>
-                    <p className="font-medium text-gray-900">
-                      {selectedOrderForView.shippingMethod || "Standard"}
-                    </p>
+                    <p className="text-gray-500 mb-1 text-xs">Shipping Method</p>
+                    <p className="font-medium text-gray-900">{selectedOrderForView.shippingMethod || 'Standard'}</p>
                   </div>
                   <div className="sm:col-span-2">
-                    <p className="text-gray-500 mb-1 text-xs">
-                      Shipping Address
-                    </p>
-                    <p className="font-medium text-gray-900">
-                      {selectedOrderForView.address}
-                    </p>
+                    <p className="text-gray-500 mb-1 text-xs">Shipping Address</p>
+                    <p className="font-medium text-gray-900">{selectedOrderForView.address}</p>
                   </div>
                 </div>
               </div>
 
               {/* Order Items */}
               <div>
-                <h4 className="font-bold mb-4 text-xs uppercase tracking-wider text-gray-500">
-                  Purchased Items
-                </h4>
+                <h4 className="font-bold mb-4 text-xs uppercase tracking-wider text-gray-500">Purchased Items</h4>
                 <div className="space-y-3">
                   {selectedOrderForView.rawItems?.map((item: any) => (
-                    <div
-                      key={item.id}
-                      className="flex gap-4 items-center p-3 border border-gray-200 rounded-lg bg-white shadow-sm hover:shadow transition-shadow"
-                    >
+                    <div key={item.id} className="flex gap-4 items-center p-3 border border-gray-200 rounded-lg bg-white shadow-sm hover:shadow transition-shadow">
                       <div className="relative w-16 h-16 shrink-0 bg-gray-50 rounded-md border border-gray-100 overflow-hidden">
-                        <Image
-                          src={imageUrl(item.image)}
-                          alt={item.productName}
-                          fill
-                          unoptimized={imageUrl(item.image).startsWith("http")}
-                          className="object-cover"
-                        />
+                         <Image
+                           src={imageUrl(item.image)}
+                           alt={item.productName}
+                           fill
+                           unoptimized={imageUrl(item.image).startsWith("http")}
+                           className="object-cover"
+                         />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-bold text-sm text-gray-900 truncate">
-                          {item.productName}
-                        </p>
+                        <p className="font-bold text-sm text-gray-900 truncate">{item.productName}</p>
                         <div className="flex flex-wrap gap-x-3 mt-1.5 text-[11px] font-medium text-gray-500">
-                          {item.color && (
-                            <span className="bg-gray-100 px-2 py-0.5 rounded">
-                              Color: {item.color}
-                            </span>
-                          )}
-                          {item.size && (
-                            <span className="bg-gray-100 px-2 py-0.5 rounded">
-                              Size: {item.size}
-                            </span>
-                          )}
-                          <span className="bg-gray-100 px-2 py-0.5 rounded">
-                            Qty: {item.quantity}
-                          </span>
+                          {item.color && <span className="bg-gray-100 px-2 py-0.5 rounded">Color: {item.color}</span>}
+                          {item.size && <span className="bg-gray-100 px-2 py-0.5 rounded">Size: {item.size}</span>}
+                          <span className="bg-gray-100 px-2 py-0.5 rounded">Qty: {item.quantity}</span>
                         </div>
                       </div>
                       <div className="text-right shrink-0">
                         <p className="font-bold text-[15px] text-gray-900">
-                          {new Intl.NumberFormat("en-US", {
-                            style: "currency",
-                            currency: "USD",
-                          }).format(Number(item.price))}
+                          {new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(Number(item.price))}
                         </p>
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
+
             </div>
           </div>
         </div>

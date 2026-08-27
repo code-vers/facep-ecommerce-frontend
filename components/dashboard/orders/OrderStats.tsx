@@ -85,7 +85,7 @@ export default function OrderStats() {
   const isVendor = session?.user?.role === "VENDOR";
 
   const { data: apiData } = useQuery({
-    queryKey: ["dashboard-orders", 1, "", session?.user?.role],
+    queryKey: ["dashboard-orders-stats", session?.user?.role],
     queryFn: async () => {
       const url = new URL(
         `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1"}/checkout/vendor-orders?page=1&limit=1`,
