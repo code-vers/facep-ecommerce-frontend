@@ -14,7 +14,12 @@ export interface AuthSession {
     id: string;
     name: string;
     email: string;
-    role: string;
+    role: UserRole;
+    contactNumber?: string | null;
+    address?: string | null;
+    avatarUrl?: string | null;
+    preferredPaymentMethod?: 'COD' | 'CARD';
+    isActive?: boolean;
   };
   token: string;
 }
@@ -24,6 +29,7 @@ export interface AuthContextValue {
   isLoading: boolean;
   login: (email: string, password: string) => Promise<AuthSession>;
   register: (payload: RegisterPayload) => Promise<void>;
+  refreshProfile: () => Promise<void>;
   logout: () => void;
 }
 
@@ -46,7 +52,7 @@ export interface AuthResponse {
     id: string;
     name: string;
     email: string;
-    role: string;
+    role: UserRole;
   };
 }
 

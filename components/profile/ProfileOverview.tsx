@@ -7,6 +7,7 @@
 
 import React, { useState, useRef } from 'react';
 import { Camera, Loader2, Save } from 'lucide-react';
+import { profileAssetUrl } from '@/lib/api/profile';
 
 interface UserProfileData {
   fullName: string;
@@ -19,6 +20,7 @@ interface UserProfileData {
 interface ProfileOverviewProps {
   initialData: UserProfileData;
   onSave: (updated: UserProfileData) => Promise<void>;
+  onAvatarUpload?: (file: File) => Promise<string>;
 }
 
 /**
@@ -27,6 +29,7 @@ interface ProfileOverviewProps {
 export default function ProfileOverview({
   initialData,
   onSave,
+  onAvatarUpload,
 }: ProfileOverviewProps) {
   const [formData, setFormData] = useState<UserProfileData>(initialData);
   const [avatar, setAvatar] = useState(initialData.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop');
@@ -54,9 +57,22 @@ export default function ProfileOverview({
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (onAvatarUpload) {
+        setIsSaving(true);
+        try {
+          const result = await onAvatarUpload(file);
+          setAvatar(result);
+          setFormData((prev) => ({ ...prev, avatarUrl: result }));
+        } catch {
+          setErrors({ general: 'Failed to upload profile picture.' });
+        } finally {
+          setIsSaving(false);
+        }
+        return;
+      }
       const reader = new FileReader();
       reader.onloadend = () => {
         const result = reader.result as string;
@@ -108,7 +124,7 @@ export default function ProfileOverview({
           <div className="relative w-[86px] h-[86px] rounded-full overflow-hidden border border-[#e5e5e6] bg-gray-50 flex items-center justify-center">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={avatar}
+              src={profileAssetUrl(avatar)}
               alt="User Avatar"
               className="w-full h-full object-cover pointer-events-none"
             />
