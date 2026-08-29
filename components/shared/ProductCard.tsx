@@ -29,7 +29,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { ArrowRight, Star, Heart } from 'lucide-react';
+import { ArrowRight, Star, Heart, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -198,6 +198,21 @@ export interface ProductCardProps {
    * Whether to show a heart icon on the image (e.g. for wishlist).
    */
   showHeart?: boolean;
+
+  /**
+   * Whether the product is currently in user's wishlist.
+   */
+  isWishlisted?: boolean;
+
+  /**
+   * Callback fired when heart icon is clicked.
+   */
+  onToggleWishlist?: (e: React.MouseEvent) => void;
+
+  /**
+   * Whether wishlist action is currently loading/pending.
+   */
+  isWishlistLoading?: boolean;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -380,6 +395,9 @@ export default function ProductCard({
   onExploreMore,
   className,
   showHeart = false,
+  isWishlisted = false,
+  onToggleWishlist,
+  isWishlistLoading = false,
 }: ProductCardProps) {
   /**
    * Whether this card has a full-width CTA button at the bottom.
@@ -452,14 +470,32 @@ export default function ProductCard({
         {showHeart && (
           <button
             type='button'
-            className='absolute bottom-[8px] right-[6px] z-10 flex size-[30px] items-center justify-center rounded-[9999px] bg-[#DEC33A] hover:bg-[#cbb235] transition-colors focus-visible:outline-none'
-            aria-label='Add to wishlist'
+            disabled={isWishlistLoading}
+            className={cn(
+              'absolute bottom-[8px] right-[6px] z-10 flex size-[30px] items-center justify-center rounded-[9999px] transition-all duration-200 focus-visible:outline-none shadow-xs',
+              isWishlisted
+                ? 'bg-red-500 hover:bg-red-600 text-white'
+                : 'bg-[#DEC33A] hover:bg-[#cbb235] text-black',
+              isWishlistLoading && 'opacity-80 cursor-wait'
+            )}
+            aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
+              onToggleWishlist?.(e);
             }}
           >
-            <Heart size={16} className='text-black' />
+            {isWishlistLoading ? (
+              <Loader2 size={16} className='animate-spin text-current' />
+            ) : (
+              <Heart
+                size={16}
+                className={cn(
+                  'transition-transform duration-200',
+                  isWishlisted ? 'fill-white text-white scale-110' : 'text-black',
+                )}
+              />
+            )}
           </button>
         )}
       </div>
