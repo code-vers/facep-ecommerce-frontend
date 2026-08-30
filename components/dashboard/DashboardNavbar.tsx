@@ -1,8 +1,8 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
 import { Search } from 'lucide-react';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 
 const getPageTitle = (pathname: string) => {
   if (pathname === '/dashboard') return 'Store Overview';
@@ -27,7 +27,7 @@ export default function DashboardNavbar({ onMenuClick }: { onMenuClick?: () => v
   return (
     <header className='flex flex-wrap md:flex-nowrap items-center justify-between gap-4 border-b border-[#E5E5E6] bg-[#F2F2F3] px-4 py-4 md:px-6 lg:px-8 xl:px-[45px] xl:py-[20px]'>
       <div className='flex items-center gap-3 shrink-0'>
-        <button 
+        <button
           onClick={onMenuClick}
           className='flex lg:hidden p-1.5 bg-white border border-[#E5E5E6] rounded-sm text-black hover:bg-gray-50'
         >

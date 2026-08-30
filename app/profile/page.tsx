@@ -1,62 +1,64 @@
 'use client';
 
+import AccountSecurity from '@/components/profile/AccountSecurity';
 import ProfileAddresses from '@/components/profile/ProfileAddresses';
 import ProfileOverview from '@/components/profile/ProfileOverview';
 import ProfilePaymentMethods from '@/components/profile/ProfilePaymentMethods';
 import { useAuth } from '@/contexts/AuthContext';
-import { INITIAL_ADDRESSES, INITIAL_CARDS, UserAddress, UserSavedCard } from '@/lib/profile-data';
-import { useState } from 'react';
+import { useProfile } from '@/hooks/api/useProfile';
+import { profileApi, type SavedPaymentMethod } from '@/lib/api/profile';
+import type { UserAddress, UserSavedCard } from '@/lib/profile-data';
+import { toast } from 'sonner';
+
+const toUiCard = (card: SavedPaymentMethod): UserSavedCard => ({
+  ...card,
+  brand: card.brand === 'VISA' ? 'Visa' : 'Mastercard',
+});
 
 export default function ProfilePage() {
-  const { session } = useAuth();
+  const { refreshProfile } = useAuth();
+  const { data: profile, isLoading, refetch } = useProfile();
 
-  const [addresses, setAddresses] = useState<UserAddress[]>(INITIAL_ADDRESSES);
-  const [cards, setCards] = useState<UserSavedCard[]>(INITIAL_CARDS);
-  const [paymentMethod, setPaymentMethod] = useState<'COD' | 'CARD'>('COD');
+  if (isLoading) return <div className='p-8 text-center'>Loading profile...</div>;
+  if (!profile) return <div className='p-8 text-center text-red-600'>Unable to load profile.</div>;
 
-  const [profileData, setProfileData] = useState({
-    fullName: session?.user?.name || '',
-    email: session?.user?.email || '',
-    contactNumber: '+41 00 000 00 00',
-    address: '123 Edelweiss Strasse, Zurich',
-    avatarUrl:
-      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop',
-  });
-
-  const handleSaveProfile = async (updated: typeof profileData) => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setProfileData(updated);
+  const saveProfile = async (data: { fullName: string; email: string; contactNumber: string; address: string; avatarUrl: string }) => {
+    await profileApi.updateMe({ name: data.fullName, contactNumber: data.contactNumber || null, address: data.address || null, avatarUrl: data.avatarUrl || null });
+    await Promise.all([refetch(), refreshProfile()]);
+    toast.success('Profile updated successfully.');
   };
 
-  const handleUpdateAddresses = async (updatedAddresses: UserAddress[]) => {
-    await new Promise((resolve) => setTimeout(resolve, 800));
-    setAddresses(updatedAddresses);
+  const syncAddresses = async (next: UserAddress[]) => {
+    const current = profile.addresses;
+    for (const old of current) if (!next.some((item) => item.id === old.id)) await profileApi.deleteAddress(old.id);
+    for (const item of next) {
+      const old = current.find((entry) => entry.id === item.id);
+      if (!old) await profileApi.createAddress({ label: item.label, addressLine: item.addressLine, phone: item.phone, isDefault: item.isDefault });
+      else if (item.isDefault && !old.isDefault) await profileApi.defaultAddress(item.id);
+      else if (item.label !== old.label || item.addressLine !== old.addressLine || item.phone !== old.phone) await profileApi.updateAddress(item.id, { label: item.label, addressLine: item.addressLine, phone: item.phone });
+    }
+    await refetch();
   };
 
-  const handleUpdateCards = async (updatedCards: UserSavedCard[]) => {
-    await new Promise((resolve) => setTimeout(resolve, 800));
-    setCards(updatedCards);
+  const syncCards = async (next: UserSavedCard[]) => {
+    const current = profile.paymentMethods;
+    for (const old of current) if (!next.some((item) => item.id === old.id)) await profileApi.deletePaymentMethod(old.id);
+    for (const item of next) {
+      const old = current.find((entry) => entry.id === item.id);
+      const metadata = { label: item.label, brand: item.brand === 'Visa' ? 'VISA' as const : 'MASTERCARD' as const, last4: item.last4, expiry: item.expiry, isDefault: item.isDefault };
+      if (!old) await profileApi.createPaymentMethod(metadata);
+      else if (item.isDefault && !old.isDefault) await profileApi.defaultPaymentMethod(item.id);
+      else if (item.label !== old.label || item.expiry !== old.expiry) await profileApi.updatePaymentMethod(item.id, metadata);
+    }
+    await refetch();
   };
-
-  const handleUpdatePaymentMethod = async (method: 'COD' | 'CARD') => {
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    setPaymentMethod(method);
-  };
-
-  if (!session) return null; // Loading/Auth states are handled by layout.tsx
 
   return (
-    <div className='space-y-8 w-full text-left'>
-      <ProfileOverview initialData={profileData} onSave={handleSaveProfile} />
-
-      <ProfileAddresses initialAddresses={addresses} onUpdateAddresses={handleUpdateAddresses} />
-
-      <ProfilePaymentMethods
-        initialCards={cards}
-        initialPaymentMethod={paymentMethod}
-        onUpdateCards={handleUpdateCards}
-        onUpdatePaymentMethod={handleUpdatePaymentMethod}
-      />
+    <div className='w-full space-y-8 text-left'>
+      <ProfileOverview key={profile.updatedAt} initialData={{ fullName: profile.name, email: profile.email, contactNumber: profile.contactNumber ?? '', address: profile.address ?? '', avatarUrl: profile.avatarUrl ?? '' }} onSave={saveProfile} onAvatarUpload={profileApi.uploadAvatar} />
+      <ProfileAddresses key={`addresses-${profile.addresses.map((item) => item.id).join('-')}`} initialAddresses={profile.addresses} onUpdateAddresses={syncAddresses} />
+      <ProfilePaymentMethods key={`payments-${profile.paymentMethods.map((item) => item.id).join('-')}`} initialCards={profile.paymentMethods.map(toUiCard)} initialPaymentMethod={profile.preferredPaymentMethod} onUpdateCards={syncCards} onUpdatePaymentMethod={async (method) => { await profileApi.updatePaymentPreference(method); await refetch(); }} />
+      <AccountSecurity />
     </div>
   );
 }

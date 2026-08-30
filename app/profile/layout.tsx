@@ -35,15 +35,6 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
             </h1>
           </div>
 
-          {/* User Role Badge */}
-          {session && (
-            <div className='flex items-center gap-2 border border-gray-200 bg-gray-50 rounded-full px-4 py-1.5 shadow-xs'>
-              <User className='w-4 h-4 text-gray-500' />
-              <span className='text-[13px] font-medium text-gray-700 capitalize'>
-                Role: <strong className='text-black'>{session.user.role}</strong>
-              </span>
-            </div>
-          )}
         </div>
       </div>
 

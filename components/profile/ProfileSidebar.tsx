@@ -23,7 +23,7 @@ export default function ProfileSidebar({
   const menuItems = [
     { href: '/profile', label: 'Profile', icon: User },
     { href: '/profile/orders', label: 'Orders', icon: ShoppingBag },
-    { href: '/profile/favourites', label: 'Favourite Shops', icon: Heart },
+    { href: '/profile/favourites', label: 'Favorites / Wishlist', icon: Heart },
     { href: '/profile/refunds', label: 'Returns & Refunds', icon: RotateCcw },
   ] as const;
 

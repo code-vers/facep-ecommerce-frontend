@@ -22,7 +22,8 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { authApi } from '@/lib/api/auth';
-import type { AuthContextValue, AuthSession, RegisterPayload } from '@/lib/auth/auth.types';
+import { getApiErrorMessage } from '@/lib/api/axios';
+import { AuthError, type AuthContextValue, type AuthSession, type RegisterPayload } from '@/lib/auth/auth.types';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Context
@@ -71,16 +72,37 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }, []);
 
+  useEffect(() => {
+    const handleUnauthorized = () => setSession(null);
+    window.addEventListener('facep:unauthorized', handleUnauthorized);
+    return () => window.removeEventListener('facep:unauthorized', handleUnauthorized);
+  }, []);
+
   const login = useCallback(async (email: string, password: string): Promise<AuthSession> => {
-    const response = await authApi.login({ email, password });
-    const newSession = { user: response.data.user, token: response.data.accessToken };
-    localStorage.setItem('accessToken', response.data.accessToken);
-    setSession(newSession);
-    return newSession;
+    try {
+      const response = await authApi.login({ email, password });
+      const newSession = { user: response.data.user, token: response.data.accessToken };
+      localStorage.setItem('accessToken', response.data.accessToken);
+      setSession(newSession);
+      return newSession;
+    } catch (error) {
+      throw new AuthError('INVALID_CREDENTIALS', getApiErrorMessage(error, 'Unable to log in.'));
+    }
   }, []);
 
   const register = useCallback(async (payload: RegisterPayload): Promise<void> => {
-    await authApi.register(payload);
+    try {
+      await authApi.register(payload);
+    } catch (error) {
+      throw new AuthError('UNKNOWN_ERROR', getApiErrorMessage(error, 'Unable to register.'));
+    }
+  }, []);
+
+  const refreshProfile = useCallback(async (): Promise<void> => {
+    const token = localStorage.getItem('accessToken');
+    if (!token) return;
+    const response = await authApi.getProfile();
+    setSession({ user: response.data, token });
   }, []);
 
   const logout = useCallback((): void => {
@@ -89,8 +111,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, []);
 
   const value = useMemo<AuthContextValue>(
-    () => ({ session, isLoading, login, register, logout }),
-    [session, isLoading, login, register, logout],
+    () => ({ session, isLoading, login, register, refreshProfile, logout }),
+    [session, isLoading, login, register, refreshProfile, logout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

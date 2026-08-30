@@ -6,12 +6,11 @@
  */
 
 import React from 'react';
-import { CreditCard, Package, Calendar } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 import { SAVED_CARDS } from '@/lib/checkout-data';
 
 interface CheckoutPaymentDetailsProps {
   formData: {
-    paymentMethod: 'COD' | 'CARD';
     selectedCardId: string;
     cardNumber: string;
     cardExpiry: string;
@@ -56,9 +55,6 @@ export default function CheckoutPaymentDetails({
   onChange,
   errors,
 }: CheckoutPaymentDetailsProps) {
-  const handlePaymentMethodChange = (method: 'COD' | 'CARD') => {
-    onChange('paymentMethod', method);
-  };
 
   const handleCardSelection = (cardId: string) => {
     onChange('selectedCardId', cardId);
@@ -73,73 +69,10 @@ export default function CheckoutPaymentDetails({
         </h2>
       </div>
 
-      {/* Payment Method Selector */}
-      <div className="space-y-4">
+      <div className="space-y-6 pt-2 transition-all duration-300">
         <label className="text-[16px] text-black font-normal block">
-          Choose Payment Method
+          Card Details
         </label>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-          {/* Cash on Delivery (COD) */}
-          <div
-            onClick={() => handlePaymentMethodChange('COD')}
-            className={`border rounded p-4 flex items-center justify-between cursor-pointer transition-all ${
-              formData.paymentMethod === 'COD'
-                ? 'border-black ring-1 ring-black bg-[#fcfcfc]'
-                : 'border-[#e5e5e6] hover:border-gray-400'
-            }`}
-          >
-            <div className="flex gap-4 items-center">
-              <div className="w-9 h-9 flex items-center justify-center bg-gray-50 border border-gray-100 rounded text-gray-700">
-                <Package className="w-5 h-5" />
-              </div>
-              <div className="flex flex-col text-left">
-                <span className="text-[16px] font-semibold text-black leading-tight">COD</span>
-                <span className="text-[12px] text-[#42454d]">Cash on delivery</span>
-              </div>
-            </div>
-            {/* Custom Radio Button */}
-            <div className="w-4 h-4 rounded-full border border-black flex items-center justify-center p-0.5">
-              {formData.paymentMethod === 'COD' && (
-                <div className="w-full h-full bg-black rounded-full" />
-              )}
-            </div>
-          </div>
-
-          {/* Credit / Debit Card */}
-          <div
-            onClick={() => handlePaymentMethodChange('CARD')}
-            className={`border rounded p-4 flex items-center justify-between cursor-pointer transition-all ${
-              formData.paymentMethod === 'CARD'
-                ? 'border-black ring-1 ring-black bg-[#fcfcfc]'
-                : 'border-[#e5e5e6] hover:border-gray-400'
-            }`}
-          >
-            <div className="flex gap-4 items-center">
-              <div className="w-9 h-9 flex items-center justify-center bg-gray-50 border border-gray-100 rounded text-gray-700">
-                <CreditCard className="w-5 h-5" />
-              </div>
-              <div className="flex flex-col text-left">
-                <span className="text-[16px] font-semibold text-black leading-tight">Credit / Debit Card</span>
-                <span className="text-[12px] text-[#42454d]">Choose your card</span>
-              </div>
-            </div>
-            {/* Custom Radio Button */}
-            <div className="w-4 h-4 rounded-full border border-black flex items-center justify-center p-0.5">
-              {formData.paymentMethod === 'CARD' && (
-                <div className="w-full h-full bg-black rounded-full" />
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Conditional Card Options Panel */}
-      {formData.paymentMethod === 'CARD' && (
-        <div className="space-y-6 pt-2 transition-all duration-300">
-          <label className="text-[16px] text-black font-normal block">
-            Card Details
-          </label>
 
           {/* Saved Cards List */}
           <div className="space-y-4 w-full">
@@ -279,7 +212,6 @@ export default function CheckoutPaymentDetails({
             </div>
           )}
         </div>
-      )}
     </div>
   );
 }

@@ -2,13 +2,30 @@
 
 import ProductCarousel from '@/components/homepage/ProductCarousel';
 import BrowsingHistory from '@/components/product/BrowsingHistory';
+import { useAuth } from '@/contexts/AuthContext';
+import { useCancelOrder, useMyOrders } from '@/hooks/api/useOrder';
+import {
+  formatOrderImageUrl,
+  mapBackendStatusToUI,
+  type TabType,
+  type UIOrderStatus,
+} from '@/lib/api/order';
 import { CarouselProduct } from '@/lib/homepage-data';
 import { cn } from '@/lib/utils';
-import { ChevronDown, ChevronUp, FileText, Package, PackageCheck, Truck, X } from 'lucide-react';
+import {
+  ChevronDown,
+  ChevronUp,
+  FileText,
+  Package,
+  PackageCheck,
+  Truck,
+  X,
+} from 'lucide-react';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import React, { useEffect, useMemo, useState } from 'react';
 
-interface OrderItem {
+interface OrderItemDisplay {
   id: string;
   name: string;
   seller: string;
@@ -16,112 +33,14 @@ interface OrderItem {
   imageSrc: string;
 }
 
-interface Order {
+interface OrderDisplay {
   id: string;
-  status: 'All Orders' | 'Ordered' | 'Packed' | 'Shipped' | 'Delivered' | 'Returned';
+  orderNumber: string;
+  status: UIOrderStatus;
   placedDate: string;
   totalPrice: string;
-  items: OrderItem[];
+  items: OrderItemDisplay[];
 }
-
-const ORDERS_MOCK_DATA: Order[] = [
-  {
-    id: '123456',
-    status: 'Ordered',
-    placedDate: 'January 15, 2026',
-    totalPrice: '$4,949.97',
-    items: [
-      {
-        id: 'item-1',
-        name: 'Plant x 1',
-        seller: 'By tech store',
-        price: '$1,649.99',
-        imageSrc:
-          'https://images.unsplash.com/photo-1545241047-6083a3684587?q=80&w=300&auto=format&fit=crop',
-      },
-      {
-        id: 'item-2',
-        name: 'Plant x 1',
-        seller: 'By tech store',
-        price: '$1,649.99',
-        imageSrc:
-          'https://images.unsplash.com/photo-1545241047-6083a3684587?q=80&w=300&auto=format&fit=crop',
-      },
-      {
-        id: 'item-3',
-        name: 'Plant x 1',
-        seller: 'By tech store',
-        price: '$1,649.99',
-        imageSrc:
-          'https://images.unsplash.com/photo-1545241047-6083a3684587?q=80&w=300&auto=format&fit=crop',
-      },
-    ],
-  },
-  {
-    id: '789012',
-    status: 'Delivered',
-    placedDate: 'December 10, 2025',
-    totalPrice: '$199.99',
-    items: [
-      {
-        id: 'item-4',
-        name: 'Office Chair x 1',
-        seller: 'By chair co',
-        price: '$199.99',
-        imageSrc:
-          'https://images.unsplash.com/photo-1505797149-43b0069ec26b?q=80&w=300&auto=format&fit=crop',
-      },
-    ],
-  },
-  {
-    id: '345678',
-    status: 'Shipped',
-    placedDate: 'November 22, 2025',
-    totalPrice: '$89.99',
-    items: [
-      {
-        id: 'item-5',
-        name: 'Mechanical Keyboard x 1',
-        seller: 'By keyboard inc',
-        price: '$89.99',
-        imageSrc:
-          'https://images.unsplash.com/photo-1587829741301-dc798b83add3?q=80&w=300&auto=format&fit=crop',
-      },
-    ],
-  },
-  {
-    id: '901234',
-    status: 'Returned',
-    placedDate: 'October 05, 2025',
-    totalPrice: '$49.99',
-    items: [
-      {
-        id: 'item-6',
-        name: 'Monitor Stand x 1',
-        seller: 'By metalworks',
-        price: '$49.99',
-        imageSrc:
-          'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?q=80&w=300&auto=format&fit=crop',
-      },
-    ],
-  },
-  {
-    id: '567890',
-    status: 'Packed',
-    placedDate: 'September 14, 2025',
-    totalPrice: '$299.99',
-    items: [
-      {
-        id: 'item-7',
-        name: 'Gaming Setup x 1',
-        seller: 'By setups store',
-        price: '$299.99',
-        imageSrc:
-          'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=300&auto=format&fit=crop',
-      },
-    ],
-  },
-];
 
 const RECENTLY_VIEWED_ITEMS: CarouselProduct[] = [
   {
@@ -192,7 +111,7 @@ const RECENTLY_VIEWED_ITEMS: CarouselProduct[] = [
   },
 ];
 
-const FILTER_TABS = [
+const FILTER_TABS: readonly TabType[] = [
   'All Orders',
   'Ordered',
   'Packed',
@@ -201,7 +120,12 @@ const FILTER_TABS = [
   'Returned',
 ] as const;
 
-const STATUS_ORDER = ['Ordered', 'Packed', 'Shipped', 'Delivered'] as const;
+const STATUS_ORDER: readonly UIOrderStatus[] = [
+  'Ordered',
+  'Packed',
+  'Shipped',
+  'Delivered',
+] as const;
 
 const TRACKING_STEPS = [
   {
@@ -274,10 +198,55 @@ const getStepDateTime = (placedDateStr: string, stepIndex: number) => {
 };
 
 export default function ReturnsAndOrdersPage() {
-  const [activeTab, setActiveTab] = useState<(typeof FILTER_TABS)[number]>('All Orders');
-  const [expandedOrders, setExpandedOrders] = useState<Record<string, boolean>>({ '123456': true });
+  const { session } = useAuth();
+  const [activeTab, setActiveTab] = useState<TabType>('All Orders');
   const [currentPage, setCurrentPage] = useState(1);
-  const [activeTrackOrder, setActiveTrackOrder] = useState<Order | null>(null);
+  const itemsPerPage = 5;
+  const [expandedOrders, setExpandedOrders] = useState<Record<string, boolean>>({});
+  const [activeTrackOrder, setActiveTrackOrder] = useState<OrderDisplay | null>(null);
+
+  const { data, isLoading } = useMyOrders({
+    page: currentPage,
+    limit: itemsPerPage,
+    status: activeTab,
+  });
+
+  const cancelOrderMutation = useCancelOrder();
+
+  const rawOrders = data?.orders;
+  const orders: OrderDisplay[] = useMemo(() => {
+    if (!rawOrders) return [];
+    return rawOrders.map((order) => {
+      const placedDate = new Date(order.createdAt).toLocaleDateString('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+      });
+
+      const formattedTotal = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+      }).format(Number(order.total) || 0);
+
+      return {
+        id: order.id,
+        orderNumber: order.orderNumber || order.id,
+        status: mapBackendStatusToUI(order.status),
+        placedDate,
+        totalPrice: formattedTotal,
+        items: (order.items || []).map((item) => ({
+          id: item.id,
+          name: item.productName || 'Item',
+          seller: item.vendorName || 'Facep Store',
+          price: new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+          }).format(Number(item.price) || 0),
+          imageSrc: formatOrderImageUrl(item.image),
+        })),
+      };
+    });
+  }, [rawOrders]);
 
   // Handle ESC key press and body scroll lock
   useEffect(() => {
@@ -300,19 +269,19 @@ export default function ReturnsAndOrdersPage() {
     };
   }, [activeTrackOrder]);
 
-  // Toggle order expansion
-  const toggleOrder = (orderId: string) => {
+  const toggleOrder = (orderId: string, defaultExpanded: boolean) => {
     setExpandedOrders((prev) => ({
       ...prev,
-      [orderId]: !prev[orderId],
+      [orderId]: prev[orderId] !== undefined ? !prev[orderId] : !defaultExpanded,
     }));
   };
 
-  // Filtered list based on active tab
-  const filteredOrders = ORDERS_MOCK_DATA.filter((order) => {
-    if (activeTab === 'All Orders') return true;
-    return order.status === activeTab;
-  });
+  const handleCancelOrder = (orderId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    cancelOrderMutation.mutate({ orderId });
+  };
+
+  const totalPages = data?.meta?.totalPages || 1;
 
   return (
     <div className='w-full min-h-screen bg-white'>
@@ -333,7 +302,7 @@ export default function ReturnsAndOrdersPage() {
                 type='button'
                 onClick={() => {
                   setActiveTab(tab);
-                  setCurrentPage(1); // reset pagination on filter change
+                  setCurrentPage(1);
                 }}
                 className={cn(
                   'px-4 py-2 text-[14px] font-semibold rounded-xs border shrink-0 transition-all cursor-pointer',
@@ -350,9 +319,30 @@ export default function ReturnsAndOrdersPage() {
 
         {/* Orders List */}
         <div className='flex flex-col gap-6'>
-          {filteredOrders.length > 0 ? (
-            filteredOrders.map((order) => {
-              const isExpanded = !!expandedOrders[order.id];
+          {!session?.user?.id ? (
+            <div className='w-full py-16 border border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center text-center px-4 gap-3'>
+              <span className='text-gray-600 text-[18px] font-semibold'>
+                Please sign in to view your order history
+              </span>
+              <Link
+                href='/login'
+                className='px-6 py-2.5 bg-[#dec33a] hover:bg-[#c9b034] text-black font-semibold rounded-xs transition-colors'
+              >
+                Sign In
+              </Link>
+            </div>
+          ) : isLoading ? (
+            <div className='w-full py-16 flex justify-center items-center'>
+              <span className='text-gray-400 font-medium'>Loading orders...</span>
+            </div>
+          ) : orders.length > 0 ? (
+            orders.map((order, index) => {
+              const defaultExpanded = index === 0;
+              const isExpanded =
+                expandedOrders[order.id] !== undefined
+                  ? expandedOrders[order.id]
+                  : defaultExpanded;
+
               return (
                 <div
                   key={order.id}
@@ -360,17 +350,17 @@ export default function ReturnsAndOrdersPage() {
                 >
                   {/* Order Header / Toggle */}
                   <div
-                    onClick={() => toggleOrder(order.id)}
+                    onClick={() => toggleOrder(order.id, defaultExpanded)}
                     className='flex flex-col sm:flex-row justify-between items-start sm:items-center bg-[#f8f9fa] border-b border-[#e5e5e6] p-4 sm:p-6 cursor-pointer hover:bg-gray-50 transition-colors select-none gap-4'
                   >
                     <div className='flex flex-col gap-1 sm:gap-2'>
                       <div className='flex items-center gap-3'>
                         <span className='text-[16px] sm:text-[18px] font-bold text-gray-900'>
-                          Order #{order.id}
+                          Order #{order.orderNumber}
                         </span>
                         <span
                           className={cn(
-                            'px-2 py-0.5 text-[12px] font-bold rounded-xs border',
+                            'px-2.5 py-0.5 text-[12px] font-bold rounded-xs border',
                             order.status === 'Delivered' &&
                               'bg-emerald-50 text-emerald-700 border-emerald-200',
                             order.status === 'Ordered' &&
@@ -401,7 +391,11 @@ export default function ReturnsAndOrdersPage() {
                         </span>
                       </div>
                       <button type='button' className='text-gray-500'>
-                        {isExpanded ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
+                        {isExpanded ? (
+                          <ChevronUp size={24} />
+                        ) : (
+                          <ChevronDown size={24} />
+                        )}
                       </button>
                     </div>
                   </div>
@@ -421,6 +415,7 @@ export default function ReturnsAndOrdersPage() {
                                 src={item.imageSrc}
                                 alt={item.name}
                                 fill
+                                unoptimized
                                 className='object-cover'
                               />
                             </div>
@@ -429,7 +424,9 @@ export default function ReturnsAndOrdersPage() {
                                 <h4 className='text-[16px] sm:text-[18px] font-bold text-gray-900 leading-tight'>
                                   {item.name}
                                 </h4>
-                                <span className='text-[14px] text-gray-500'>{item.seller}</span>
+                                <span className='text-[14px] text-gray-500'>
+                                  By {item.seller}
+                                </span>
                               </div>
                               <span className='text-[18px] font-bold text-gray-950 mt-2 sm:mt-0'>
                                 {item.price}
@@ -441,12 +438,16 @@ export default function ReturnsAndOrdersPage() {
 
                       {/* Action buttons */}
                       <div className='flex flex-col sm:flex-row justify-end gap-3 pt-6 border-t border-gray-100'>
-                        <button
-                          type='button'
-                          className='px-6 py-2.5 text-[15px] font-semibold border border-red-200 text-red-600 hover:bg-rose-50 active:bg-rose-100 rounded-xs transition-all cursor-pointer text-center'
-                        >
-                          Cancel Order
-                        </button>
+                        {order.status !== 'Delivered' && order.status !== 'Returned' && (
+                          <button
+                            type='button'
+                            onClick={(e) => handleCancelOrder(order.id, e)}
+                            disabled={cancelOrderMutation.isPending}
+                            className='px-6 py-2.5 text-[15px] font-semibold border border-red-200 text-red-600 hover:bg-rose-50 active:bg-rose-100 rounded-xs transition-all cursor-pointer text-center disabled:opacity-50'
+                          >
+                            Cancel Order
+                          </button>
+                        )}
                         <button
                           type='button'
                           onClick={() => setActiveTrackOrder(order)}
@@ -470,7 +471,7 @@ export default function ReturnsAndOrdersPage() {
         </div>
 
         {/* Pagination Section */}
-        {filteredOrders.length > 0 && (
+        {totalPages > 1 && (
           <div className='flex justify-center items-center gap-1.5 py-4'>
             <button
               onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
@@ -480,7 +481,7 @@ export default function ReturnsAndOrdersPage() {
             >
               Previous
             </button>
-            {[1, 2, 3, 4, 5].map((pageNum) => (
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
               <button
                 key={pageNum}
                 onClick={() => setCurrentPage(pageNum)}
@@ -496,8 +497,8 @@ export default function ReturnsAndOrdersPage() {
               </button>
             ))}
             <button
-              onClick={() => setCurrentPage((p) => Math.min(p + 1, 5))}
-              disabled={currentPage === 5}
+              onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+              disabled={currentPage === totalPages}
               type='button'
               className='px-3 py-2 text-[14px] font-semibold rounded-xs border border-gray-300 hover:bg-gray-50 disabled:opacity-40 disabled:hover:bg-transparent transition-all cursor-pointer text-gray-700'
             >
@@ -543,8 +544,10 @@ export default function ReturnsAndOrdersPage() {
 
             {/* Modal Header */}
             <div className='flex flex-col gap-1 pb-6 border-b border-gray-100'>
-              <span className='text-[18px] text-gray-500 font-sans select-none'>Your Order is</span>
-              <h2 className='text-[32px] sm:text-[36px] font-bold text-gray-955 leading-tight'>
+              <span className='text-[18px] text-gray-500 font-sans select-none'>
+                Order #{activeTrackOrder.orderNumber} is
+              </span>
+              <h2 className='text-[32px] sm:text-[36px] font-bold text-gray-900 leading-tight'>
                 {getStatusTitle(activeTrackOrder.status)}
               </h2>
             </div>
@@ -593,7 +596,7 @@ export default function ReturnsAndOrdersPage() {
                         >
                           <StepIcon size={28} />
                         </div>
-                        <span className='text-[13px] sm:text-[14px] font-bold text-gray-955 mt-2 bg-white px-2 relative z-10 select-none text-center'>
+                        <span className='text-[13px] sm:text-[14px] font-bold text-gray-900 mt-2 bg-white px-2 relative z-10 select-none text-center'>
                           {step.label}
                         </span>
                       </div>
