@@ -6,13 +6,15 @@ import ProductCard from '@/components/shared/ProductCard';
 import SignUpBanner from '@/components/shared/SignUpBanner';
 import { useRelatedProducts } from '@/hooks/api/useProduct';
 import type { Product, ProductVariant } from '@/lib/api/product';
-import { ExternalLink, MapPin, Star } from 'lucide-react';
+import { ExternalLink, MapPin, Star, Heart, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { useCartStore } from '@/contexts/CartContext';
+import { useAuth } from '@/contexts/AuthContext';
+import { useCheckWishlistStatus, useToggleWishlist } from '@/hooks/api/useWishlist';
 
 const apiOrigin = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1').replace(
   /\/api\/v1\/?$/,
@@ -82,6 +84,36 @@ export default function PublicProductDetail({ product }: { product: Product }) {
 
   const router = useRouter();
   const { addToCart } = useCartStore();
+  const { session } = useAuth();
+  const { data: wishlistStatus, isLoading: isWishlistLoading } = useCheckWishlistStatus(product.id);
+  const toggleWishlistMutation = useToggleWishlist();
+  const isWishlisted = Boolean(wishlistStatus?.isWishlisted);
+
+  const handleToggleWishlist = async () => {
+    if (!session) {
+      toast.error('Please log in first', {
+        description: 'You need an account to save items to your wishlist.',
+      });
+      return;
+    }
+
+    try {
+      const res = await toggleWishlistMutation.mutateAsync(product.id);
+      if (res.isWishlisted) {
+        toast.success('Added to Wishlist', {
+          description: `${product.name} has been added to your wishlist.`,
+        });
+      } else {
+        toast.info('Removed from Wishlist', {
+          description: `${product.name} has been removed from your wishlist.`,
+        });
+      }
+    } catch {
+      toast.error('Wishlist Action Failed', {
+        description: 'Unable to update wishlist. Please try again.',
+      });
+    }
+  };
 
   const handleAddToCart = (redirect: boolean) => {
     if (isOutOfStock) return;
@@ -164,9 +196,38 @@ export default function PublicProductDetail({ product }: { product: Product }) {
 
               <div className='flex min-w-0 flex-1 flex-col gap-4'>
                 <div className='flex flex-col gap-2 border-b border-[#E5E5E6] pb-4.5'>
-                  <div className='flex items-start gap-1.75 text-[16px] leading-[1.2] text-[#165DD0]'>
-                    <span>Brand: {product.brand || '—'}</span>
-                    <ExternalLink size={18} strokeWidth={1.6} />
+                  <div className='flex items-center justify-between gap-2'>
+                    <div className='flex items-start gap-1.75 text-[16px] leading-[1.2] text-[#165DD0]'>
+                      <span>Brand: {product.brand || '—'}</span>
+                      <ExternalLink size={18} strokeWidth={1.6} />
+                    </div>
+                    <button
+                      type='button'
+                      onClick={handleToggleWishlist}
+                      disabled={toggleWishlistMutation.isPending}
+                      className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold transition-all ${
+                        isWishlisted
+                          ? 'bg-red-50 text-red-600 border border-red-200 hover:bg-red-100'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                      title={isWishlisted ? 'Remove from Wishlist' : 'Add to Wishlist'}
+                    >
+                      {toggleWishlistMutation.isPending ? (
+                        <Loader2 size={15} className='animate-spin text-current' />
+                      ) : (
+                        <Heart
+                          size={15}
+                          className={`${isWishlisted ? 'fill-red-600 text-red-600' : 'text-gray-600'}`}
+                        />
+                      )}
+                      <span>
+                        {toggleWishlistMutation.isPending
+                          ? 'Saving...'
+                          : isWishlisted
+                          ? 'In Wishlist'
+                          : 'Wishlist'}
+                      </span>
+                    </button>
                   </div>
                   <h1 className='font-[Arial] text-[28px] font-normal leading-[1.2] text-[#42454D]'>
                     {product.name}
@@ -393,6 +454,36 @@ export default function PublicProductDetail({ product }: { product: Product }) {
                     }`}
                   >
                     Add to Cart
+                  </button>
+                  <button
+                    type='button'
+                    disabled={toggleWishlistMutation.isPending}
+                    onClick={handleToggleWishlist}
+                    className={`flex h-12 w-full items-center justify-center gap-2.5 rounded-xs border text-[16px] font-medium transition-all duration-200 shadow-xs ${
+                      isWishlisted
+                        ? 'border-red-500 bg-red-50 text-red-600 hover:bg-red-100 hover:border-red-600'
+                        : 'border-[#686F7D] bg-white text-[#42454D] hover:bg-gray-50'
+                    } ${toggleWishlistMutation.isPending ? 'opacity-85 cursor-wait' : ''}`}
+                  >
+                    {toggleWishlistMutation.isPending ? (
+                      <Loader2 size={20} className='animate-spin text-current' />
+                    ) : (
+                      <Heart
+                        size={20}
+                        className={`transition-transform duration-300 ${
+                          isWishlisted ? 'fill-red-600 text-red-600 scale-110' : 'text-gray-600'
+                        }`}
+                      />
+                    )}
+                    <span>
+                      {toggleWishlistMutation.isPending
+                        ? isWishlisted
+                          ? 'Removing from Wishlist...'
+                          : 'Adding to Wishlist...'
+                        : isWishlisted
+                        ? 'Remove from Wishlist'
+                        : 'Add to Wishlist'}
+                    </span>
                   </button>
                 </div>
               </div>
