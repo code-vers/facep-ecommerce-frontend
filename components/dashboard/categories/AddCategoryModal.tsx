@@ -1,8 +1,12 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDown, Check, X } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import Image from 'next/image';
+import { ChevronDown, Check, X, UploadCloud, Loader2, Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
+import { cn, getImageUrl } from '@/lib/utils';
+import { apiClient } from '@/lib/api/axios';
+import { ApiResponse } from '@/lib/api/category';
 
 export type CategoryStatus = 'Active' | 'Disable';
 
@@ -11,6 +15,7 @@ interface AddCategoryModalProps {
   onClose: () => void;
   onAddCategory: (categoryData: {
     name: string;
+    imageUrl?: string | null;
     subcategories: number;
     status: CategoryStatus;
     subcategoryNames?: string[];
@@ -23,6 +28,8 @@ export default function AddCategoryModal({
   onAddCategory,
 }: AddCategoryModalProps) {
   const [name, setName] = useState('');
+  const [imageUrl, setImageUrl] = useState<string>('');
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [status, setStatus] = useState<CategoryStatus>('Active');
   const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
   const [subcategories, setSubcategories] = useState<string[]>([]);
@@ -31,6 +38,7 @@ export default function AddCategoryModal({
   const [newSubcategoryName, setNewSubcategoryName] = useState('');
 
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -43,6 +51,37 @@ export default function AddCategoryModal({
   }, []);
 
   if (!isOpen) return null;
+
+  const handleImageFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please upload an image file (PNG, JPG, WEBP)');
+      return;
+    }
+
+    try {
+      setIsUploadingImage(true);
+      const formData = new FormData();
+      formData.append('files', file);
+
+      const res = await apiClient.post<ApiResponse<string[]>>('/uploads/categories', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
+      if (res.data?.data?.[0]) {
+        setImageUrl(res.data.data[0]);
+        toast.success('Category image uploaded');
+      }
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
+      toast.error(error?.response?.data?.message || 'Failed to upload image');
+    } finally {
+      setIsUploadingImage(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
 
   const handleAddSubcategory = () => {
     if (newSubcategoryName.trim()) {
@@ -61,6 +100,7 @@ export default function AddCategoryModal({
 
     onAddCategory({
       name: name.trim(),
+      imageUrl: imageUrl || null,
       subcategories: subcategories.length,
       status,
       subcategoryNames: subcategories,
@@ -68,6 +108,7 @@ export default function AddCategoryModal({
 
     // Reset state
     setName('');
+    setImageUrl('');
     setStatus('Active');
     setSubcategories([]);
     setIsAddingSubcategory(false);
@@ -152,6 +193,77 @@ export default function AddCategoryModal({
               </div>
             </div>
 
+            {/* Category Image Upload */}
+            <div className='flex flex-col gap-2 w-full'>
+              <label className="font-['Open_Sans'] font-normal text-base text-black leading-[1.2]">
+                Category Image
+              </label>
+              <input
+                ref={fileInputRef}
+                type='file'
+                accept='image/*'
+                onChange={handleImageFileChange}
+                className='hidden'
+              />
+
+              {imageUrl ? (
+                <div className='flex items-center gap-4 rounded-sm border border-[#e5e5e6] p-3'>
+                  <div className='relative h-20 w-20 shrink-0 overflow-hidden rounded-sm bg-gray-100 border border-gray-200'>
+                    <Image
+                      src={getImageUrl(imageUrl)}
+                      alt='Category preview'
+                      fill
+                      className='object-cover'
+                      unoptimized
+                    />
+                  </div>
+                  <div className='flex flex-col gap-1.5'>
+                    <p className='text-xs text-[#5A6573] truncate max-w-xs'>{imageUrl}</p>
+                    <div className='flex items-center gap-3'>
+                      <button
+                        type='button'
+                        onClick={() => fileInputRef.current?.click()}
+                        className='text-xs text-[#165dd0] hover:underline font-medium'
+                      >
+                        Change image
+                      </button>
+                      <button
+                        type='button'
+                        onClick={() => setImageUrl('')}
+                        className='text-xs text-red-600 hover:underline flex items-center gap-1'
+                      >
+                        <Trash2 size={12} /> Remove
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div
+                  onClick={() => fileInputRef.current?.click()}
+                  className='flex cursor-pointer flex-col items-center justify-center gap-2 rounded-sm border-2 border-dashed border-[#e5e5e6] bg-[#fafafa] py-6 px-4 hover:border-[#F09000] hover:bg-orange-50/20 transition-colors'
+                >
+                  {isUploadingImage ? (
+                    <div className='flex items-center gap-2 text-sm text-[#848995]'>
+                      <Loader2 className='h-5 w-5 animate-spin text-[#F09000]' />
+                      <span>Uploading image...</span>
+                    </div>
+                  ) : (
+                    <>
+                      <div className='flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm border border-gray-200 text-[#848995]'>
+                        <UploadCloud size={20} />
+                      </div>
+                      <div className='text-center'>
+                        <p className='text-sm text-black font-medium'>
+                          <span className='text-[#165dd0] underline'>Click to upload</span> category image
+                        </p>
+                        <p className='text-xs text-[#848995] mt-0.5'>PNG, JPG, or WEBP up to 5MB</p>
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+
             {/* Subcategories Display */}
             {subcategories.length > 0 && (
               <div className='flex flex-wrap gap-3 items-center w-full'>
@@ -213,7 +325,7 @@ export default function AddCategoryModal({
             <div className='flex justify-end w-full mt-4'>
               <button
                 onClick={handleSubmit}
-                disabled={!name.trim()}
+                disabled={!name.trim() || isUploadingImage}
                 className="bg-[#f09000] hover:bg-[#d98200] disabled:opacity-50 disabled:cursor-not-allowed border border-[#f09000] text-black font-['Open_Sans'] font-normal text-sm leading-[1.2] px-3 py-2 rounded-sm transition-colors flex items-center gap-2"
               >
                 Add Category

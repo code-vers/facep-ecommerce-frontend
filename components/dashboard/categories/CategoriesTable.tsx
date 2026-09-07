@@ -1,12 +1,13 @@
 'use client';
 
 import { useAuth } from '@/contexts/AuthContext';
-import { ChevronDown, Eye, Pencil, PlusCircle, Trash2, X } from 'lucide-react';
+import Image from 'next/image';
+import { ChevronDown, Eye, Folder, Pencil, PlusCircle, Trash2, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
-import { cn } from '@/lib/utils';
+import { cn, getImageUrl } from '@/lib/utils';
 import AddCategoryModal, { CategoryStatus } from './AddCategoryModal';
 import EditCategoryModal from './EditCategoryModal';
 import ViewCategoryModal from './ViewCategoryModal';
@@ -58,6 +59,7 @@ export default function CategoriesTable() {
 
   const handleAddCategory = (data: {
     name: string;
+    imageUrl?: string | null;
     subcategories: number;
     status: CategoryStatus;
     subcategoryNames?: string[];
@@ -65,6 +67,7 @@ export default function CategoriesTable() {
     createCategoryMutation.mutate(
       {
         name: data.name,
+        imageUrl: data.imageUrl,
         subcategories: data.subcategoryNames || [],
         isActive: data.status === 'Active',
       },
@@ -85,6 +88,7 @@ export default function CategoriesTable() {
     categoryId: string,
     data: {
       name: string;
+      imageUrl?: string | null;
       subcategories: number;
       status: CategoryStatus;
       subcategoryNames?: string[];
@@ -94,6 +98,7 @@ export default function CategoriesTable() {
       {
         id: categoryId,
         name: data.name,
+        imageUrl: data.imageUrl,
         subcategories: data.subcategoryNames,
         isActive: data.status === 'Active',
       },
@@ -195,8 +200,23 @@ export default function CategoriesTable() {
               key={category.id}
               className='flex w-full shrink-0 items-center border-b border-[#E5E5E6] py-4 px-2 transition-colors hover:bg-gray-50'
             >
-              <div className='min-w-37.5 flex-[1.5_0_0] px-2'>
-                <p className='truncate text-[13px] font-normal leading-[1.3] text-[#42454D]'>
+              <div className='min-w-37.5 flex-[1.5_0_0] px-2 flex items-center gap-3'>
+                {category.imageUrl ? (
+                  <div className='relative h-9 w-9 shrink-0 overflow-hidden rounded-[4px] border border-[#E5E5E6] bg-gray-50'>
+                    <Image
+                      src={getImageUrl(category.imageUrl)}
+                      alt={category.name}
+                      fill
+                      className='object-cover'
+                      unoptimized
+                    />
+                  </div>
+                ) : (
+                  <div className='flex h-9 w-9 shrink-0 items-center justify-center rounded-[4px] border border-[#E5E5E6] bg-gray-50 text-gray-400'>
+                    <Folder size={16} />
+                  </div>
+                )}
+                <p className='truncate text-[13px] font-medium leading-[1.3] text-[#1e293b]'>
                   {category.name}
                 </p>
               </div>

@@ -1,6 +1,7 @@
 'use client';
 
-import { cn } from '@/lib/utils';
+import Image from 'next/image';
+import { cn, getImageUrl } from '@/lib/utils';
 import { ChevronDown, X } from 'lucide-react';
 
 import { Category } from '@/lib/api/category';
@@ -54,6 +55,25 @@ export default function ViewCategoryModal({ isOpen, onClose, category }: ViewCat
               <ChevronDown className='w-4 h-4 opacity-70' />
             </div>
           </div>
+
+          {/* Category Image Preview if present */}
+          {category.imageUrl && (
+            <div className='flex items-center gap-4 p-4 rounded-sm border border-[#e5e5e6] bg-gray-50/50'>
+              <div className='relative h-20 w-20 shrink-0 overflow-hidden rounded-sm bg-white border border-[#e5e5e6]'>
+                <Image
+                  src={getImageUrl(category.imageUrl)}
+                  alt={category.name}
+                  fill
+                  className='object-cover'
+                  unoptimized
+                />
+              </div>
+              <div className='flex flex-col gap-1 min-w-0'>
+                <p className='text-sm font-medium text-black'>Category Image</p>
+                <p className='text-xs text-[#5A6573] truncate'>{category.imageUrl}</p>
+              </div>
+            </div>
+          )}
 
           <div className='flex flex-col gap-6 w-full'>
             {/* Subcategories Section */}
