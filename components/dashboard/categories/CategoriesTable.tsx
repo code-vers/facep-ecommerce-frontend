@@ -202,7 +202,7 @@ export default function CategoriesTable() {
             >
               <div className='min-w-37.5 flex-[1.5_0_0] px-2 flex items-center gap-3'>
                 {category.imageUrl ? (
-                  <div className='relative h-9 w-9 shrink-0 overflow-hidden rounded-[4px] border border-[#E5E5E6] bg-gray-50'>
+                  <div className='relative h-9 w-9 shrink-0 overflow-hidden rounded-lg border border-[#E5E5E6] bg-gray-50'>
                     <Image
                       src={getImageUrl(category.imageUrl)}
                       alt={category.name}
@@ -212,7 +212,7 @@ export default function CategoriesTable() {
                     />
                   </div>
                 ) : (
-                  <div className='flex h-9 w-9 shrink-0 items-center justify-center rounded-[4px] border border-[#E5E5E6] bg-gray-50 text-gray-400'>
+                  <div className='flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[#E5E5E6] bg-gray-50 text-gray-400'>
                     <Folder size={16} />
                   </div>
                 )}
