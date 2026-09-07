@@ -15,7 +15,7 @@ import SignUpBanner from "@/components/product/SignUpBanner";
 import { useHomepageCategoryGrids } from "@/hooks/api/useCategory";
 import { useRelatedToViewedProducts } from "@/hooks/api/useProduct";
 import {
-  CAROUSEL_BEAUTY_ITEMS,
+  // CAROUSEL_BEAUTY_ITEMS,
   CAROUSEL_BEST_CLOTHING_ITEMS,
   CAROUSEL_CANADA_ITEMS,
   CAROUSEL_CLOTHES_SHOES_ITEMS,
@@ -24,7 +24,7 @@ import {
   CAROUSEL_WIRELESS_ITEMS,
   CATEGORY_GRIDS_1,
   CATEGORY_GRIDS_2,
-  CATEGORY_GRIDS_3,
+  // CATEGORY_GRIDS_3,
   CATEGORY_GRIDS_4,
 } from "@/lib/homepage-data";
 
@@ -85,24 +85,15 @@ export default function Home() {
         )}
 
         {/* ── 5. Carousel 2 — Popular products in Beauty internationally ── */}
-        <ProductCarousel
+        {/* <ProductCarousel
           title="Popular products in Beauty internationally"
           products={CAROUSEL_BEAUTY_ITEMS}
           exploreHref="/products?category=beauty"
-        />
-
-        {/* ── 6. Category Grid 3 ── */}
-        <section aria-label="Merchandise, Travel, and Toys Categories">
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {CATEGORY_GRIDS_3.map((grid) => (
-              <CategoryGridCard key={grid.id} data={grid} />
-            ))}
-          </div>
-        </section>
+        /> */}
 
         {/* ── 7. Carousel 3 — Best Sellers in Clothing, Shoes & Jewelry ── */}
         <ProductCarousel
-          title="Best Sellers in Clothing, Shoes & Jewelry"
+          title="Best Sellers"
           products={CAROUSEL_BEST_CLOTHING_ITEMS}
           exploreHref="/products?category=clothing"
         />
