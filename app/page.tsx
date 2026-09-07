@@ -7,11 +7,12 @@
 
 "use client";
 
-import CategoryGridCard from "@/components/homepage/CategoryGridCard";
+import CategoryGridCard, { CategoryGridCardSkeleton } from "@/components/homepage/CategoryGridCard";
 import HeroSection from "@/components/homepage/HeroSection";
 import ProductCarousel from "@/components/homepage/ProductCarousel";
 import BrowsingHistory from "@/components/product/BrowsingHistory";
 import SignUpBanner from "@/components/product/SignUpBanner";
+import { useHomepageCategoryGrids } from "@/hooks/api/useCategory";
 import {
   CAROUSEL_BEAUTY_ITEMS,
   CAROUSEL_BEST_CLOTHING_ITEMS,
@@ -27,6 +28,11 @@ import {
 } from "@/lib/homepage-data";
 
 export default function Home() {
+  const { grid1, grid2, hasData, isLoading } = useHomepageCategoryGrids();
+
+  const displayGrid1 = hasData ? grid1 : CATEGORY_GRIDS_1;
+  const displayGrid2 = hasData ? grid2 : CATEGORY_GRIDS_2;
+
   return (
     <main className="min-h-screen bg-[#F4F4F5]">
       {/* ── 1. Hero Section ── */}
@@ -36,20 +42,28 @@ export default function Home() {
       <div className="mx-auto w-full max-w-[1760px] px-4 sm:px-6 lg:px-10 space-y-12 md:space-y-16 pb-16">
 
         {/* ── 2. Category Grid 1 ── */}
-        <section aria-label="Home and Decor Categories" className="-mt-16 sm:-mt-32 md:-mt-48 lg:-mt-64 xl:-mt-80 relative z-20">
+        <section aria-label="Featured Categories Grid 1" className="-mt-16 sm:-mt-32 md:-mt-48 lg:-mt-64 xl:-mt-80 relative z-20">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {CATEGORY_GRIDS_1.map((grid) => (
-              <CategoryGridCard key={grid.id} data={grid} />
-            ))}
+            {isLoading && !hasData
+              ? Array.from({ length: 4 }).map((_, i) => (
+                  <CategoryGridCardSkeleton key={`skeleton-grid-1-${i}`} />
+                ))
+              : displayGrid1.map((grid) => (
+                  <CategoryGridCard key={grid.id} data={grid} />
+                ))}
           </div>
         </section>
 
         {/* ── 3. Category Grid 2 ── */}
-        <section aria-label="Kitchen, Fashion, and Gaming Categories">
+        <section aria-label="Featured Categories Grid 2">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {CATEGORY_GRIDS_2.map((grid) => (
-              <CategoryGridCard key={grid.id} data={grid} />
-            ))}
+            {isLoading && !hasData
+              ? Array.from({ length: 4 }).map((_, i) => (
+                  <CategoryGridCardSkeleton key={`skeleton-grid-2-${i}`} />
+                ))
+              : displayGrid2.map((grid) => (
+                  <CategoryGridCard key={grid.id} data={grid} />
+                ))}
           </div>
         </section>
 

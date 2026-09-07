@@ -3,11 +3,12 @@ import img from './../public/banner.png'
 export interface CategoryItem {
   label: string;
   imageSrc: string;
+  href?: string;
 }
 
 export interface CategoryGridData {
   id: string;
-  title: string;
+  title?: string;
   items: CategoryItem[];
   exploreLabel?: string;
   exploreHref: string;
@@ -57,9 +58,9 @@ export const HERO_SLIDES: HeroSlide[] = [
 // ── Category Grids Data ──────────────────────────────────────────────────────
 export const CATEGORY_GRIDS_1: CategoryGridData[] = [
   {
-    id: "revamp-home",
-    title: "Revamp your home in style",
-    exploreHref: "/products?category=lighting",
+    id: "grid-1-card-1",
+    title: "",
+    exploreHref: "/products",
     items: [
       {
         label: "Chandeliers",
@@ -80,9 +81,9 @@ export const CATEGORY_GRIDS_1: CategoryGridData[] = [
     ],
   },
   {
-    id: "decorate-style",
-    title: "Decorate with Style",
-    exploreHref: "/products?category=decor",
+    id: "grid-1-card-2",
+    title: "",
+    exploreHref: "/products",
     items: [
       {
         label: "String Art",
@@ -103,9 +104,9 @@ export const CATEGORY_GRIDS_1: CategoryGridData[] = [
     ],
   },
   {
-    id: "illuminate-space",
-    title: "Illuminate Your Space",
-    exploreHref: "/products?category=smart-lighting",
+    id: "grid-1-card-3",
+    title: "",
+    exploreHref: "/products",
     items: [
       {
         label: "Smart Home Devices",
@@ -126,9 +127,9 @@ export const CATEGORY_GRIDS_1: CategoryGridData[] = [
     ],
   },
   {
-    id: "upgrade-home",
-    title: "Upgrade Your Home Today",
-    exploreHref: "/products?category=appliances",
+    id: "grid-1-card-4",
+    title: "",
+    exploreHref: "/products",
     items: [
       {
         label: "Ceiling Fans",
@@ -152,9 +153,9 @@ export const CATEGORY_GRIDS_1: CategoryGridData[] = [
 
 export const CATEGORY_GRIDS_2: CategoryGridData[] = [
   {
-    id: "kitchen-appliances",
-    title: "Top categories in Kitchen appliances",
-    exploreHref: "/products?category=kitchen",
+    id: "grid-2-card-1",
+    title: "",
+    exploreHref: "/products",
     items: [
       {
         label: "Cookware sets",
@@ -175,9 +176,9 @@ export const CATEGORY_GRIDS_2: CategoryGridData[] = [
     ],
   },
   {
-    id: "fathers-day",
-    title: "Shop Father's Day deals",
-    exploreHref: "/products?deals=fathers-day",
+    id: "grid-2-card-2",
+    title: "",
+    exploreHref: "/products",
     items: [
       {
         label: "Pins",
@@ -198,9 +199,9 @@ export const CATEGORY_GRIDS_2: CategoryGridData[] = [
     ],
   },
   {
-    id: "fashion-trends",
-    title: "Fashion trends you like",
-    exploreHref: "/products?category=fashion",
+    id: "grid-2-card-3",
+    title: "",
+    exploreHref: "/products",
     items: [
       {
         label: "Formal Dress",
@@ -221,9 +222,9 @@ export const CATEGORY_GRIDS_2: CategoryGridData[] = [
     ],
   },
   {
-    id: "game-on",
-    title: "Get your game on",
-    exploreHref: "/products?category=gaming-accessories",
+    id: "grid-2-card-4",
+    title: "",
+    exploreHref: "/products",
     items: [
       {
         label: "Gaming Keyboards",
