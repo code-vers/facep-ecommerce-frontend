@@ -9,10 +9,11 @@
 
 import CategoryGridCard, { CategoryGridCardSkeleton } from "@/components/homepage/CategoryGridCard";
 import HeroSection from "@/components/homepage/HeroSection";
-import ProductCarousel from "@/components/homepage/ProductCarousel";
+import ProductCarousel, { ProductCarouselSkeleton } from "@/components/homepage/ProductCarousel";
 import BrowsingHistory from "@/components/product/BrowsingHistory";
 import SignUpBanner from "@/components/product/SignUpBanner";
 import { useHomepageCategoryGrids } from "@/hooks/api/useCategory";
+import { useRelatedToViewedProducts } from "@/hooks/api/useProduct";
 import {
   CAROUSEL_BEAUTY_ITEMS,
   CAROUSEL_BEST_CLOTHING_ITEMS,
@@ -28,10 +29,15 @@ import {
 } from "@/lib/homepage-data";
 
 export default function Home() {
-  const { grid1, grid2, hasData, isLoading } = useHomepageCategoryGrids();
+  const { grid1, grid2, hasData: hasCategoryData, isLoading: isCategoryLoading } = useHomepageCategoryGrids();
+  const {
+    products: viewedProducts,
+    isLoading: isViewedLoading,
+    hasData: hasViewedData,
+  } = useRelatedToViewedProducts();
 
-  const displayGrid1 = hasData ? grid1 : CATEGORY_GRIDS_1;
-  const displayGrid2 = hasData ? grid2 : CATEGORY_GRIDS_2;
+  const displayGrid1 = hasCategoryData ? grid1 : CATEGORY_GRIDS_1;
+  const displayGrid2 = hasCategoryData ? grid2 : CATEGORY_GRIDS_2;
 
   return (
     <main className="min-h-screen bg-[#F4F4F5]">
@@ -44,7 +50,7 @@ export default function Home() {
         {/* ── 2. Category Grid 1 ── */}
         <section aria-label="Featured Categories Grid 1" className="-mt-16 sm:-mt-32 md:-mt-48 lg:-mt-64 xl:-mt-80 relative z-20">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {isLoading && !hasData
+            {isCategoryLoading && !hasCategoryData
               ? Array.from({ length: 4 }).map((_, i) => (
                   <CategoryGridCardSkeleton key={`skeleton-grid-1-${i}`} />
                 ))
@@ -57,7 +63,7 @@ export default function Home() {
         {/* ── 3. Category Grid 2 ── */}
         <section aria-label="Featured Categories Grid 2">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {isLoading && !hasData
+            {isCategoryLoading && !hasCategoryData
               ? Array.from({ length: 4 }).map((_, i) => (
                   <CategoryGridCardSkeleton key={`skeleton-grid-2-${i}`} />
                 ))
@@ -68,11 +74,15 @@ export default function Home() {
         </section>
 
         {/* ── 4. Carousel 1 — Related to items you've viewed ── */}
-        <ProductCarousel
-          title="Related to items you’ve viewed"
-          products={CAROUSEL_VIEWED_ITEMS}
-          exploreHref="/products?filter=related"
-        />
+        {isViewedLoading && !hasViewedData ? (
+          <ProductCarouselSkeleton title="Related to items you’ve viewed" />
+        ) : (
+          <ProductCarousel
+            title="Related to items you’ve viewed"
+            products={hasViewedData ? viewedProducts : CAROUSEL_VIEWED_ITEMS}
+            exploreHref="/products"
+          />
+        )}
 
         {/* ── 5. Carousel 2 — Popular products in Beauty internationally ── */}
         <ProductCarousel

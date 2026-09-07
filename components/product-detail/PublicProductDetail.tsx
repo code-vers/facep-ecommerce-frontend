@@ -9,7 +9,8 @@ import type { Product, ProductVariant } from '@/lib/api/product';
 import { ExternalLink, MapPin, Star, Heart, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { recordProductView } from '@/lib/view-history';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { useCartStore } from '@/contexts/CartContext';
@@ -60,6 +61,12 @@ const colorNameMap: Record<string, string> = {
 export default function PublicProductDetail({ product }: { product: Product }) {
   const [selectedImage, setSelectedImage] = useState(product.thumbnail);
   const [selectedVariantId, setSelectedVariantId] = useState(product.variants[0]?.id ?? '');
+
+  useEffect(() => {
+    if (product?.slug) {
+      recordProductView(product.slug);
+    }
+  }, [product?.slug]);
   const related = useRelatedProducts(product.slug);
   const selectedVariant = product.variants.find((variant) => variant.id === selectedVariantId);
   const sizes = useMemo(() => [...new Set(product.variants.map((v) => v.size).filter(Boolean))] as string[], [product]);
@@ -85,7 +92,7 @@ export default function PublicProductDetail({ product }: { product: Product }) {
   const router = useRouter();
   const { addToCart } = useCartStore();
   const { session } = useAuth();
-  const { data: wishlistStatus, isLoading: isWishlistLoading } = useCheckWishlistStatus(product.id);
+  const { data: wishlistStatus } = useCheckWishlistStatus(product.id);
   const toggleWishlistMutation = useToggleWishlist();
   const isWishlisted = Boolean(wishlistStatus?.isWishlisted);
 

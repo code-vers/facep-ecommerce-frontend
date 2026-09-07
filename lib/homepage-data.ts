@@ -16,6 +16,8 @@ export interface CategoryGridData {
 
 export interface CarouselProduct {
   id: string;
+  slug?: string;
+  href?: string;
   title: string;
   imageSrc: string;
   imageAlt: string;
