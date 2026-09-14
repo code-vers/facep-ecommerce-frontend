@@ -1,6 +1,10 @@
 import Link from "next/link";
 
-const navItems = ["Today’s Deal", "Sell", "Customer Service"];
+const navItems = [
+  // "Today’s Deal",
+  "Sell",
+  "Customer Service",
+];
 
 export default function TopNavLinks() {
   return (
@@ -29,6 +33,7 @@ export default function TopNavLinks() {
                 </Link>
               );
             }
+            /*
             if (item === "Today’s Deal") {
               return (
                 <Link key={item} href="/todays-deal" className="shrink-0 text-white hover:text-[#dec33a] transition-all">
@@ -36,6 +41,7 @@ export default function TopNavLinks() {
                 </Link>
               );
             }
+            */
             return (
               <button key={item} type="button" className="shrink-0 text-white hover:text-[#dec33a] transition-all">
                 {item}
