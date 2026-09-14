@@ -102,6 +102,8 @@ export interface ProductQueryParams {
   inStock?: boolean;
   status?: string;
   sort?: string;
+  vendor?: string;
+  vendorId?: string;
 }
 
 export interface ProductStats {
