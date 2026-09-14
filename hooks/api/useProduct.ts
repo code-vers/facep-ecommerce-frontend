@@ -5,6 +5,7 @@ import {
   getProductFacets,
   getProducts,
   getRelatedProducts,
+  getTopCategoriesShowcase,
   getVendorProductById,
   getVendorProducts,
   getAdminProducts,
@@ -75,6 +76,12 @@ export const useRelatedProducts = (slug: string) =>
 
 export const useProductFacets = () =>
   useQuery({ queryKey: ['products', 'facets'], queryFn: getProductFacets });
+
+export const useTopCategoriesShowcase = () =>
+  useQuery({
+    queryKey: ['products', 'top-categories-showcase'],
+    queryFn: () => getTopCategoriesShowcase(),
+  });
 
 export const useVendorProductStats = () => {
   const { session } = useAuth();

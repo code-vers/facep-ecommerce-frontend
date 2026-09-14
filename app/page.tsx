@@ -10,22 +10,18 @@
 import CategoryGridCard, { CategoryGridCardSkeleton } from "@/components/homepage/CategoryGridCard";
 import HeroSection from "@/components/homepage/HeroSection";
 import ProductCarousel, { ProductCarouselSkeleton } from "@/components/homepage/ProductCarousel";
-import BrowsingHistory from "@/components/product/BrowsingHistory";
 import SignUpBanner from "@/components/product/SignUpBanner";
 import { useHomepageCategoryGrids } from "@/hooks/api/useCategory";
-import { useRelatedToViewedProducts } from "@/hooks/api/useProduct";
 import {
-  // CAROUSEL_BEAUTY_ITEMS,
+  mapProductToCarousel,
+  useRelatedToViewedProducts,
+  useTopCategoriesShowcase,
+} from "@/hooks/api/useProduct";
+import {
   CAROUSEL_BEST_CLOTHING_ITEMS,
-  CAROUSEL_CANADA_ITEMS,
-  CAROUSEL_CLOTHES_SHOES_ITEMS,
-  CAROUSEL_HOME_ITEMS,
   CAROUSEL_VIEWED_ITEMS,
-  CAROUSEL_WIRELESS_ITEMS,
   CATEGORY_GRIDS_1,
   CATEGORY_GRIDS_2,
-  // CATEGORY_GRIDS_3,
-  CATEGORY_GRIDS_4,
 } from "@/lib/homepage-data";
 
 export default function Home() {
@@ -35,6 +31,11 @@ export default function Home() {
     isLoading: isViewedLoading,
     hasData: hasViewedData,
   } = useRelatedToViewedProducts();
+  const {
+    data: topCategories,
+    isLoading: isTopCategoriesLoading,
+  } = useTopCategoriesShowcase();
+  const hasTopCategoriesData = Boolean(topCategories && topCategories.length > 0);
 
   const displayGrid1 = hasCategoryData ? grid1 : CATEGORY_GRIDS_1;
   const displayGrid2 = hasCategoryData ? grid2 : CATEGORY_GRIDS_2;
@@ -84,62 +85,29 @@ export default function Home() {
           />
         )}
 
-        {/* ── 5. Carousel 2 — Popular products in Beauty internationally ── */}
-        {/* <ProductCarousel
-          title="Popular products in Beauty internationally"
-          products={CAROUSEL_BEAUTY_ITEMS}
-          exploreHref="/products?category=beauty"
-        /> */}
-
-        {/* ── 7. Carousel 3 — Best Sellers in Clothing, Shoes & Jewelry ── */}
+        {/* ── 5. Best Sellers ── */}
         <ProductCarousel
           title="Best Sellers"
           products={CAROUSEL_BEST_CLOTHING_ITEMS}
           exploreHref="/products?category=clothing"
         />
 
-        {/* ── 8. Carousel 4 — Top picks for Canada ── */}
-        <ProductCarousel
-          title="Top picks for Canada"
-          products={CAROUSEL_CANADA_ITEMS}
-          exploreHref="/products?filter=canada-picks"
-        />
-
-        {/* ── 9. Carousel 5 — Best sellers in cloths, shoes & jewelleries ── */}
-        <ProductCarousel
-          title="Best sellers in cloths , shoes & jewelleries"
-          products={CAROUSEL_CLOTHES_SHOES_ITEMS}
-          exploreHref="/products?category=apparel"
-        />
-
-        {/* ── 10. Carousel 6 — International top sellers in Home ── */}
-        <ProductCarousel
-          title="International top sellers in Home"
-          products={CAROUSEL_HOME_ITEMS}
-          exploreHref="/products?category=home"
-        />
-
-        {/* ── 11. Category Grid 4 ── */}
-        <section aria-label="Tech and Deals Categories">
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {CATEGORY_GRIDS_4.map((grid) => (
-              <CategoryGridCard key={grid.id} data={grid} />
+        {/* ── 6. Top 5 Categories with Highest Product Count ── */}
+        {isTopCategoriesLoading && !hasTopCategoriesData
+          ? Array.from({ length: 5 }).map((_, i) => (
+              <ProductCarouselSkeleton key={`top-cat-skeleton-${i}`} />
+            ))
+          : topCategories?.map((cat) => (
+              <ProductCarousel
+                key={cat.id}
+                title={`Top picks in ${cat.name}`}
+                products={cat.products.map(mapProductToCarousel)}
+                exploreHref={`/products?category=${encodeURIComponent(cat.name)}`}
+              />
             ))}
-          </div>
-        </section>
-
-        {/* ── 12. Carousel 7 — Popular products in Wireless internationally ── */}
-        <ProductCarousel
-          title="Popular products in Wireless internationally"
-          products={CAROUSEL_WIRELESS_ITEMS}
-          exploreHref="/products?category=wireless"
-        />
       </div>
 
-      {/* ── 13. Browsing History Section ── */}
-      <BrowsingHistory />
-
-      {/* ── 14. Sign In Section ── */}
+      {/* ── Sign In Section ── */}
       <div className="">
         <SignUpBanner />
       </div>
