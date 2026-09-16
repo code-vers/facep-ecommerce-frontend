@@ -102,6 +102,8 @@ export interface ProductQueryParams {
   inStock?: boolean;
   status?: string;
   sort?: string;
+  vendor?: string;
+  vendorId?: string;
 }
 
 export interface ProductStats {
@@ -231,5 +233,20 @@ export const removeProductPromotion = async (id: string) => {
 
 export const deleteProduct = async (id: string) => {
   const { data } = await apiClient.delete<ApiResponse<Product>>(`/products/${id}`);
+  return data.data;
+};
+
+export interface TopCategoryShowcase {
+  id: string;
+  name: string;
+  imageUrl?: string | null;
+  _count: { products: number };
+  products: Product[];
+}
+
+export const getTopCategoriesShowcase = async (): Promise<TopCategoryShowcase[]> => {
+  const { data } = await apiClient.get<ApiResponse<TopCategoryShowcase[]>>(
+    '/products/top-categories-showcase',
+  );
   return data.data;
 };

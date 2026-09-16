@@ -3,6 +3,7 @@ import { apiClient } from './axios';
 export interface Category {
   id: string;
   name: string;
+  imageUrl?: string | null;
   subcategories: Subcategory[];
   products: number;
   orders: number;
@@ -49,6 +50,7 @@ export const getCategories = async (
 
 export const createCategory = async (payload: {
   name: string;
+  imageUrl?: string | null;
   subcategories: string[];
   isActive: boolean;
 }): Promise<Category> => {
@@ -62,6 +64,7 @@ export const updateCategory = async ({
 }: {
   id: string;
   name?: string;
+  imageUrl?: string | null;
   subcategories?: string[];
   isActive?: boolean;
 }): Promise<Category> => {

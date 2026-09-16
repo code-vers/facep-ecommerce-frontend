@@ -35,7 +35,7 @@ export default function ProductCarousel({
   return (
     <section
       className={cn(
-        "relative flex flex-col bg-white p-6 rounded-[4px] border border-[#E5E5E6] shadow-sm",
+        "relative flex flex-col bg-white p-6 rounded-lg border border-[#E5E5E6] shadow-sm",
         className
       )}
     >
@@ -62,28 +62,32 @@ export default function ProductCarousel({
           className="flex gap-4 overflow-x-auto pb-4 scroll-smooth scrollbar-hide items-stretch"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
-          {products.map((product) => (
-            <Link 
-              key={product.id} 
-              href={`/product/deals/${product.id}`}
-              className="flex w-[199px] shrink-0 group focus-visible:outline-none"
-            >
-              <ProductCard
-                imageSrc={product.imageSrc}
-                imageAlt={product.imageAlt}
-                title={product.title}
-                rating={product.rating}
-                reviewCount={product.reviewCount}
-                price={product.price}
-                originalPrice={product.originalPrice}
-                badgeText={product.badgeText}
-                badgeLabel={product.badgeLabel}
-                offerText={product.offerText}
-                shippingText={product.shippingText}
-                buttonVariant="none"
-              />
-            </Link>
-          ))}
+          {products.map((product) => {
+            const productHref =
+              product.href || (product.slug ? `/products/${product.slug}` : `/products/${product.id}`);
+            return (
+              <Link 
+                key={product.id} 
+                href={productHref}
+                className="flex w-49.75 shrink-0 group focus-visible:outline-none"
+              >
+                <ProductCard
+                  imageSrc={product.imageSrc}
+                  imageAlt={product.imageAlt}
+                  title={product.title}
+                  rating={product.rating}
+                  reviewCount={product.reviewCount}
+                  price={product.price}
+                  originalPrice={product.originalPrice}
+                  badgeText={product.badgeText}
+                  badgeLabel={product.badgeLabel}
+                  offerText={product.offerText}
+                  shippingText={product.shippingText}
+                  buttonVariant="none"
+                />
+              </Link>
+            );
+          })}
         </div>
 
         {/* Right Arrow Button */}
@@ -106,6 +110,47 @@ export default function ProductCarousel({
           <span>Explore More</span>
           <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
         </Link>
+      </div>
+    </section>
+  );
+}
+
+export function ProductCarouselSkeleton({
+  title,
+  className,
+}: {
+  title?: string;
+  className?: string;
+}) {
+  return (
+    <section
+      className={cn(
+        "relative flex flex-col bg-white p-6 rounded-lg border border-[#E5E5E6] shadow-sm animate-pulse",
+        className
+      )}
+    >
+      {title ? (
+        <h3 className="text-[20px] font-bold leading-[1.2] text-black mb-4 truncate">
+          {title}
+        </h3>
+      ) : (
+        <div className="h-6 w-64 bg-gray-200 rounded mb-4" />
+      )}
+      <div className="flex gap-4 overflow-hidden pb-4 items-stretch">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <div
+            key={i}
+            className="flex w-49.75 shrink-0 flex-col gap-2 rounded-lg border border-[#E5E5E6] p-2"
+          >
+            <div className="h-45 w-full bg-gray-200 rounded-lg" />
+            <div className="h-4 w-3/4 bg-gray-200 rounded mt-2" />
+            <div className="h-3 w-1/2 bg-gray-200 rounded" />
+            <div className="h-5 w-1/3 bg-gray-200 rounded mt-1" />
+          </div>
+        ))}
+      </div>
+      <div className="mt-4 border-t border-[#F4F4F5] pt-4">
+        <div className="h-4 w-28 bg-gray-200 rounded" />
       </div>
     </section>
   );

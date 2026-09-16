@@ -22,7 +22,7 @@ export default function HeroSection() {
   return (
     <section
       className={cn(
-        "relative w-full h-[320px] sm:h-[450px] md:h-[600px] lg:h-[700px] xl:h-[794px] overflow-hidden transition-all duration-700 ease-in-out",
+        "relative w-full h-80 sm:h-112.5 md:h-150 lg:h-175 xl:h-198.5 overflow-hidden transition-all duration-700 ease-in-out",
         slide.bgColor
       )}
     >
@@ -34,7 +34,7 @@ export default function HeroSection() {
           <p className="font-sans text-[18px] sm:text-[28px] md:text-[32px] lg:text-[40px] xl:text-[48px] font-bold leading-[1.1] tracking-tight text-black capitalize">
             {slide.title}
           </p>
-          <h2 className="font-sans text-[22px] sm:text-[36px] md:text-[44px] lg:text-[52px] xl:text-[64px] font-bold leading-[1.1] tracking-tight text-black max-w-[600px]">
+          <h2 className="font-sans text-[22px] sm:text-[36px] md:text-[44px] lg:text-[52px] xl:text-[64px] font-bold leading-[1.1] tracking-tight text-black max-w-150">
             {slide.subtitle}
           </h2>
         </div>
@@ -93,7 +93,7 @@ export default function HeroSection() {
       </div>
 
       {/* Bottom Blur/Fade Blending Overlay - blends Hero into the body background #F4F4F5 */}
-      <div className="absolute bottom-0 left-0 right-0 h-[100px] sm:h-[150px] bg-gradient-to-t from-[#F4F4F5] to-transparent pointer-events-none z-10" />
+      <div className="absolute bottom-0 left-0 right-0 h-25 sm:h-37.5 bg-linear-to-t from-[#F4F4F5] to-transparent pointer-events-none z-10" />
     </section>
   );
 }
