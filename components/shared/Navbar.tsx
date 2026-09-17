@@ -44,6 +44,8 @@ function AccountBlock() {
   const [isOpen, setIsOpen] = useState(false);
   const { session, logout } = useAuth();
   const isLoggedIn = !!session;
+  const isAdmin = session?.user?.role === 'ADMIN';
+  const isVendor = session?.user?.role === 'VENDOR';
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -72,7 +74,7 @@ function AccountBlock() {
         className="flex shrink-0 flex-col items-start gap-1 text-left cursor-pointer"
       >
         <span className="text-[13px] leading-[1.3] text-[#a9acb2] xl:text-[14px]">
-          {isLoggedIn ? `Hello, ` : 'Hello, sign in'}
+          {isLoggedIn ? (session?.user?.name ? `Hello, ${session.user.name.split(' ')[0]}` : 'Hello,') : 'Hello, sign in'}
         </span>
         <span className="flex items-center gap-1 text-[15px] leading-[1.2] font-bold text-white xl:text-[16px]">
           Account
@@ -101,13 +103,34 @@ function AccountBlock() {
             </>
           ) : (
             <>
-              <Link
-                href="/profile"
-                className="block px-4 py-2 text-[14px] text-black hover:bg-gray-100"
-                onClick={() => setIsOpen(false)}
-              >
-                Profile
-              </Link>
+              {isAdmin ? (
+                <Link
+                  href="/dashboard"
+                  className="block px-4 py-2 text-[14px] text-black hover:bg-gray-100"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Dashboard
+                </Link>
+              ) : (
+                <>
+                  {isVendor && (
+                    <Link
+                      href="/dashboard"
+                      className="block px-4 py-2 text-[14px] text-black hover:bg-gray-100"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Vendor Dashboard
+                    </Link>
+                  )}
+                  <Link
+                    href="/profile"
+                    className="block px-4 py-2 text-[14px] text-black hover:bg-gray-100"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Profile
+                  </Link>
+                </>
+              )}
               <button
                 type="button"
                 className="block w-full text-left px-4 py-2 text-[14px] text-[#cb1b1b] hover:bg-gray-100 cursor-pointer"
