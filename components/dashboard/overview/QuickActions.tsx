@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { CirclePlus, Wrench } from 'lucide-react';
 
 export default function QuickActions() {
@@ -10,18 +11,24 @@ export default function QuickActions() {
         <p className="font-semibold leading-[1.2] shrink-0 text-[20px] text-black w-full">
           Quick Actions
         </p>
-        <button className="bg-[#f09000] border border-[#f09000] flex gap-1 items-center justify-center p-2 rounded-sm shrink-0 w-full hover:bg-[#d98200] transition-colors">
-          <p className="font-normal leading-[1.2] shrink-0 text-[14px] text-black whitespace-nowrap">
+        <Link
+          href="/dashboard/add-new-products"
+          className="bg-[#f09000] border border-[#f09000] flex gap-1 items-center justify-center p-2 rounded-sm shrink-0 w-full hover:bg-[#d98200] transition-colors"
+        >
+          <span className="font-normal leading-[1.2] text-[14px] text-black whitespace-nowrap">
             Add Product
-          </p>
+          </span>
           <CirclePlus className="size-4 text-black" />
-        </button>
-        <button className="bg-[#e3cfb0] border border-[#f09000] flex gap-1 items-center justify-center p-2 rounded-sm shrink-0 w-full hover:bg-[#d6c19f] transition-colors">
-          <p className="font-normal leading-[1.2] shrink-0 text-[14px] text-black whitespace-nowrap">
+        </Link>
+        <Link
+          href="/dashboard/store-management"
+          className="bg-[#e3cfb0] border border-[#f09000] flex gap-1 items-center justify-center p-2 rounded-sm shrink-0 w-full hover:bg-[#d6c19f] transition-colors"
+        >
+          <span className="font-normal leading-[1.2] text-[14px] text-black whitespace-nowrap">
             Edit Store Profile
-          </p>
+          </span>
           <Wrench className="size-4 text-black" />
-        </button>
+        </Link>
       </div>
     </div>
   );

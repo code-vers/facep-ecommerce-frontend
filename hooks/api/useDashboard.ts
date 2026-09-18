@@ -5,12 +5,22 @@ import { dashboardApi } from '@/lib/api/dashboard';
 
 export const DASHBOARD_QUERY_KEYS = {
   adminOverview: ['admin-overview'] as const,
+  vendorOverview: ['vendor-overview'] as const,
 };
 
 export const useAdminOverview = (enabled = true) => {
   return useQuery({
     queryKey: DASHBOARD_QUERY_KEYS.adminOverview,
     queryFn: () => dashboardApi.getAdminOverview(),
+    enabled,
+    staleTime: 30 * 1000, // 30 seconds
+  });
+};
+
+export const useVendorOverview = (enabled = true) => {
+  return useQuery({
+    queryKey: DASHBOARD_QUERY_KEYS.vendorOverview,
+    queryFn: () => dashboardApi.getVendorOverview(),
     enabled,
     staleTime: 30 * 1000, // 30 seconds
   });
