@@ -37,7 +37,7 @@ const vendorNavItems = [
   { name: 'Reviews', href: '/dashboard/reviews', icon: Star },
   { name: 'Storefront', href: '/dashboard/storefront', icon: Store },
   { name: 'Store Management', href: '/dashboard/store-management', icon: Wrench },
-  { name: 'Profile Settings', href: '/dashboard/profile', icon: Cog },
+  { name: 'Settings', href: '/dashboard/profile', icon: Cog },
 ];
 
 const adminNavItems = [
@@ -48,12 +48,12 @@ const adminNavItems = [
   { name: 'Categories', href: '/dashboard/categories', icon: FilePlusCorner },
   { name: 'Orders', href: '/dashboard/orders', icon: ShoppingBag },
   { name: 'Payout Requests', href: '/dashboard/payouts', icon: Banknote },
-  { name: 'Returns & Refunds', href: '/dashboard/returns', icon: CircleX },
-  { name: 'Shipping', href: '/dashboard/shipping', icon: Truck },
+  // { name: 'Returns & Refunds', href: '/dashboard/returns', icon: CircleX },
+  // { name: 'Shipping', href: '/dashboard/shipping', icon: Truck },
   { name: 'Promotions & Deals', href: '/dashboard/promotions', icon: TicketPercent },
   { name: 'Support Inquiries', href: '/dashboard/support', icon: MessageSquare },
-  { name: 'CMS', href: '/dashboard/cms', icon: LayoutTemplate },
-  { name: 'Profile Settings', href: '/dashboard/profile', icon: Cog },
+  // { name: 'CMS', href: '/dashboard/cms', icon: LayoutTemplate },
+  { name: 'Settings', href: '/dashboard/profile', icon: Cog },
 ];
 
 export default function DashboardSidebar({ isMobile }: { isMobile?: boolean }) {
@@ -90,12 +90,12 @@ export default function DashboardSidebar({ isMobile }: { isMobile?: boolean }) {
       </div>
 
       {/* Select Input Mockup */}
-      <div className='w-full shrink-0 border-b border-[#E5E5E6] p-6 py-4'>
+      {/* <div className='w-full shrink-0 border-b border-[#E5E5E6] p-6 py-4'>
         <div className='flex cursor-pointer items-center justify-between rounded-sm border border-[#E5E5E6] bg-white px-3 py-2.5'>
           <span className='text-[14px] text-[#848995]'>Plant House</span>
           <ChevronUp size={20} className='rotate-180 text-[#848995]' />
         </div>
-      </div>
+      </div> */}
 
       {/* Navigation */}
       <div className='flex flex-1 flex-col justify-between overflow-y-auto'>
