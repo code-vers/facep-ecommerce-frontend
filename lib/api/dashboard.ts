@@ -61,6 +61,52 @@ export interface IAdminOverviewResponse {
   pendingProducts: IPendingProductItem[];
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Vendor Dashboard Interfaces
+// ─────────────────────────────────────────────────────────────────────────────
+
+export interface IVendorOverviewMetrics {
+  totalSales: number;
+  totalOrders: number;
+  totalProducts: number;
+  storeRating: string;
+  salesGrowth: string;
+  ordersGrowth: string;
+  productsGrowth: string;
+  ratingGrowth: string;
+  currentPeriod: string;
+}
+
+export interface IRecentOrderItem {
+  id: string;
+  orderNumber: string;
+  product: string;
+  date: string;
+  amount: number;
+  status: string;
+}
+
+export interface ITopSellingProductItem {
+  id: string;
+  image: string;
+  product: string;
+  units: number;
+  price: number;
+}
+
+export interface ILowStockAlert {
+  lowStockCount: number;
+}
+
+export interface IVendorOverviewResponse {
+  metrics: IVendorOverviewMetrics;
+  revenueOverview: IRevenueChartPoint[];
+  ordersTrend: IRevenueChartPoint[];
+  recentOrders: IRecentOrderItem[];
+  topSellingProducts: ITopSellingProductItem[];
+  lowStockAlert: ILowStockAlert;
+}
+
 interface ApiResponse<T> {
   data: T;
   message: string;
@@ -70,6 +116,10 @@ interface ApiResponse<T> {
 export const dashboardApi = {
   getAdminOverview: async (): Promise<IAdminOverviewResponse> => {
     const response = await apiClient.get<ApiResponse<IAdminOverviewResponse>>('/dashboard/admin/overview');
+    return response.data.data;
+  },
+  getVendorOverview: async (): Promise<IVendorOverviewResponse> => {
+    const response = await apiClient.get<ApiResponse<IVendorOverviewResponse>>('/dashboard/vendor/overview');
     return response.data.data;
   },
 };
