@@ -12,6 +12,7 @@ interface BrandFiltersProps {
   selectedReviewRating: number | null;
   setSelectedReviewRating: (rating: number | null) => void;
   onClearFilters: () => void;
+  categories?: Array<{ id: string; label: string }>;
 }
 
 export default function BrandFilters({
@@ -24,7 +25,9 @@ export default function BrandFilters({
   selectedReviewRating,
   setSelectedReviewRating,
   onClearFilters,
+  categories,
 }: BrandFiltersProps) {
+  const renderedCategories = categories && categories.length > 0 ? categories : BRAND_CATEGORIES;
   return (
     <aside className='w-full lg:w-70 shrink-0 flex flex-col gap-6 bg-white border border-[#E5E5E6] rounded-lg p-5 h-fit shadow-xs'>
       <div className='flex items-center justify-between border-b border-[#E5E5E6] pb-3'>
@@ -208,7 +211,7 @@ export default function BrandFilters({
       <div className='flex flex-col gap-3 border-t border-[#E5E5E6] pt-4'>
         <h4 className='text-[15px] font-bold text-black'>Category</h4>
         <div className='flex flex-col gap-2'>
-          {BRAND_CATEGORIES.map((cat) => (
+          {renderedCategories.map((cat) => (
             <button
               key={cat.id}
               type='button'

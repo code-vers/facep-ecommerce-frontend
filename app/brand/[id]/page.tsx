@@ -33,7 +33,7 @@ export default async function BrandPage({ params }: BrandPageProps) {
 
   return (
     <main className="min-h-screen">
-      <BrandStoreFront />
+      <BrandStoreFront vendorId={id} />
     </main>
   );
 }

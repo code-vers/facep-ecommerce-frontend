@@ -62,6 +62,13 @@ export default function PublicProductDetail({ product }: { product: Product }) {
   const [selectedImage, setSelectedImage] = useState(product.thumbnail);
   const [selectedVariantId, setSelectedVariantId] = useState(product.variants[0]?.id ?? '');
 
+  const brandVendorId = product.vendorId || product.vendor?.id;
+  const brandDisplayName =
+    product.vendor?.storefront?.storeName ||
+    product.brand ||
+    product.vendor?.name ||
+    '—';
+
   useEffect(() => {
     if (product?.slug) {
       recordProductView(product.slug);
@@ -204,10 +211,19 @@ export default function PublicProductDetail({ product }: { product: Product }) {
               <div className='flex min-w-0 flex-1 flex-col gap-4'>
                 <div className='flex flex-col gap-2 border-b border-[#E5E5E6] pb-4.5'>
                   <div className='flex items-center justify-between gap-2'>
-                    <div className='flex items-start gap-1.75 text-[16px] leading-[1.2] text-[#165DD0]'>
-                      <span>Brand: {product.brand || '—'}</span>
-                      <ExternalLink size={18} strokeWidth={1.6} />
-                    </div>
+                    {brandVendorId ? (
+                      <Link
+                        href={`/brand/${brandVendorId}`}
+                        className='flex items-center gap-1.75 text-[16px] leading-[1.2] text-[#165DD0] hover:underline transition-opacity hover:opacity-85'
+                      >
+                        <span>Brand: {brandDisplayName}</span>
+                        <ExternalLink size={18} strokeWidth={1.6} />
+                      </Link>
+                    ) : (
+                      <div className='flex items-start gap-1.75 text-[16px] leading-[1.2] text-[#165DD0]'>
+                        <span>Brand: {brandDisplayName}</span>
+                      </div>
+                    )}
                     <button
                       type='button'
                       onClick={handleToggleWishlist}
@@ -353,7 +369,18 @@ export default function PublicProductDetail({ product }: { product: Product }) {
                 <div className='flex flex-col gap-4 text-black mt-4'>
                   <h2 className='text-[22px] leading-[1.2]'>Product details</h2>
                   <dl className='flex flex-col gap-2 text-[16px]'>
-                    <div className='flex gap-1'><dt className='font-semibold min-w-30'>Brand:</dt><dd>{product.brand || '—'}</dd></div>
+                    <div className='flex gap-1'>
+                      <dt className='font-semibold min-w-30'>Brand:</dt>
+                      <dd>
+                        {brandVendorId ? (
+                          <Link href={`/brand/${brandVendorId}`} className='text-[#165DD0] hover:underline'>
+                            {brandDisplayName}
+                          </Link>
+                        ) : (
+                          product.brand || '—'
+                        )}
+                      </dd>
+                    </div>
                     {specifications.map((item) => (
                       <div key={item.id || item.name} className='flex gap-1'>
                         <dt className='font-semibold min-w-30'>{item.name}:</dt><dd>{item.value}</dd>

@@ -8,7 +8,8 @@
 export interface BrandProduct {
   id: string;
   title: string;
-  category: 'indoor' | 'outdoor' | 'pots' | 'soils' | 'care' | 'seeds';
+  slug?: string;
+  category: string;
   imageSrc: string;
   rating: number;
   reviewCount: number;

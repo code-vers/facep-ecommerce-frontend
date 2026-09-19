@@ -18,6 +18,15 @@ export const useStorefront = (enabled = true) => {
   });
 };
 
+export const usePublicStorefront = (vendorId: string, enabled = true) => {
+  return useQuery({
+    queryKey: ['public-storefront', vendorId],
+    queryFn: () => storefrontApi.getPublicStorefront(vendorId),
+    enabled: enabled && Boolean(vendorId),
+    staleTime: 60 * 1000,
+  });
+};
+
 export const useUpdateStorefront = () => {
   const queryClient = useQueryClient();
 

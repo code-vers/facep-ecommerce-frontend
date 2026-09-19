@@ -5,6 +5,7 @@
  * @module components/brand/BrandProductGrid
  */
 
+import Link from 'next/link';
 import ProductCard from '@/components/shared/ProductCard';
 import { BrandProduct } from '@/lib/brand-data';
 import { cn } from '@/lib/utils';
@@ -17,6 +18,7 @@ interface BrandProductGridProps {
   totalPages: number;
   setCurrentPage: (page: number) => void;
   onClearFilters: () => void;
+  storeName?: string;
 }
 
 export default function BrandProductGrid({
@@ -26,13 +28,16 @@ export default function BrandProductGrid({
   totalPages,
   setCurrentPage,
   onClearFilters,
+  storeName,
 }: BrandProductGridProps) {
   return (
     <div className='flex-1 flex flex-col gap-6'>
       {/* Grid Header */}
       <div className='border-b border-[#E5E5E6] pb-4 flex flex-col sm:flex-row sm:items-baseline justify-between gap-2'>
         <div>
-          <h3 className='text-[20px] font-bold text-black'>Explore Plant House&apos;s Products</h3>
+          <h3 className='text-[20px] font-bold text-black'>
+            Explore {storeName ? `${storeName}'s` : ''} Products
+          </h3>
           <p className='text-[12px] text-gray-500 mt-1'>
             Price and other details may vary based on product size and colour
           </p>
@@ -47,19 +52,24 @@ export default function BrandProductGrid({
         <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
           {products.map((product) => (
             <div key={product.id} className='w-full'>
-              <ProductCard
-                imageSrc={product.imageSrc}
-                imageAlt={product.title}
-                title={product.title}
-                rating={product.rating}
-                reviewCount={product.reviewCount.toString()}
-                price={`$${product.price}`}
-                originalPrice={product.originalPrice ? `$${product.originalPrice}` : undefined}
-                badgeText={product.badgeText}
-                badgeLabel={product.badgeLabel}
-                shippingText={product.shippingText}
-                buttonVariant={product.isTodayDeal ? 'add-to-cart' : 'see-options'}
-              />
+              <Link
+                href={`/products/${product.slug || product.id}`}
+                className='block w-full h-full transition-transform duration-200 hover:-translate-y-0.5'
+              >
+                <ProductCard
+                  imageSrc={product.imageSrc}
+                  imageAlt={product.title}
+                  title={product.title}
+                  rating={product.rating}
+                  reviewCount={product.reviewCount.toString()}
+                  price={`$${product.price}`}
+                  originalPrice={product.originalPrice ? `$${product.originalPrice}` : undefined}
+                  badgeText={product.badgeText}
+                  badgeLabel={product.badgeLabel}
+                  shippingText={product.shippingText}
+                  buttonVariant={product.isTodayDeal ? 'add-to-cart' : 'see-options'}
+                />
+              </Link>
             </div>
           ))}
         </div>

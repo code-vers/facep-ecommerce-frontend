@@ -23,6 +23,13 @@ export interface ProductVendor {
   id: string;
   name: string;
   email?: string;
+  avatarUrl?: string | null;
+  storefront?: {
+    id?: string;
+    storeName?: string | null;
+    storeLogo?: string | null;
+    storeBanner?: string | null;
+  } | null;
 }
 
 export interface Product {

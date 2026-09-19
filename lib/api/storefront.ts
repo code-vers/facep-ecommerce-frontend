@@ -16,6 +16,7 @@ export interface IVendorStorefront {
   warrantyInformation: string;
   createdAt?: string;
   updatedAt?: string;
+  productCount?: number;
 }
 
 export interface IUpdateStorefrontPayload {
@@ -41,6 +42,11 @@ interface ApiResponse<T> {
 export const storefrontApi = {
   getStorefront: async (): Promise<IVendorStorefront> => {
     const response = await apiClient.get<ApiResponse<IVendorStorefront>>('/storefront/vendor');
+    return response.data.data;
+  },
+
+  getPublicStorefront: async (vendorId: string): Promise<IVendorStorefront> => {
+    const response = await apiClient.get<ApiResponse<IVendorStorefront>>(`/storefront/${vendorId}`);
     return response.data.data;
   },
 
