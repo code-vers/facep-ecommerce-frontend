@@ -1,18 +1,20 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { CircleCheck, Loader2, UploadCloud, Store as StoreIcon } from 'lucide-react';
+import { CircleCheck, Loader2, Store as StoreIcon } from 'lucide-react';
 import { toast } from 'sonner';
 import { profileAssetUrl } from '@/lib/api/profile';
 import { storefrontApi } from '@/lib/api/storefront';
-import { useStorefront, useUpdateStorefront } from '@/hooks/api/useStorefront';
+import { useStorefront, useUpdateStorefront, STOREFRONT_QUERY_KEYS } from '@/hooks/api/useStorefront';
+import { useQueryClient } from '@tanstack/react-query';
+import imageCompression from 'browser-image-compression';
+import { getApiErrorMessage } from '@/lib/api/axios';
 
 const DEFAULT_BANNER =
   'https://images.unsplash.com/photo-1459156212016-c812468e2115?q=80&w=1400&auto=format&fit=crop';
-const DEFAULT_LOGO =
-  'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=150&auto=format&fit=crop';
 
 export default function StorefrontForm() {
+  const queryClient = useQueryClient();
   const { data, isLoading } = useStorefront();
   const updateMutation = useUpdateStorefront();
 
@@ -42,7 +44,7 @@ export default function StorefrontForm() {
     if (data) {
       setStoreName(data.storeName || '');
       setStoreLogo(data.storeLogo || '');
-      setStoreBanner(data.storeBanner || DEFAULT_BANNER);
+      setStoreBanner(data.storeBanner || '');
       setBannerHeadline(data.bannerHeadline || 'Buy Your Favorite Plant');
       setBannerSubheadline(data.bannerSubheadline || `From ${data.storeName || 'Plant home'}`);
       setStoreDescription(data.storeDescription || '');
@@ -61,11 +63,28 @@ export default function StorefrontForm() {
 
     try {
       setIsUploadingLogo(true);
-      const logoUrl = await storefrontApi.uploadLogo(file);
+      let uploadFile = file;
+      try {
+        uploadFile = await imageCompression(file, {
+          maxSizeMB: 1,
+          maxWidthOrHeight: 800,
+          useWebWorker: false,
+        });
+      } catch {
+        uploadFile = file;
+      }
+
+      const logoUrl = await storefrontApi.uploadLogo(uploadFile);
       setStoreLogo(logoUrl);
-      toast.success('Store logo uploaded successfully!');
-    } catch {
-      toast.error('Failed to upload store logo.');
+
+      // Auto-save immediately to database so refresh retains the logo
+      await storefrontApi.updateStorefront({ storeLogo: logoUrl });
+      queryClient.invalidateQueries({ queryKey: STOREFRONT_QUERY_KEYS.vendorStorefront });
+      queryClient.invalidateQueries({ queryKey: ['profile'] });
+
+      toast.success('Store logo uploaded and saved successfully!');
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, 'Failed to upload store logo.'));
     } finally {
       setIsUploadingLogo(false);
       if (logoInputRef.current) logoInputRef.current.value = '';
@@ -79,11 +98,27 @@ export default function StorefrontForm() {
 
     try {
       setIsUploadingBanner(true);
-      const bannerUrl = await storefrontApi.uploadBanner(file);
+      let uploadFile = file;
+      try {
+        uploadFile = await imageCompression(file, {
+          maxSizeMB: 2,
+          maxWidthOrHeight: 2560,
+          useWebWorker: false,
+        });
+      } catch {
+        uploadFile = file;
+      }
+
+      const bannerUrl = await storefrontApi.uploadBanner(uploadFile);
       setStoreBanner(bannerUrl);
-      toast.success('Store banner uploaded successfully!');
-    } catch {
-      toast.error('Failed to upload store banner.');
+
+      // Auto-save immediately to database so refresh retains the banner
+      await storefrontApi.updateStorefront({ storeBanner: bannerUrl });
+      queryClient.invalidateQueries({ queryKey: STOREFRONT_QUERY_KEYS.vendorStorefront });
+
+      toast.success('Store banner uploaded and saved successfully!');
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, 'Failed to upload store banner.'));
     } finally {
       setIsUploadingBanner(false);
       if (bannerInputRef.current) bannerInputRef.current.value = '';
@@ -109,8 +144,8 @@ export default function StorefrontForm() {
     });
   };
 
-  const logoDisplaySrc = profileAssetUrl(storeLogo) || DEFAULT_LOGO;
-  const bannerDisplaySrc = profileAssetUrl(storeBanner) || DEFAULT_BANNER;
+  const logoDisplaySrc = storeLogo ? profileAssetUrl(storeLogo) : '';
+  const bannerDisplaySrc = storeBanner ? profileAssetUrl(storeBanner) : DEFAULT_BANNER;
 
   return (
     <form
