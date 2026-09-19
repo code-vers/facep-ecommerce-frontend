@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -74,25 +75,27 @@ export default function LoginPage() {
   return (
     <div className='flex min-h-screen w-full flex-col items-center justify-center px-4 py-12'>
       <div className='flex w-full max-w-200 flex-col items-center gap-16'>
-        <div className='flex items-center gap-9'>
-          {/* Logo icon rendered as an SVG shape matching Figma */}
-          <div className='flex size-15 shrink-0 items-center justify-center rounded-[8px] bg-black'>
-            <svg width='32' height='32' viewBox='0 0 32 32' fill='none' aria-hidden='true'>
-              <path
-                d='M8 6L24 26M8 26L24 6'
-                stroke='white'
-                strokeWidth='3.5'
-                strokeLinecap='round'
-              />
-            </svg>
+        <Link
+          href='/'
+          className='flex items-center gap-4 sm:gap-5 transition-opacity hover:opacity-90'
+          aria-label='Facep home'
+        >
+          <div className='relative h-14 w-22 sm:h-16 sm:w-26 shrink-0 overflow-hidden rounded-lg bg-black shadow-sm'>
+            <Image
+              src='/logo.jpg'
+              alt='Facep logo'
+              fill
+              priority
+              className='object-cover'
+            />
           </div>
-          <span
-            className='whitespace-nowrap text-[64px] font-bold capitalize leading-none text-black'
-            style={{ fontFamily: 'Arial', letterSpacing: '-1.92px' }}
+          {/* <span
+            className='whitespace-nowrap text-[36px] sm:text-[44px] font-bold capitalize leading-none text-black'
+            style={{ fontFamily: 'Arial', letterSpacing: '-1.5px' }}
           >
-            Logo
-          </span>
-        </div>
+            Facep
+          </span> */}
+        </Link>
 
         <div className='w-full rounded-[6px] border border-[#CACBCE] bg-white p-10'>
           <form onSubmit={handleSubmit} noValidate>

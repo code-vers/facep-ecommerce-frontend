@@ -1,17 +1,15 @@
 'use client';
 
 import { useAuth } from '@/contexts/AuthContext';
+import Image from 'next/image';
 import {
     Banknote,
     Boxes,
-    ChevronUp,
     CirclePlus,
-    CircleX,
     Cog,
     Coins,
     FilePlusCorner,
     LayoutDashboard,
-    LayoutTemplate,
     LogOut,
     MessageSquare,
     ShoppingBag,
@@ -30,7 +28,7 @@ const vendorNavItems = [
   { name: 'Product Management', href: '/dashboard/products', icon: Boxes },
   { name: 'Add New Product', href: '/dashboard/add-new-products', icon: CirclePlus },
   { name: 'Orders', href: '/dashboard/orders', icon: ShoppingBag },
-  { name: 'Shipping', href: '/dashboard/shipping', icon: Truck },
+  // { name: 'Shipping', href: '/dashboard/shipping', icon: Truck },
   // { name: 'Returns', href: '/dashboard/returns', icon: CircleX },
   { name: 'Earning', href: '/dashboard/earning', icon: Coins },
   { name: 'Promotions & Deals', href: '/dashboard/promotions', icon: TicketPercent },
@@ -49,7 +47,7 @@ const adminNavItems = [
   { name: 'Orders', href: '/dashboard/orders', icon: ShoppingBag },
   { name: 'Payout Requests', href: '/dashboard/payouts', icon: Banknote },
   // { name: 'Returns & Refunds', href: '/dashboard/returns', icon: CircleX },
-  // { name: 'Shipping', href: '/dashboard/shipping', icon: Truck },
+  { name: 'Shipping', href: '/dashboard/shipping', icon: Truck },
   { name: 'Promotions & Deals', href: '/dashboard/promotions', icon: TicketPercent },
   { name: 'Support Inquiries', href: '/dashboard/support', icon: MessageSquare },
   // { name: 'CMS', href: '/dashboard/cms', icon: LayoutTemplate },
@@ -68,26 +66,28 @@ export default function DashboardSidebar({ isMobile }: { isMobile?: boolean }) {
       className={`flex h-full flex-col border-r border-[#E5E5E6] bg-[#F2F2F3] ${isMobile ? 'w-full' : 'w-70'}`}
     >
       {/* Header / Logo */}
-      <div className='flex h-20 shrink-0 items-center gap-3 border-b border-[#E5E5E6] px-6 py-4'>
-        <div className='relative flex h-9 w-9 items-center justify-center overflow-hidden rounded bg-[#0A132B] text-white'>
-          {/* Using a placeholder SVG similar to the Figma one */}
-          <svg
-            width='24'
-            height='24'
-            viewBox='0 0 24 24'
-            fill='none'
-            stroke='currentColor'
-            strokeWidth='2'
-            strokeLinecap='round'
-            strokeLinejoin='round'
-          >
-            <line x1='4' y1='20' x2='20' y2='4'></line>
-            <line x1='14' y1='20' x2='20' y2='14'></line>
-            <line x1='4' y1='10' x2='10' y2='4'></line>
-          </svg>
+      <Link
+        href='/'
+        className='flex h-20 shrink-0 items-center gap-3 border-b border-[#E5E5E6] px-6 py-4 transition-colors hover:bg-black/5'
+        aria-label='Facep home'
+      >
+        <div className='relative h-10 w-16 shrink-0 overflow-hidden rounded bg-black'>
+          <Image
+            src='/logo.jpg'
+            alt='Facep logo'
+            fill
+            className='object-cover'
+          />
         </div>
-        <span className='text-[22px] font-normal leading-[1.2] text-black'>Platform Name</span>
-      </div>
+        <div className='flex flex-col'>
+          {/* <span className='text-[20px] font-bold leading-[1.2] text-black tracking-tight'>
+            Facep
+          </span> */}
+          <span className='text-[11px] font-medium text-gray-500 uppercase tracking-wider'>
+            {isAdmin ? 'Admin Dashboard' : 'Vendor Dashboard'}
+          </span>
+        </div>
+      </Link>
 
       {/* Select Input Mockup */}
       {/* <div className='w-full shrink-0 border-b border-[#E5E5E6] p-6 py-4'>

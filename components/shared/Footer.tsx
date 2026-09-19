@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 
 const canadaFlag = "https://www.figma.com/api/mcp/asset/0859158b-4418-4d80-b7d7-f869e43f0c98";
 
@@ -135,7 +136,19 @@ export default function Footer() {
 
         <div className="border-t border-[#686f7d]">
           <div className="mx-auto flex w-full max-w-[1760px] flex-col items-center justify-center gap-6 px-4 py-8 sm:px-6 md:px-8 lg:px-10 xl:flex-row xl:gap-16 xl:px-16 xl:py-9 2xl:px-20">
-            <p className="font-[Arial] text-[30px] leading-[1.2] font-bold text-white sm:text-[34px] xl:text-[36px]">Logo</p>
+            <Link href="/" className="flex items-center gap-2.5 transition-opacity hover:opacity-90" aria-label="Facep home">
+              <div className="relative h-10 w-16 sm:h-12 sm:w-20 overflow-hidden rounded bg-black">
+                <Image
+                  src="/logo.jpg"
+                  alt="Facep"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              {/* <span className="font-[Arial] text-[24px] sm:text-[28px] xl:text-[30px] font-bold text-white tracking-tight">
+                Facep
+              </span> */}
+            </Link>
 
             <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
               <FooterPill
