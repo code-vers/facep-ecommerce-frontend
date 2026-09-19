@@ -1,231 +1,438 @@
-import { Filter, Star, Check } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { BRAND_CATEGORIES } from '@/lib/brand-data';
+'use client';
+
+import { ChevronDown } from 'lucide-react';
+import { useState, useEffect } from 'react';
+
+const COLOR_HEX_MAP: Record<string, string> = {
+  black: '#111827',
+  'obsidian black': '#0f172a',
+  white: '#ffffff',
+  'warm white': '#fef9c3',
+  gold: '#eab308',
+  'matte gold': '#d97706',
+  'rose gold': '#b76e79',
+  silver: '#94a3b8',
+  gray: '#6b7280',
+  grey: '#6b7280',
+  blue: '#2563eb',
+  red: '#dc2626',
+  green: '#16a34a',
+  yellow: '#facc15',
+  brown: '#78350f',
+  purple: '#9333ea',
+  pink: '#ec4899',
+  orange: '#ea580c',
+};
+
+const resolveColorSwatch = (colorName: string): string => {
+  const lower = colorName.toLowerCase().trim();
+  return COLOR_HEX_MAP[lower] || '#9ca3af';
+};
+
+interface FilterRadioItemProps {
+  id: string;
+  label: string;
+  checked: boolean;
+  onChange: () => void;
+  count?: number;
+}
+
+function FilterRadioItem({
+  id,
+  label,
+  checked,
+  onChange,
+  count,
+}: FilterRadioItemProps) {
+  return (
+    <div
+      role="button"
+      tabIndex={0}
+      id={id}
+      onClick={onChange}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onChange();
+        }
+      }}
+      className="group flex cursor-pointer items-center justify-between py-1 text-left select-none outline-none focus-visible:ring-1 focus-visible:ring-black"
+    >
+      <div className="flex items-center gap-2">
+        <div
+          className={`flex size-3.75 items-center justify-center rounded-full border transition-all ${
+            checked
+              ? 'border-[#165DD0] bg-[#165DD0]'
+              : 'border-gray-400 bg-white group-hover:border-black'
+          }`}
+        >
+          {checked && <div className="size-1.25 rounded-full bg-white" />}
+        </div>
+        <span
+          className={`text-[13px] leading-[1.3] sm:text-[14px] ${
+            checked
+              ? 'font-bold text-black'
+              : 'text-gray-700 group-hover:text-black'
+          }`}
+        >
+          {label}
+        </span>
+      </div>
+      {typeof count === 'number' && (
+        <span className="text-[12px] text-gray-400">({count})</span>
+      )}
+    </div>
+  );
+}
+
+export interface BrandCategoryItem {
+  id: string;
+  name: string;
+  count?: number;
+}
 
 interface BrandFiltersProps {
-  selectedCategory: string;
-  setSelectedCategory: (cat: string) => void;
-  maxPrice: number;
-  setMaxPrice: (price: number) => void;
-  selectedDiscount: 'all' | 'deals';
-  setSelectedDiscount: (disc: 'all' | 'deals') => void;
-  selectedReviewRating: number | null;
-  setSelectedReviewRating: (rating: number | null) => void;
-  onClearFilters: () => void;
-  categories?: Array<{ id: string; label: string }>;
+  categories?: BrandCategoryItem[];
+  colors?: string[];
+  selectedCategory?: string;
+  onSelectCategory: (category: string) => void;
+  selectedCondition?: string;
+  onSelectCondition: (condition: string) => void;
+  selectedColor?: string;
+  onSelectColor: (color: string) => void;
+  selectedHasDiscount?: boolean;
+  onSelectHasDiscount: (hasDiscount: boolean) => void;
+  selectedInStock?: boolean;
+  onSelectInStock: (inStock: boolean) => void;
+  minPrice?: number;
+  maxPrice?: number;
+  onPriceChange: (min?: number, max?: number) => void;
+  onClearAll: () => void;
 }
 
 export default function BrandFilters({
-  selectedCategory,
-  setSelectedCategory,
+  categories = [],
+  colors = [],
+  selectedCategory = '',
+  onSelectCategory,
+  selectedCondition = '',
+  onSelectCondition,
+  selectedColor = '',
+  onSelectColor,
+  selectedHasDiscount = false,
+  onSelectHasDiscount,
+  selectedInStock = false,
+  onSelectInStock,
+  minPrice,
   maxPrice,
-  setMaxPrice,
-  selectedDiscount,
-  setSelectedDiscount,
-  selectedReviewRating,
-  setSelectedReviewRating,
-  onClearFilters,
-  categories,
+  onPriceChange,
+  onClearAll,
 }: BrandFiltersProps) {
-  const renderedCategories = categories && categories.length > 0 ? categories : BRAND_CATEGORIES;
+  const [showAllCategories, setShowAllCategories] = useState(false);
+
+  const [customMin, setCustomMin] = useState<string>(minPrice !== undefined ? String(minPrice) : '');
+  const [customMax, setCustomMax] = useState<string>(maxPrice !== undefined ? String(maxPrice) : '');
+
+  useEffect(() => {
+    setCustomMin(minPrice !== undefined ? String(minPrice) : '');
+  }, [minPrice]);
+
+  useEffect(() => {
+    setCustomMax(maxPrice !== undefined ? String(maxPrice) : '');
+  }, [maxPrice]);
+
+  const isPriceActive = (min?: number, max?: number) => {
+    return minPrice === min && maxPrice === max;
+  };
+
+  const handleCustomPriceSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const min = customMin.trim() !== '' ? Number(customMin) : undefined;
+    const max = customMax.trim() !== '' ? Number(customMax) : undefined;
+    onPriceChange(min, max);
+  };
+
+  const visibleCategories = showAllCategories ? categories : categories.slice(0, 5);
+
+  const isCategorySelected = (cat: BrandCategoryItem) => {
+    if (!selectedCategory) return false;
+    return (
+      selectedCategory === cat.id ||
+      selectedCategory.toLowerCase() === cat.name.toLowerCase()
+    );
+  };
+
   return (
-    <aside className='w-full lg:w-70 shrink-0 flex flex-col gap-6 bg-white border border-[#E5E5E6] rounded-lg p-5 h-fit shadow-xs'>
-      <div className='flex items-center justify-between border-b border-[#E5E5E6] pb-3'>
-        <h3 className='text-[18px] font-bold text-black flex items-center gap-2'>
-          <Filter size={16} className='text-emerald-700' />
-          <span>Filter By</span>
-        </h3>
+    <aside className="w-full shrink-0 space-y-6 pb-10 lg:w-55">
+      {/* Header with Clear button */}
+      <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+        <h3 className="text-[16px] font-bold text-black">Filter by</h3>
         <button
-          type='button'
-          onClick={onClearFilters}
-          className='text-[13px] font-semibold text-[#165DD0] hover:underline cursor-pointer'
+          type="button"
+          onClick={onClearAll}
+          className="cursor-pointer text-[12px] font-semibold text-[#CB1B1B] hover:underline"
         >
-          Clear All
+          Clear all
         </button>
       </div>
 
-      {/* Filter: Deals & Discounts */}
-      <div className='flex flex-col gap-3'>
-        <h4 className='text-[15px] font-bold text-black'>Deals & Discounts</h4>
-        <div className='flex flex-col gap-2'>
-          <label className='flex items-center gap-2.5 text-[14px] text-gray-700 cursor-pointer select-none'>
-            <input
-              type='radio'
-              name='discount'
-              checked={selectedDiscount === 'all'}
-              onChange={() => setSelectedDiscount('all')}
-              className='size-4 text-emerald-600 border-gray-300 focus:ring-emerald-500 cursor-pointer'
-            />
-            <span>All Discounts</span>
-          </label>
-          <label className='flex items-center gap-2.5 text-[14px] text-gray-700 cursor-pointer select-none'>
-            <input
-              type='radio'
-              name='discount'
-              checked={selectedDiscount === 'deals'}
-              onChange={() => setSelectedDiscount('deals')}
-              className='size-4 text-emerald-600 border-gray-300 focus:ring-emerald-500 cursor-pointer'
-            />
-            <span>Today&apos;s Deals Only</span>
-          </label>
+      {/* 1. Deals & Discounts */}
+      <div>
+        <h4 className="mb-2 text-[14px] font-bold text-black">Deals &amp; Discounts</h4>
+        <div className="space-y-0.5">
+          <FilterRadioItem
+            id="discount-all"
+            label="All Items"
+            checked={!selectedHasDiscount}
+            onChange={() => onSelectHasDiscount(false)}
+          />
+          <FilterRadioItem
+            id="discount-active"
+            label="Today's Deals & Discounts"
+            checked={selectedHasDiscount}
+            onChange={() => onSelectHasDiscount(true)}
+          />
         </div>
       </div>
 
-      {/* Filter: Price */}
-      <div className='flex flex-col gap-3 border-t border-[#E5E5E6] pt-4'>
-        <div className='flex items-center justify-between'>
-          <h4 className='text-[15px] font-bold text-black'>Price Limit</h4>
-          <span className='text-[14px] font-bold text-emerald-800'>Up to ${maxPrice}</span>
+      {/* 2. Availability */}
+      <div>
+        <h4 className="mb-2 text-[14px] font-bold text-black">Availability</h4>
+        <div className="space-y-0.5">
+          <FilterRadioItem
+            id="stock-all"
+            label="All Items"
+            checked={!selectedInStock}
+            onChange={() => onSelectInStock(false)}
+          />
+          <FilterRadioItem
+            id="stock-available"
+            label="In Stock Only"
+            checked={selectedInStock}
+            onChange={() => onSelectInStock(true)}
+          />
+        </div>
+      </div>
+
+      {/* 3. Category */}
+      <div>
+        <h4 className="mb-2 text-[14px] font-bold text-black">Category</h4>
+        <div className="space-y-0.5">
+          <FilterRadioItem
+            id="category-all"
+            label="All Categories"
+            checked={!selectedCategory}
+            onChange={() => onSelectCategory('')}
+          />
+          {visibleCategories.map((cat) => (
+            <FilterRadioItem
+              key={cat.id}
+              id={`category-${cat.id}`}
+              label={cat.name}
+              checked={isCategorySelected(cat)}
+              count={cat.count}
+              onChange={() =>
+                onSelectCategory(isCategorySelected(cat) ? '' : cat.id)
+              }
+            />
+          ))}
+        </div>
+        {categories.length > 5 && (
+          <button
+            type="button"
+            onClick={() => setShowAllCategories((prev) => !prev)}
+            className="mt-2 flex cursor-pointer items-center gap-1 text-[13px] font-semibold text-[#165DD0] hover:underline"
+          >
+            {showAllCategories ? 'See less' : `See more (${categories.length - 5})`}
+            <ChevronDown
+              size={14}
+              className={`transition-transform duration-200 ${
+                showAllCategories ? 'rotate-180' : ''
+              }`}
+            />
+          </button>
+        )}
+      </div>
+
+      {/* 4. Price */}
+      <div>
+        <h4 className="mb-2 text-[14px] font-bold text-black">Price</h4>
+        <div className="space-y-0.5">
+          <FilterRadioItem
+            id="price-all"
+            label="All Prices"
+            checked={minPrice === undefined && maxPrice === undefined}
+            onChange={() => {
+              setCustomMin('');
+              setCustomMax('');
+              onPriceChange(undefined, undefined);
+            }}
+          />
+          <FilterRadioItem
+            id="price-under-50"
+            label="Under $50"
+            checked={isPriceActive(undefined, 50)}
+            onChange={() => {
+              setCustomMin('');
+              setCustomMax('50');
+              onPriceChange(undefined, 50);
+            }}
+          />
+          <FilterRadioItem
+            id="price-50-100"
+            label="$50 - $100"
+            checked={isPriceActive(50, 100)}
+            onChange={() => {
+              setCustomMin('50');
+              setCustomMax('100');
+              onPriceChange(50, 100);
+            }}
+          />
+          <FilterRadioItem
+            id="price-100-500"
+            label="$100 - $500"
+            checked={isPriceActive(100, 500)}
+            onChange={() => {
+              setCustomMin('100');
+              setCustomMax('500');
+              onPriceChange(100, 500);
+            }}
+          />
+          <FilterRadioItem
+            id="price-500-1000"
+            label="$500 - $1,000"
+            checked={isPriceActive(500, 1000)}
+            onChange={() => {
+              setCustomMin('500');
+              setCustomMax('1000');
+              onPriceChange(500, 1000);
+            }}
+          />
+          <FilterRadioItem
+            id="price-1000-2000"
+            label="$1,000 - $2,000"
+            checked={isPriceActive(1000, 2000)}
+            onChange={() => {
+              setCustomMin('1000');
+              setCustomMax('2000');
+              onPriceChange(1000, 2000);
+            }}
+          />
+          <FilterRadioItem
+            id="price-over-2000"
+            label="$2,000 & Above"
+            checked={isPriceActive(2000, undefined)}
+            onChange={() => {
+              setCustomMin('2000');
+              setCustomMax('');
+              onPriceChange(2000, undefined);
+            }}
+          />
         </div>
 
-        {/* Range Slider */}
-        <div className='w-full px-1'>
-          <input
-            type='range'
-            min='10'
-            max='3000'
-            step='10'
-            value={maxPrice}
-            onChange={(e) => setMaxPrice(Number(e.target.value))}
-            className='w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#dec33a]'
-          />
-          <div className='flex items-center justify-between text-[11px] text-gray-400 mt-1'>
-            <span>$10</span>
-            <span>$3,000</span>
+        {/* Custom Price Range Form */}
+        <form onSubmit={handleCustomPriceSubmit} className="mt-3 flex items-center gap-1.5">
+          <div className="relative flex-1">
+            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[12px] text-gray-400">
+              $
+            </span>
+            <input
+              type="number"
+              placeholder="Min"
+              min="0"
+              value={customMin}
+              onChange={(e) => setCustomMin(e.target.value)}
+              className="w-full rounded border border-gray-300 py-1 pr-1 pl-5 text-[12px] text-black outline-none focus:border-black"
+              aria-label="Minimum price"
+            />
+          </div>
+          <span className="text-[12px] text-gray-400">-</span>
+          <div className="relative flex-1">
+            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[12px] text-gray-400">
+              $
+            </span>
+            <input
+              type="number"
+              placeholder="Max"
+              min="0"
+              value={customMax}
+              onChange={(e) => setCustomMax(e.target.value)}
+              className="w-full rounded border border-gray-300 py-1 pr-1 pl-5 text-[12px] text-black outline-none focus:border-black"
+              aria-label="Maximum price"
+            />
+          </div>
+          <button
+            type="submit"
+            className="cursor-pointer rounded bg-[#DEC33A] px-2.5 py-1 text-[12px] font-bold text-black transition-colors hover:bg-[#d0b530]"
+          >
+            Go
+          </button>
+        </form>
+      </div>
+
+      {/* 5. Colors */}
+      {colors.length > 0 && (
+        <div>
+          <h4 className="mb-2 text-[14px] font-bold text-black">Colors</h4>
+          <div className="flex flex-wrap gap-1.5 pt-1">
+            <button
+              type="button"
+              onClick={() => onSelectColor('')}
+              className={`cursor-pointer rounded-full px-2.5 py-1 text-[12px] font-medium transition-all ${
+                !selectedColor
+                  ? 'bg-black text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              All
+            </button>
+            {colors.map((color) => {
+              const isSelected = selectedColor.toLowerCase() === color.toLowerCase();
+              const hex = resolveColorSwatch(color);
+              return (
+                <button
+                  key={color}
+                  type="button"
+                  onClick={() => onSelectColor(isSelected ? '' : color)}
+                  className={`flex cursor-pointer items-center gap-1.5 rounded-full border px-2.5 py-1 text-[12px] font-medium transition-all ${
+                    isSelected
+                      ? 'border-black bg-black text-white'
+                      : 'border-gray-200 bg-white text-gray-800 hover:border-gray-400'
+                  }`}
+                  title={`Filter by ${color}`}
+                >
+                  <span
+                    className="size-2.5 shrink-0 rounded-full border border-black/15"
+                    style={{ backgroundColor: hex }}
+                  />
+                  <span>{color}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
+      )}
 
-        {/* Quick Filters */}
-        <div className='flex flex-col gap-2 mt-1'>
-          <button
-            type='button'
-            onClick={() => setMaxPrice(3000)}
-            className={cn(
-              'text-left text-[14px] py-0.5 hover:text-[#165DD0] cursor-pointer',
-              maxPrice === 3000 ? 'font-bold text-emerald-800' : 'text-gray-600',
-            )}
-          >
-            All Price Ranges
-          </button>
-          <button
-            type='button'
-            onClick={() => setMaxPrice(15)}
-            className={cn(
-              'text-left text-[14px] py-0.5 hover:text-[#165DD0] cursor-pointer',
-              maxPrice === 15 ? 'font-bold text-emerald-800' : 'text-gray-600',
-            )}
-          >
-            Under $15
-          </button>
-          <button
-            type='button'
-            onClick={() => setMaxPrice(30)}
-            className={cn(
-              'text-left text-[14px] py-0.5 hover:text-[#165DD0] cursor-pointer',
-              maxPrice === 30 ? 'font-bold text-emerald-800' : 'text-gray-600',
-            )}
-          >
-            Under $30
-          </button>
-          <button
-            type='button'
-            onClick={() => setMaxPrice(50)}
-            className={cn(
-              'text-left text-[14px] py-0.5 hover:text-[#165DD0] cursor-pointer',
-              maxPrice === 50 ? 'font-bold text-emerald-800' : 'text-gray-600',
-            )}
-          >
-            Under $50
-          </button>
-        </div>
-      </div>
-
-      {/* Filter: Reviews */}
-      <div className='flex flex-col gap-3 border-t border-[#E5E5E6] pt-4'>
-        <h4 className='text-[15px] font-bold text-black'>Customer Review</h4>
-        <div className='flex flex-col gap-2'>
-          <button
-            type='button'
-            onClick={() => setSelectedReviewRating(null)}
-            className={cn(
-              'text-left text-[14px] hover:text-[#165DD0] cursor-pointer',
-              selectedReviewRating === null ? 'font-bold text-emerald-800' : 'text-gray-600',
-            )}
-          >
-            All Ratings
-          </button>
-          <button
-            type='button'
-            onClick={() => setSelectedReviewRating(4.5)}
-            className='flex items-center gap-1.5 hover:text-[#165DD0] cursor-pointer text-left'
-          >
-            <div className='flex items-center text-[#dec33a]'>
-              {Array.from({ length: 5 }, (_, i) => (
-                <Star
-                  key={i}
-                  size={14}
-                  fill={i < 4 ? 'currentColor' : 'none'}
-                  strokeWidth={1.5}
-                  className='text-[#dec33a]'
-                />
-              ))}
-            </div>
-            <span
-              className={cn(
-                'text-[13px]',
-                selectedReviewRating === 4.5 ? 'font-bold text-emerald-800' : 'text-gray-600',
-              )}
-            >
-              4.5 & Up
-            </span>
-          </button>
-          <button
-            type='button'
-            onClick={() => setSelectedReviewRating(4.7)}
-            className='flex items-center gap-1.5 hover:text-[#165DD0] cursor-pointer text-left'
-          >
-            <div className='flex items-center text-[#dec33a]'>
-              {Array.from({ length: 5 }, (_, i) => (
-                <Star
-                  key={i}
-                  size={14}
-                  fill={i < 5 ? 'currentColor' : 'none'}
-                  strokeWidth={1.5}
-                  className='text-[#dec33a]'
-                />
-              ))}
-            </div>
-            <span
-              className={cn(
-                'text-[13px]',
-                selectedReviewRating === 4.7 ? 'font-bold text-emerald-800' : 'text-gray-600',
-              )}
-            >
-              4.7 & Up
-            </span>
-          </button>
-        </div>
-      </div>
-
-      {/* Filter: Categories */}
-      <div className='flex flex-col gap-3 border-t border-[#E5E5E6] pt-4'>
-        <h4 className='text-[15px] font-bold text-black'>Category</h4>
-        <div className='flex flex-col gap-2'>
-          {renderedCategories.map((cat) => (
-            <button
-              key={cat.id}
-              type='button'
-              onClick={() => setSelectedCategory(cat.id)}
-              className={cn(
-                'flex items-center justify-between text-left text-[14px] py-1 cursor-pointer transition-colors hover:text-[#165DD0]',
-                selectedCategory === cat.id
-                  ? 'font-bold text-emerald-800 border-l-2 border-emerald-700 pl-2'
-                  : 'text-gray-600',
-              )}
-            >
-              <span>{cat.label}</span>
-              {selectedCategory === cat.id && <Check size={14} className='text-emerald-700' />}
-            </button>
+      {/* 6. Condition */}
+      <div>
+        <h4 className="mb-2 text-[14px] font-bold text-black">Condition</h4>
+        <div className="space-y-0.5">
+          <FilterRadioItem
+            id="condition-all"
+            label="All Conditions"
+            checked={!selectedCondition}
+            onChange={() => onSelectCondition('')}
+          />
+          {['NEW', 'RENEWED', 'USED'].map((condition) => (
+            <FilterRadioItem
+              key={condition}
+              id={`condition-${condition}`}
+              label={condition.charAt(0) + condition.slice(1).toLowerCase()}
+              checked={selectedCondition === condition}
+              onChange={() =>
+                onSelectCondition(selectedCondition === condition ? '' : condition)
+              }
+            />
           ))}
         </div>
       </div>

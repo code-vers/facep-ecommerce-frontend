@@ -6,6 +6,7 @@
  */
 
 import { Metadata } from 'next';
+import { Suspense } from 'react';
 import BrandStoreFront from '@/components/brand/BrandStoreFront';
 
 interface BrandPageProps {
@@ -33,7 +34,9 @@ export default async function BrandPage({ params }: BrandPageProps) {
 
   return (
     <main className="min-h-screen">
-      <BrandStoreFront vendorId={id} />
+      <Suspense fallback={<div className="min-h-screen bg-white" />}>
+        <BrandStoreFront vendorId={id} />
+      </Suspense>
     </main>
   );
 }
