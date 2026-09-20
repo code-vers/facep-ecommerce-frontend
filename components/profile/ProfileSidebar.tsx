@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import Image from 'next/image';
 import { User, ShoppingBag, Heart, RotateCcw, LogOut } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -28,7 +29,22 @@ export default function ProfileSidebar({
   ] as const;
 
   return (
-    <div className="w-full lg:w-[400px] border border-[#e5e5e6] rounded bg-[#f2f2f3] p-6 flex flex-col gap-9 shrink-0 text-left">
+    <div className="w-full lg:w-100 border border-[#e5e5e6] rounded bg-[#f2f2f3] p-6 flex flex-col gap-8 shrink-0 text-left">
+      <div className="flex items-center gap-3 pb-5 border-b border-[#e5e5e6]">
+        <div className="relative h-10 w-16 overflow-hidden rounded bg-black shrink-0">
+          <Image
+            src="/logo.jpg"
+            alt="Facep logo"
+            fill
+            className="object-cover"
+          />
+        </div>
+        <div className="flex flex-col">
+          {/* <span className="text-[17px] font-bold text-black leading-tight tracking-tight">Facep Account</span> */}
+          <span className="text-[12px] text-gray-500">Customer Center</span>
+        </div>
+      </div>
+
       <div className="flex flex-col gap-6 w-full">
         {/* Title */}
         <h3 className="text-[22px] font-normal text-black leading-tight">

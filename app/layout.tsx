@@ -35,6 +35,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: 'Facep',
   description: 'Facep storefront interface',
+  icons: {
+    icon: '/logo.jpg',
+  },
 };
 
 export default function RootLayout({

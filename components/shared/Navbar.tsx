@@ -103,7 +103,7 @@ function AccountBlock() {
             </>
           ) : (
             <>
-              {isAdmin ? (
+              {isAdmin || isVendor ? (
                 <Link
                   href="/dashboard"
                   className="block px-4 py-2 text-[14px] text-black hover:bg-gray-100"
@@ -112,24 +112,13 @@ function AccountBlock() {
                   Dashboard
                 </Link>
               ) : (
-                <>
-                  {isVendor && (
-                    <Link
-                      href="/dashboard"
-                      className="block px-4 py-2 text-[14px] text-black hover:bg-gray-100"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      Vendor Dashboard
-                    </Link>
-                  )}
-                  <Link
-                    href="/profile"
-                    className="block px-4 py-2 text-[14px] text-black hover:bg-gray-100"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    Profile
-                  </Link>
-                </>
+                <Link
+                  href="/profile"
+                  className="block px-4 py-2 text-[14px] text-black hover:bg-gray-100"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Profile
+                </Link>
               )}
               <button
                 type="button"
@@ -340,10 +329,19 @@ export default function Navbar() {
     <header className="w-full bg-black text-white">
       <div className="mx-auto flex w-full max-w-[1760px] flex-col gap-4 px-4 py-4 sm:px-6 md:px-8 lg:flex-row lg:items-center lg:gap-6 lg:px-10 xl:px-16 2xl:px-20">
         <div className="flex items-center justify-between gap-4 lg:shrink-0">
-          <Link href="/" className="shrink-0 text-left" aria-label="Facep home">
-            <span className="font-[Arial] text-[28px] leading-[1.2] font-bold text-white sm:text-[32px] xl:text-[36px]">
-              Logo
-            </span>
+          <Link href="/" className="flex shrink-0 items-center gap-2.5 transition-opacity hover:opacity-90" aria-label="Facep home">
+            <div className="relative h-9 w-14 sm:h-10 sm:w-16 overflow-hidden rounded bg-black">
+              <Image
+                src="/logo.jpg"
+                alt="Facep"
+                fill
+                priority
+                className="object-cover"
+              />
+            </div>
+            {/* <span className="font-[Arial] text-[22px] sm:text-[26px] xl:text-[28px] leading-[1.2] font-bold text-white tracking-tight">
+              Facep
+            </span> */}
           </Link>
 
           <div className="flex items-center gap-3 lg:hidden">

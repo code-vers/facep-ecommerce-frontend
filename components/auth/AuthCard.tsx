@@ -11,11 +11,7 @@
  */
 
 import Image from 'next/image';
-
-// ─── Assets ──────────────────────────────────────────────────────────────────
-
-/** Figma: Shadcn-style logo icon (filled square with slash). */
-const LOGO_ICON_SRC = 'http://localhost:3845/assets/c7dccfac2c38409253b30c61d18b8732759fefa6.svg';
+import Link from 'next/link';
 
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -43,36 +39,35 @@ export default function AuthCard({ children }: AuthCardProps) {
      * with min-h to replicate this naturally and responsively.
      */
     <div className="flex min-h-screen w-full flex-col items-center justify-center px-4 py-12">
-      <div className="flex w-full max-w-[800px] flex-col items-center gap-16">
+      <div className="flex w-full max-w-200 flex-col items-center gap-16">
         {/* ── Logo ─────────────────────────────────────────────────────── */}
-        {/*
-         * Figma: 60px icon + "Logo" text at 64px Arial Bold.
-         * Gap between them: 36px.
-         * Letter-spacing: -1.92px.
-         */}
-        <div className="flex items-center gap-9">
-          <div className="relative size-[60px] shrink-0 overflow-hidden">
+        <Link
+          href="/"
+          className="flex items-center gap-4 sm:gap-5 transition-opacity hover:opacity-90"
+          aria-label="Facep home"
+        >
+          <div className="relative h-14 w-22 sm:h-16 sm:w-26 shrink-0 overflow-hidden rounded-lg bg-black shadow-sm">
             <Image
-              src={LOGO_ICON_SRC}
+              src="/logo.jpg"
               alt="Facep logo"
               fill
-              unoptimized
-              className="object-contain"
+              priority
+              className="object-cover"
             />
           </div>
-          <span
-            className="whitespace-nowrap text-[64px] font-bold capitalize leading-none text-black"
-            style={{ fontFamily: 'Arial', letterSpacing: '-1.92px' }}
+          {/* <span
+            className="whitespace-nowrap text-[36px] sm:text-[44px] font-bold capitalize leading-none text-black"
+            style={{ fontFamily: 'Arial', letterSpacing: '-1.5px' }}
           >
-            Logo
-          </span>
-        </div>
+            Facep
+          </span> */}
+        </Link>
 
         {/* ── Card ─────────────────────────────────────────────────────── */}
         {/*
          * Figma: bg white, border 1px #CACBCE, border-radius 6px, padding 40px.
          */}
-        <div className="w-full rounded-[6px] border border-[#CACBCE] bg-white p-[40px]">
+        <div className="w-full rounded-[6px] border border-[#CACBCE] bg-white p-10">
           {children}
         </div>
       </div>
