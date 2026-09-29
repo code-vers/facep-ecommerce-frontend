@@ -8,7 +8,8 @@
 "use client";
 
 import CategoryGridCard, { CategoryGridCardSkeleton } from "@/components/homepage/CategoryGridCard";
-import HeroSection from "@/components/homepage/HeroSection";
+import CategoryHeroCards from "@/components/homepage/CategoryHeroCards";
+// import HeroSection from "@/components/homepage/HeroSection";
 import ProductCarousel, { ProductCarouselSkeleton } from "@/components/homepage/ProductCarousel";
 import SignUpBanner from "@/components/product/SignUpBanner";
 import { useHomepageCategoryGrids } from "@/hooks/api/useCategory";
@@ -41,15 +42,16 @@ export default function Home() {
   const displayGrid2 = hasCategoryData ? grid2 : CATEGORY_GRIDS_2;
 
   return (
-    <main className="min-h-screen bg-[#F4F4F5]">
-      {/* ── 1. Hero Section ── */}
-      <HeroSection />
+    <main className="min-h-screen bg-white">
+      {/* ── 1. Hero Section (Previous Hero commented, replaced with CategoryHeroCards) ── */}
+      {/* <HeroSection /> */}
+      <CategoryHeroCards />
 
       {/* Main Content Layout Container */}
       <div className="mx-auto w-full max-w-[1760px] px-4 sm:px-6 lg:px-10 space-y-12 md:space-y-16 pb-16">
 
         {/* ── 2. Category Grid 1 ── */}
-        <section aria-label="Featured Categories Grid 1" className="-mt-16 sm:-mt-32 md:-mt-48 lg:-mt-64 xl:-mt-80 relative z-20">
+        <section aria-label="Featured Categories Grid 1" className="relative z-20">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {isCategoryLoading && !hasCategoryData
               ? Array.from({ length: 4 }).map((_, i) => (
