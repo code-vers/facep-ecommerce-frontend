@@ -98,8 +98,9 @@ export default function CategoryHeroCards() {
 
   const scroll = (direction: "left" | "right") => {
     if (scrollRef.current) {
-      // Card width (300px) + gap (20px) = 320px; scroll 2 cards at a time
-      const scrollAmount = 320 * 2;
+      const cardWidth = 300;
+      const cardGap = 5;
+      const scrollAmount = (cardWidth + cardGap) * 2;
       scrollRef.current.scrollBy({
         left: direction === "left" ? -scrollAmount : scrollAmount,
         behavior: "smooth",
@@ -110,7 +111,7 @@ export default function CategoryHeroCards() {
   return (
     <section
       aria-label="Featured Categories Carousel"
-      className="w-full bg-white pt-6 pb-2 md:pt-8 md:pb-4"
+      className="w-full bg-white pt-2 pb-2 md:pt-3 md:pb-3"
     >
       <div className="mx-auto w-full max-w-[1760px] px-4 sm:px-6 lg:px-10">
         <div className="relative group/hero">
@@ -127,13 +128,15 @@ export default function CategoryHeroCards() {
           {/* Cards Track */}
           <div
             ref={scrollRef}
-            className="flex gap-5 overflow-x-auto scroll-smooth py-3 px-1 scrollbar-none [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+            className="flex overflow-x-auto scroll-smooth pt-1 pb-3 px-1 scrollbar-none [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+            style={{ gap: '5px' }}
           >
             {cards.map((card, index) => (
               <Link
                 key={`${card.name}-${index}`}
                 href={card.href}
                 className="group relative shrink-0 w-75 h-125 overflow-hidden rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer block select-none border border-[#E5E5E6]"
+                style={{ width: '300px', height: '500px', minWidth: '300px' }}
               >
                 {/* Full Card Category Image */}
                 <Image
