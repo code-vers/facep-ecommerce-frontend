@@ -10,7 +10,7 @@ export default function TopNavLinks() {
   return (
     <section className="w-full bg-[#2b323b] text-white">
       <div className="mx-auto w-full max-w-[1760px] px-4 sm:px-6 md:px-8 lg:px-10 xl:px-16 2xl:px-20">
-        <nav className="flex h-13 items-center gap-4 overflow-x-auto whitespace-nowrap text-[14px] leading-[1.2] font-bold sm:h-14 sm:gap-6 sm:text-[15px] xl:h-16 xl:gap-9 xl:text-[16px]">
+        <nav className="flex h-9 sm:h-9.5 xl:h-10 items-center gap-4 sm:gap-6 xl:gap-8 overflow-x-auto whitespace-nowrap text-[13px] sm:text-[14px] leading-none font-semibold">
           <Link
             href="/products"
             className="shrink-0 text-white hover:text-[#dec33a] transition-all"

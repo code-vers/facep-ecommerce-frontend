@@ -285,7 +285,7 @@ function NavbarSearch() {
           onClick={handleToggleAll}
           aria-expanded={isAllOpen}
           aria-label="Toggle all products menu"
-          className={`h-11 shrink-0 items-center gap-1 rounded-l-sm px-2.5 sm:px-3 text-[13px] sm:text-[14px] leading-[1.2] transition-colors cursor-pointer select-none flex ${
+          className={`h-9.5 sm:h-10 shrink-0 items-center gap-1 rounded-l-sm px-2.5 sm:px-3 text-[13px] sm:text-[14px] leading-[1.2] transition-colors cursor-pointer select-none flex ${
             isAllOpen
               ? 'bg-[#b8b8bd] text-black font-semibold'
               : 'bg-[#cacace] text-[#42454d] hover:bg-[#b8b8bd]'
@@ -297,7 +297,7 @@ function NavbarSearch() {
           </span>
         </button>
 
-        <div className="flex h-11 min-w-0 flex-1 items-center bg-white px-3">
+        <div className="flex h-9.5 sm:h-10 min-w-0 flex-1 items-center bg-white px-3">
           <input
             type="search"
             value={searchQuery}
@@ -337,7 +337,7 @@ function NavbarSearch() {
 
         <button
           type="submit"
-          className="flex h-11 shrink-0 items-center justify-center rounded-r-sm bg-[#dec33a] px-4 text-black hover:bg-[#c9b034] transition-colors cursor-pointer"
+          className="flex h-9.5 sm:h-10 shrink-0 items-center justify-center rounded-r-sm bg-[#dec33a] px-3.5 sm:px-4 text-black hover:bg-[#c9b034] transition-colors cursor-pointer"
           aria-label="Search"
         >
           <SearchIcon />
@@ -454,10 +454,10 @@ export default function Navbar() {
 
   return (
     <header className="w-full bg-black text-white">
-      <div className="mx-auto flex w-full max-w-[1760px] flex-col gap-4 px-4 py-4 sm:px-6 md:px-8 lg:flex-row lg:items-center lg:gap-6 lg:px-10 xl:px-16 2xl:px-20">
+      <div className="mx-auto flex w-full max-w-[1760px] flex-col gap-2.5 px-4 py-2 sm:px-6 sm:py-2.5 md:px-8 lg:flex-row lg:items-center lg:gap-6 lg:px-10 xl:px-16 2xl:px-20">
         <div className="flex items-center justify-between gap-4 lg:shrink-0">
           <Link href="/" className="flex shrink-0 items-center gap-2.5 transition-opacity hover:opacity-90" aria-label="Facep home">
-            <div className="relative h-9 w-14 sm:h-10 sm:w-16 overflow-hidden rounded bg-black">
+            <div className="relative h-8 w-12 sm:h-9 sm:w-14 overflow-hidden rounded bg-black">
               <Image
                 src="/logo.jpg"
                 alt="Facep"
@@ -481,19 +481,19 @@ export default function Navbar() {
           </div>
         </div>
 
-        <div className="flex min-w-0 flex-1 flex-col gap-4 lg:flex-row lg:items-center lg:justify-between lg:gap-6 xl:gap-8">
+        <div className="flex min-w-0 flex-1 flex-col gap-2.5 lg:flex-row lg:items-center lg:justify-between lg:gap-6 xl:gap-8">
           <NavbarSearch />
 
-          <div className="order-1 hidden shrink-0 items-center gap-5 lg:order-2 lg:flex xl:gap-7">
+          <div className="order-1 hidden shrink-0 items-center gap-4 lg:order-2 lg:flex xl:gap-6">
             <AccountBlock />
-            <Link href="/orders" className="shrink-0 text-[15px] leading-[1.2] font-bold text-white xl:text-[16px] hover:text-[#dec33a] transition-all">
+            <Link href="/orders" className="shrink-0 text-[14px] leading-[1.2] font-bold text-white xl:text-[15px] hover:text-[#dec33a] transition-all">
               Returns &amp; Orders
             </Link>
 
             <Link href="/cart" className="flex shrink-0 items-center justify-center gap-1 text-white hover:text-[#dec33a] transition-all">
               <CartIcon />
-              <span className="hidden text-[15px] leading-[1.2] font-bold xl:inline xl:text-[16px]">Cart</span>
-              <span className="flex h-5 min-w-5 items-center justify-center rounded-[10px] bg-[#dec33a] px-1.5 py-0.75 text-[12px] leading-[1.3] font-normal text-black">
+              <span className="hidden text-[14px] leading-[1.2] font-bold xl:inline xl:text-[15px]">Cart</span>
+              <span className="flex h-5 min-w-5 items-center justify-center rounded-[10px] bg-[#dec33a] px-1.5 py-0.5 text-[12px] leading-[1.3] font-normal text-black">
                 {cartItemsCount}
               </span>
             </Link>
