@@ -112,7 +112,7 @@ function ProductMeta() {
   return (
     <div className='flex w-full flex-col gap-4 border-b border-[#E5E5E6] pb-4.5'>
       <Link
-        href="/brand/plant-house"
+        href="/brand/1"
         className='flex flex-wrap items-center gap-1.75 w-fit hover:opacity-85 transition-opacity group'
       >
         <p className='text-[16px] leading-[1.2] text-[#165DD0] font-semibold group-hover:underline'>
