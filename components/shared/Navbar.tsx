@@ -12,6 +12,7 @@ import {
   formatPriceCurrency,
   calculateProductPrice,
 } from "@/hooks/api/useProduct";
+import type { Product } from "@/lib/api/product";
 
 function ChevronDownIcon() {
   return (
@@ -135,10 +136,55 @@ function AccountBlock() {
   );
 }
 
+function DropdownProductItem({
+  product,
+  onSelect,
+}: {
+  product: Product;
+  onSelect: (slug: string) => void;
+}) {
+  const effective = calculateProductPrice(product);
+  return (
+    <div
+      onClick={() => onSelect(product.slug)}
+      className="flex items-center gap-3 p-3 hover:bg-gray-50 cursor-pointer transition-colors"
+    >
+      <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded border border-gray-200 bg-gray-50">
+        <Image
+          src={formatProductImageUrl(product.thumbnail)}
+          alt={product.name}
+          fill
+          className="object-cover"
+          unoptimized
+        />
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="text-[14px] font-medium text-gray-900 truncate">
+          {product.name}
+        </p>
+        <p className="text-[12px] text-gray-500 truncate">
+          {product.category?.name || product.brand || 'Product'}
+        </p>
+      </div>
+      <div className="shrink-0 text-right">
+        <p className="text-[14px] font-bold text-black">
+          {formatPriceCurrency(effective)}
+        </p>
+        {Number(product.oldPrice || product.basePrice) > effective && (
+          <p className="text-[11px] text-gray-400 line-through">
+            {formatPriceCurrency(product.oldPrice || product.basePrice)}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function NavbarSearch() {
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
-  const [isOpen, setIsOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isAllOpen, setIsAllOpen] = useState(false);
   const router = useRouter();
   const searchContainerRef = useRef<HTMLDivElement>(null);
 
@@ -152,11 +198,22 @@ function NavbarSearch() {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
+        setIsSearchOpen(false);
+        setIsAllOpen(false);
+      }
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsSearchOpen(false);
+        setIsAllOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
   }, []);
 
   const hasQuery = debouncedQuery.length > 0;
@@ -165,26 +222,59 @@ function NavbarSearch() {
     hasQuery,
   );
 
-  const products = searchResults.data?.data ?? [];
-  const totalCount = searchResults.data?.meta?.total ?? 0;
-  const isLoading = searchResults.isLoading || searchResults.isFetching;
+  const allProductsQuery = useProducts(
+    { limit: 20 },
+    isAllOpen,
+  );
+
+  const searchProducts = searchResults.data?.data ?? [];
+  const searchTotalCount = searchResults.data?.meta?.total ?? 0;
+  const isSearchLoading = searchResults.isLoading || searchResults.isFetching;
+
+  const allProducts = allProductsQuery.data?.data ?? [];
+  const allTotalCount = allProductsQuery.data?.meta?.total ?? 0;
+  const isAllLoading = allProductsQuery.isLoading || allProductsQuery.isFetching;
+
+  const showSearchDropdown = isSearchOpen && searchQuery.trim().length > 0;
+  const showAllDropdown = isAllOpen && searchQuery.trim().length === 0;
+  const isDropdownOpen = showSearchDropdown || showAllDropdown;
+
+  const handleToggleAll = () => {
+    if (isAllOpen) {
+      setIsAllOpen(false);
+    } else {
+      setIsSearchOpen(false);
+      setSearchQuery('');
+      setDebouncedQuery('');
+      setIsAllOpen(true);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSearchOpen(false);
+    setIsAllOpen(false);
     if (searchQuery.trim()) {
-      setIsOpen(false);
       router.push(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+    } else {
+      router.push('/products');
     }
   };
 
   const handleSelectProduct = (slug: string) => {
-    setIsOpen(false);
+    setIsSearchOpen(false);
+    setIsAllOpen(false);
     router.push(`/products/${slug}`);
   };
 
-  const handleSeeMore = () => {
-    setIsOpen(false);
+  const handleSeeMoreSearch = () => {
+    setIsSearchOpen(false);
     router.push(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+  };
+
+  const handleViewAllProducts = () => {
+    setIsAllOpen(false);
+    router.push('/products');
   };
 
   return (
@@ -192,25 +282,39 @@ function NavbarSearch() {
       <form onSubmit={handleSubmit} className="flex min-w-0 w-full items-center">
         <button
           type="button"
-          className="hidden h-11 shrink-0 items-center gap-0.5 rounded-l-sm bg-[#cacace] px-3 text-[14px] leading-[1.2] text-[#42454d] sm:flex"
+          onClick={handleToggleAll}
+          aria-expanded={isAllOpen}
+          aria-label="Toggle all products menu"
+          className={`h-11 shrink-0 items-center gap-1 rounded-l-sm px-2.5 sm:px-3 text-[13px] sm:text-[14px] leading-[1.2] transition-colors cursor-pointer select-none flex ${
+            isAllOpen
+              ? 'bg-[#b8b8bd] text-black font-semibold'
+              : 'bg-[#cacace] text-[#42454d] hover:bg-[#b8b8bd]'
+          }`}
         >
           <span>All</span>
-          <ChevronDownIcon />
+          <span className={`transition-transform duration-200 ${isAllOpen ? 'rotate-180' : ''}`}>
+            <ChevronDownIcon />
+          </span>
         </button>
 
-        <div className="flex h-11 min-w-0 flex-1 items-center rounded-l-sm bg-white px-3 sm:rounded-none">
+        <div className="flex h-11 min-w-0 flex-1 items-center bg-white px-3">
           <input
             type="search"
             value={searchQuery}
             onChange={(e) => {
-              setSearchQuery(e.target.value);
-              if (!isOpen && e.target.value.trim().length > 0) {
-                setIsOpen(true);
+              const val = e.target.value;
+              setSearchQuery(val);
+              if (val.trim().length > 0) {
+                setIsAllOpen(false);
+                setIsSearchOpen(true);
+              } else {
+                setIsSearchOpen(false);
               }
             }}
             onFocus={() => {
               if (searchQuery.trim().length > 0) {
-                setIsOpen(true);
+                setIsAllOpen(false);
+                setIsSearchOpen(true);
               }
             }}
             placeholder="Search products..."
@@ -222,7 +326,7 @@ function NavbarSearch() {
               onClick={() => {
                 setSearchQuery('');
                 setDebouncedQuery('');
-                setIsOpen(false);
+                setIsSearchOpen(false);
               }}
               className="text-gray-400 hover:text-gray-600 text-xs px-1 cursor-pointer"
             >
@@ -240,78 +344,101 @@ function NavbarSearch() {
         </button>
       </form>
 
-      {/* Autocomplete Dropdown */}
-      {isOpen && searchQuery.trim().length > 0 && (
+      {/* Dropdown for Search or All Products */}
+      {isDropdownOpen && (
         <div className="absolute left-0 right-0 top-full mt-1.5 rounded-md bg-white text-black shadow-2xl border border-[#e5e5e6] z-50 overflow-hidden max-h-115 flex flex-col">
-          {isLoading && !products.length ? (
-            <div className="flex items-center justify-center gap-2 p-6 text-[14px] text-gray-500">
-              <span className="h-4 w-4 border-2 border-[#dec33a] border-t-transparent rounded-full animate-spin" />
-              Searching products...
-            </div>
-          ) : products.length > 0 ? (
-            <>
-              <div className="overflow-y-auto divide-y divide-gray-100 flex-1">
-                {products.map((product) => {
-                  const effective = calculateProductPrice(product);
-                  return (
-                    <div
-                      key={product.id}
-                      onClick={() => handleSelectProduct(product.slug)}
-                      className="flex items-center gap-3 p-3 hover:bg-gray-50 cursor-pointer transition-colors"
-                    >
-                      <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded border border-gray-200 bg-gray-50">
-                        <Image
-                          src={formatProductImageUrl(product.thumbnail)}
-                          alt={product.name}
-                          fill
-                          className="object-cover"
-                          unoptimized
-                        />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-[14px] font-medium text-gray-900 truncate">
-                          {product.name}
-                        </p>
-                        <p className="text-[12px] text-gray-500 truncate">
-                          {product.category?.name || product.brand || 'Product'}
-                        </p>
-                      </div>
-                      <div className="shrink-0 text-right">
-                        <p className="text-[14px] font-bold text-black">
-                          {formatPriceCurrency(effective)}
-                        </p>
-                        {Number(product.oldPrice || product.basePrice) > effective && (
-                          <p className="text-[11px] text-gray-400 line-through">
-                            {formatPriceCurrency(product.oldPrice || product.basePrice)}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* See more button */}
+          {showAllDropdown && (
+            <div className="flex items-center justify-between px-3.5 py-2.5 bg-gray-50 border-b border-gray-200/80 text-[12px] text-gray-600 font-medium">
+              <span className="font-semibold text-gray-800">
+                Explore Products {allProducts.length > 0 ? `(Top ${allProducts.length})` : ''}
+              </span>
               <button
                 type="button"
-                onClick={handleSeeMore}
-                className="flex items-center justify-center gap-1.5 w-full py-2.5 px-4 bg-gray-50 hover:bg-[#dec33a]/20 border-t border-gray-200 text-[13px] font-semibold text-[#165DD0] transition-colors cursor-pointer"
+                onClick={handleViewAllProducts}
+                className="text-[#165DD0] hover:underline font-semibold text-[12px] cursor-pointer"
               >
-                <span>See more results for &ldquo;{searchQuery.trim()}&rdquo;</span>
-                {totalCount > 0 && <span className="text-gray-500 font-normal">({totalCount} found)</span>}
-                <span>→</span>
+                View all products →
               </button>
-            </>
-          ) : (
-            <div className="p-6 text-center text-[14px] text-gray-500">
-              No products found for &ldquo;<span className="font-semibold text-black">{searchQuery.trim()}</span>&rdquo;
             </div>
+          )}
+
+          {showAllDropdown ? (
+            isAllLoading && !allProducts.length ? (
+              <div className="flex items-center justify-center gap-2 p-6 text-[14px] text-gray-500">
+                <span className="h-4 w-4 border-2 border-[#dec33a] border-t-transparent rounded-full animate-spin" />
+                Loading products...
+              </div>
+            ) : allProducts.length > 0 ? (
+              <>
+                <div className="overflow-y-auto divide-y divide-gray-100 flex-1">
+                  {allProducts.map((product) => (
+                    <DropdownProductItem
+                      key={product.id}
+                      product={product}
+                      onSelect={handleSelectProduct}
+                    />
+                  ))}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleViewAllProducts}
+                  className="flex items-center justify-center gap-1.5 w-full py-2.5 px-4 bg-gray-50 hover:bg-[#dec33a]/20 border-t border-gray-200 text-[13px] font-semibold text-[#165DD0] transition-colors cursor-pointer"
+                >
+                  <span>View all products</span>
+                  {allTotalCount > 0 && (
+                    <span className="text-gray-500 font-normal">({allTotalCount} total)</span>
+                  )}
+                  <span>→</span>
+                </button>
+              </>
+            ) : (
+              <div className="p-6 text-center text-[14px] text-gray-500">
+                No products available.
+              </div>
+            )
+          ) : (
+            isSearchLoading && !searchProducts.length ? (
+              <div className="flex items-center justify-center gap-2 p-6 text-[14px] text-gray-500">
+                <span className="h-4 w-4 border-2 border-[#dec33a] border-t-transparent rounded-full animate-spin" />
+                Searching products...
+              </div>
+            ) : searchProducts.length > 0 ? (
+              <>
+                <div className="overflow-y-auto divide-y divide-gray-100 flex-1">
+                  {searchProducts.map((product) => (
+                    <DropdownProductItem
+                      key={product.id}
+                      product={product}
+                      onSelect={handleSelectProduct}
+                    />
+                  ))}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleSeeMoreSearch}
+                  className="flex items-center justify-center gap-1.5 w-full py-2.5 px-4 bg-gray-50 hover:bg-[#dec33a]/20 border-t border-gray-200 text-[13px] font-semibold text-[#165DD0] transition-colors cursor-pointer"
+                >
+                  <span>See more results for &ldquo;{searchQuery.trim()}&rdquo;</span>
+                  {searchTotalCount > 0 && (
+                    <span className="text-gray-500 font-normal">({searchTotalCount} found)</span>
+                  )}
+                  <span>→</span>
+                </button>
+              </>
+            ) : (
+              <div className="p-6 text-center text-[14px] text-gray-500">
+                No products found for &ldquo;<span className="font-semibold text-black">{searchQuery.trim()}</span>&rdquo;
+              </div>
+            )
           )}
         </div>
       )}
     </div>
   );
 }
+
 
 const emptySubscribe = () => () => {};
 
