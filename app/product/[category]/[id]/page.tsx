@@ -1,4 +1,6 @@
+import PublicProductDetail from '@/components/product-detail/PublicProductDetail';
 import ProductOverviewSection from '@/components/product-detail/ProductOverviewSection';
+import { getProductBySlug } from '@/lib/api/product';
 
 interface ProductDetailPageProps {
   params: Promise<{
@@ -8,7 +10,16 @@ interface ProductDetailPageProps {
 }
 
 export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
-  await params;
+  const { id } = await params;
+
+  try {
+    const product = await getProductBySlug(id);
+    if (product) {
+      return <PublicProductDetail product={product} />;
+    }
+  } catch {
+    // If not found or fallback requested
+  }
 
   return (
     <div className='min-h-screen'>
@@ -16,3 +27,4 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
     </div>
   );
 }
+
