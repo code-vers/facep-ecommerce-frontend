@@ -457,18 +457,15 @@ export default function Navbar() {
       <div className="mx-auto flex w-full max-w-[1760px] flex-col gap-2.5 px-4 py-2 sm:px-6 sm:py-2.5 md:px-8 lg:flex-row lg:items-center lg:gap-6 lg:px-10 xl:px-16 2xl:px-20">
         <div className="flex items-center justify-between gap-4 lg:shrink-0">
           <Link href="/" className="flex shrink-0 items-center gap-2.5 transition-opacity hover:opacity-90" aria-label="Facep home">
-            <div className="relative h-8 w-12 sm:h-9 sm:w-14 overflow-hidden rounded bg-black">
+            <div className="relative h-11 w-16 sm:h-12 sm:w-18 md:h-13 md:w-20 xl:h-14 xl:w-22 overflow-hidden rounded-md bg-white p-0.5 shadow-xs">
               <Image
                 src="/logo.jpg"
                 alt="Facep"
                 fill
                 priority
-                className="object-cover"
+                className="object-contain"
               />
             </div>
-            {/* <span className="font-[Arial] text-[22px] sm:text-[26px] xl:text-[28px] leading-[1.2] font-bold text-white tracking-tight">
-              Facep
-            </span> */}
           </Link>
 
           <div className="flex items-center gap-3 lg:hidden">
