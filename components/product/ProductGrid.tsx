@@ -6,6 +6,7 @@ import type { UseQueryResult } from '@tanstack/react-query';
 import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useProductModal } from '@/contexts/ProductModalContext';
 
 const apiOrigin = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1').replace(
   /\/api\/v1\/?$/,
@@ -39,6 +40,7 @@ interface ProductGridProps {
 export default function ProductGrid({ query }: ProductGridProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { openProductModal } = useProductModal();
   const products = query.data?.data ?? [];
   const meta = query.data?.meta;
 
@@ -59,18 +61,18 @@ export default function ProductGrid({ query }: ProductGridProps) {
       </div>
 
       {query.isLoading ? (
-        <div className='flex min-h-[360px] items-center justify-center text-[#848995]'>
+        <div className='flex min-h-90 items-center justify-center text-[#848995]'>
           <Loader2 className='mr-2 animate-spin' size={22} /> Loading products...
         </div>
       ) : query.isError ? (
-        <div className='flex min-h-[360px] flex-col items-center justify-center gap-3 text-[#CB1B1B]'>
+        <div className='flex min-h-90 flex-col items-center justify-center gap-3 text-[#CB1B1B]'>
           <p>Failed to load products.</p>
           <button className='text-[#165DD0] underline' onClick={() => query.refetch()}>
             Retry
           </button>
         </div>
       ) : products.length === 0 ? (
-        <div className='flex min-h-[360px] items-center justify-center text-[#848995]'>
+        <div className='flex min-h-90 items-center justify-center text-[#848995]'>
           No products match the selected filters.
         </div>
       ) : (
@@ -79,7 +81,15 @@ export default function ProductGrid({ query }: ProductGridProps) {
             const price = effectivePrice(product);
             const hasDiscount = price < Number(product.basePrice);
             return (
-              <Link key={product.id} href={`/products/${product.slug}`} className='flex h-full'>
+              <Link
+                key={product.id}
+                href={`/products/${product.slug}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  openProductModal(product);
+                }}
+                className='flex h-full'
+              >
                 <ProductCard
                   imageSrc={imageUrl(product.thumbnail)}
                   imageAlt={product.name}
@@ -108,7 +118,7 @@ export default function ProductGrid({ query }: ProductGridProps) {
           <button
             disabled={meta.page <= 1}
             onClick={() => changePage(meta.page - 1)}
-            className='mr-1 flex h-[33px] w-[109px] items-center justify-center gap-1 rounded-[2px] border border-[#E5E5E6] bg-white text-[14px] transition-colors hover:bg-gray-50 disabled:opacity-40'
+            className='mr-1 flex h-8.25 w-27.25 items-center justify-center gap-1 rounded-xs border border-[#E5E5E6] bg-white text-[14px] transition-colors hover:bg-gray-50 disabled:opacity-40'
             aria-label='Previous page'
           >
             <ChevronLeft size={16} className='text-[#42454D]' /> Previous
@@ -128,7 +138,7 @@ export default function ProductGrid({ query }: ProductGridProps) {
           <button
             disabled={meta.page >= meta.totalPage}
             onClick={() => changePage(meta.page + 1)}
-            className='ml-1 flex h-[33px] w-[83px] items-center justify-center gap-1 rounded-[2px] border border-[#E5E5E6] bg-white text-[14px] transition-colors hover:bg-gray-50 disabled:opacity-40'
+            className='ml-1 flex h-8.25 w-20.75 items-center justify-center gap-1 rounded-xs border border-[#E5E5E6] bg-white text-[14px] transition-colors hover:bg-gray-50 disabled:opacity-40'
             aria-label='Next page'
           >
             Next <ChevronRight size={16} className='text-[#42454D]' />

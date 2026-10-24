@@ -28,6 +28,7 @@
 
 'use client';
 
+import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { ArrowRight, Star, Heart, Loader2 } from 'lucide-react';
 import Image from 'next/image';
@@ -213,6 +214,11 @@ export interface ProductCardProps {
    * Whether wishlist action is currently loading/pending.
    */
   isWishlistLoading?: boolean;
+
+  /**
+   * Optional click handler for the entire card.
+   */
+  onClick?: (e: React.MouseEvent<HTMLElement>) => void;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -247,7 +253,7 @@ interface StarRatingProps {
 function StarRating({ rating, totalStars = 5 }: StarRatingProps) {
   return (
     <div
-      className='flex items-center gap-[2px]'
+      className='flex items-center gap-0.5'
       role='img'
       aria-label={`${rating} out of ${totalStars} stars`}
     >
@@ -398,7 +404,9 @@ export default function ProductCard({
   isWishlisted = false,
   onToggleWishlist,
   isWishlistLoading = false,
+  onClick,
 }: ProductCardProps) {
+  const [imgError, setImgError] = useState(false);
   /**
    * Whether this card has a full-width CTA button at the bottom.
    * When true, the body uses a fixed height (188px) with `justify-between`
@@ -431,11 +439,12 @@ export default function ProductCard({
 
   return (
     <article
+      onClick={onClick}
       className={cn(
         // ── Structure ─────────────────────────────────────────────────
         'group relative flex h-full w-full flex-col items-start overflow-hidden',
         // ── Border & Background — Figma: border #E5E5E6, radius 4px ──
-        'rounded-[4px] border border-[#E5E5E6] bg-white',
+        'rounded-lg border border-[#E5E5E6] bg-white',
         // ── Hover: subtle lift, border emphasis, shadow ──────────────
         'transition-all duration-200 ease-out',
         'hover:-translate-y-0.5 hover:border-[#CACACE]',
@@ -455,12 +464,13 @@ export default function ProductCard({
        * `group-hover:scale-105` adds a subtle zoom animation on hover
        * via the `overflow-hidden` clipping on the parent container.
        */}
-      <div className='relative h-[180px] w-full shrink-0 overflow-hidden rounded-tl-[4px] rounded-tr-[4px]'>
+      <div className='relative h-45 w-full shrink-0 overflow-hidden rounded-tl-lg rounded-tr-lg'>
         <Image
-          src={imageSrc}
+          src={imgError || !imageSrc ? '/placeholder.png' : imageSrc}
           alt={imageAlt}
           fill
           unoptimized
+          onError={() => setImgError(true)}
           className={cn(
             'object-cover',
             'transition-transform duration-300 ease-out group-hover:scale-105',
@@ -472,7 +482,7 @@ export default function ProductCard({
             type='button'
             disabled={isWishlistLoading}
             className={cn(
-              'absolute bottom-[8px] right-[6px] z-10 flex size-[30px] items-center justify-center rounded-[9999px] transition-all duration-200 focus-visible:outline-none shadow-xs',
+              'absolute bottom-2 right-1.5 z-10 flex size-7.5 items-center justify-center rounded-[9999px] transition-all duration-200 focus-visible:outline-none shadow-xs',
               isWishlisted
                 ? 'bg-red-500 hover:bg-red-600 text-white'
                 : 'bg-[#DEC33A] hover:bg-[#cbb235] text-black',
@@ -535,9 +545,9 @@ export default function ProductCard({
            *   - Row gap:    10px
            */}
           {hasFlashDeal && (
-            <div className='flex items-center gap-[10px]'>
+            <div className='flex items-center gap-2.5'>
               {/* Yellow badge chip */}
-              <span className='flex shrink-0 items-center justify-center overflow-clip rounded-[2px] bg-[#DEC33A] px-[10px] py-[2px]'>
+              <span className='flex shrink-0 items-center justify-center overflow-clip rounded-xs bg-[#DEC33A] px-2.5 py-0.5'>
                 <span className='whitespace-nowrap text-[12px] font-normal leading-[1.3] text-black'>
                   {badgeText}
                 </span>
@@ -597,7 +607,7 @@ export default function ProductCard({
            *    Both items sit on the same baseline row.
            */}
           {hasPrice && (
-            <div className='flex items-baseline gap-[12px]'>
+            <div className='flex items-baseline gap-3'>
               {/* Sale / current price */}
               <span className='text-[18px] font-normal leading-[1.2] text-black'>{price}</span>
 
@@ -685,7 +695,7 @@ export default function ProductCard({
             className={cn(
               'flex w-full items-center justify-center',
               // Figma: h 32px, radius 2px
-              'h-8 rounded-[2px] text-[12px] font-normal leading-[1.3] text-black',
+              'h-8 rounded-xs text-[12px] font-normal leading-[1.3] text-black',
               // Variant specific styles
               buttonVariant === 'add-to-cart'
                 ? 'border border-[#DEC33A] bg-[#DEC33A] transition-colors duration-150 hover:bg-[#C9B034] hover:border-[#C9B034] active:bg-[#B49A2E] active:border-[#B49A2E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#DEC33A] focus-visible:ring-offset-1'

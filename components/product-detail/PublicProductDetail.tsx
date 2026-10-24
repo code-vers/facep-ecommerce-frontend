@@ -17,9 +17,6 @@ import {
   Maximize2,
   X,
   Tag,
-  ShieldCheck,
-  Check,
-  Flag,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useCartStore } from '@/contexts/CartContext';
@@ -32,17 +29,9 @@ import ProductCard from '@/components/shared/ProductCard';
 import CustomerReviewsSection from '@/components/product-detail/CustomerReviewsSection';
 import BrowsingHistorySection from '@/components/product-detail/BrowsingHistorySection';
 import SignUpBanner from '@/components/shared/SignUpBanner';
+import { getImageUrl } from '@/lib/utils';
 
-const apiOrigin = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1').replace(
-  /\/api\/v1\/?$/,
-  '',
-);
-
-const imageUrl = (value?: string | null) => {
-  if (!value) return '/placeholder.png';
-  if (value.startsWith('http')) return value;
-  return `${apiOrigin}${value.startsWith('/') ? '' : '/'}${value}`;
-};
+const imageUrl = (value?: string | null) => getImageUrl(value);
 
 const activePrice = (product: Product, variant?: ProductVariant) => {
   const base = Number(variant?.price ?? product.basePrice);
@@ -157,6 +146,7 @@ export default function PublicProductDetail({ product }: { product: Product }) {
   const [isZooming, setIsZooming] = useState(false);
   const [zoomPos, setZoomPos] = useState({ x: 0.5, y: 0.5 });
   const [lensPos, setLensPos] = useState({ left: 0, top: 0 });
+  const [imgError, setImgError] = useState(false);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -198,14 +188,6 @@ export default function PublicProductDetail({ product }: { product: Product }) {
   );
   const colors = useMemo(
     () => [...new Set(product.variants.map((v) => v.color).filter(Boolean))] as string[],
-    [product.variants],
-  );
-  const materials = useMemo(
-    () => [...new Set(product.variants.map((v) => v.material).filter(Boolean))] as string[],
-    [product.variants],
-  );
-  const storages = useMemo(
-    () => [...new Set(product.variants.map((v) => v.storage).filter(Boolean))] as string[],
     [product.variants],
   );
 
@@ -349,8 +331,8 @@ export default function PublicProductDetail({ product }: { product: Product }) {
   return (
     <div className='min-h-screen bg-white font-sans text-[#0F1111] antialiased selection:bg-[#E77600]/20'>
       {/* Amazon Breadcrumb Top Bar */}
-      <nav aria-label="Breadcrumb" className='sticky top-[96px] z-30 border-b border-gray-200 bg-white/95 backdrop-blur-xs py-2 px-4 sm:px-6 lg:px-8 text-xs text-[#565959] shadow-2xs transition-shadow'>
-        <div className='mx-auto max-w-[1500px] flex flex-wrap items-center gap-1.5'>
+      <nav aria-label="Breadcrumb" className='sticky top-24 z-30 border-b border-gray-200 bg-white/95 backdrop-blur-xs py-2 px-4 sm:px-6 lg:px-8 text-xs text-[#565959] shadow-2xs transition-shadow'>
+        <div className='mx-auto max-w-375 flex flex-wrap items-center gap-1.5'>
           <Link href='/' className='hover:text-[#C45500] hover:underline'>
             Home
           </Link>
@@ -374,20 +356,20 @@ export default function PublicProductDetail({ product }: { product: Product }) {
               <span>›</span>
             </>
           )}
-          <span className='truncate max-w-[250px] sm:max-w-md text-gray-500 font-normal'>
+          <span className='truncate max-w-62.5 sm:max-w-md text-gray-500 font-normal'>
             {product.name}
           </span>
         </div>
       </nav>
 
       {/* Main Content Area */}
-      <main className='mx-auto max-w-[1500px] px-4 sm:px-6 lg:px-8 py-4 sm:py-6'>
+      <main className='mx-auto max-w-375 px-4 sm:px-6 lg:px-8 py-4 sm:py-6'>
         <div className='grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start min-w-0 max-w-full'>
           {/* Left Column: Vertical Thumbnails + Main Image Showcase */}
-          <section aria-label="Product Images" className='lg:col-span-5 flex flex-col-reverse md:flex-row gap-3 items-start sticky top-[144px] self-start min-w-0 max-w-full z-10'>
+          <section aria-label="Product Images" className='lg:col-span-5 flex flex-col-reverse md:flex-row gap-3 items-start sticky top-36 self-start min-w-0 max-w-full z-10'>
             {/* Vertical Thumbnails Column */}
             {images.length > 1 && (
-              <div className='flex md:flex-col gap-2 overflow-x-auto md:overflow-y-auto max-h-[540px] scrollbar-none py-1 shrink-0 w-full md:w-auto'>
+              <div className='flex md:flex-col gap-2 overflow-x-auto md:overflow-y-auto max-h-135 scrollbar-none py-1 shrink-0 w-full md:w-auto'>
                 {images.map((img, idx) => {
                   const isActive = activeMainImage === img;
                   return (
@@ -423,11 +405,12 @@ export default function PublicProductDetail({ product }: { product: Product }) {
               onMouseMove={handleMouseMove}
             >
               <Image
-                src={imageUrl(activeMainImage)}
+                src={imgError ? '/placeholder.png' : imageUrl(activeMainImage)}
                 alt={product.name}
                 fill
                 priority
                 unoptimized
+                onError={() => setImgError(true)}
                 className='object-contain p-2'
               />
 
@@ -444,7 +427,7 @@ export default function PublicProductDetail({ product }: { product: Product }) {
 
               {/* Floating Magnified Zoom Window */}
               {isZooming && (
-                <div className='absolute left-[102%] top-0 z-50 w-[560px] h-[560px] bg-white border border-gray-300 shadow-2xl rounded-md overflow-hidden pointer-events-none hidden lg:block'>
+                <div className='absolute left-[102%] top-0 z-50 w-140 h-140 bg-white border border-gray-300 shadow-2xl rounded-md overflow-hidden pointer-events-none hidden lg:block'>
                   <div
                     className='w-full h-full relative'
                     style={{
@@ -484,7 +467,7 @@ export default function PublicProductDetail({ product }: { product: Product }) {
           </section>
 
           {/* Center Column: Product Specs, Rating, Deal & Bullet Points */}
-          <section aria-label="Product Specifications" className='lg:col-span-4 flex flex-col gap-4 border-b lg:border-b-0 border-gray-200 pb-6 lg:pb-0 min-w-0 max-w-full overflow-hidden break-words'>
+          <section aria-label="Product Specifications" className='lg:col-span-4 flex flex-col gap-4 border-b lg:border-b-0 border-gray-200 pb-6 lg:pb-0 min-w-0 max-w-full overflow-hidden wrap-break-word'>
             {/* Store & Title */}
             <div>
               {brandVendorId ? (
@@ -709,16 +692,16 @@ export default function PublicProductDetail({ product }: { product: Product }) {
             </div>
 
             {/* Bullet List: About This Item */}
-            <div className='flex flex-col gap-2.5 min-w-0 max-w-full overflow-hidden break-words'>
+            <div className='flex flex-col gap-2.5 min-w-0 max-w-full overflow-hidden wrap-break-word'>
               <h2 className='text-base sm:text-lg font-bold text-[#0F1111]'>About this item</h2>
               {features.length > 0 ? (
-                <ul className='list-disc pl-5 space-y-2 text-xs sm:text-sm text-[#0F1111] leading-relaxed min-w-0 max-w-full overflow-hidden break-words [&_li]:break-words [&_li]:overflow-hidden [&_li]:max-w-full'>
+                <ul className='list-disc pl-5 space-y-2 text-xs sm:text-sm text-[#0F1111] leading-relaxed min-w-0 max-w-full overflow-hidden wrap-break-word [&_li]:wrap-break-word [&_li]:overflow-hidden [&_li]:max-w-full'>
                   {displayedFeatures.map((feat, idx) => (
-                    <li key={idx} className='break-words max-w-full overflow-hidden'>{formatBulletPoint(feat)}</li>
+                    <li key={idx} className='wrap-break-word max-w-full overflow-hidden'>{formatBulletPoint(feat)}</li>
                   ))}
                 </ul>
               ) : (
-                <p className='text-xs sm:text-sm text-[#0F1111] leading-relaxed break-words overflow-hidden max-w-full'>
+                <p className='text-xs sm:text-sm text-[#0F1111] leading-relaxed wrap-break-word overflow-hidden max-w-full'>
                   {product.shortDescription || 'No additional details available.'}
                 </p>
               )}
@@ -748,7 +731,7 @@ export default function PublicProductDetail({ product }: { product: Product }) {
           </section>
 
           {/* Right Column: Amazon Buy Box Sidebar */}
-          <aside aria-label="Purchase details" className='lg:col-span-3 sticky top-[144px] self-start min-w-0 max-w-full shrink-0 z-10'>
+          <aside aria-label="Purchase details" className='lg:col-span-3 sticky top-36 self-start min-w-0 max-w-full shrink-0 z-10'>
             <div className='border border-[#D5D9D9] rounded-lg p-4 bg-white shadow-2xs flex flex-col gap-3 text-xs sm:text-sm text-[#0F1111]'>
               {/* Buy Box Price */}
               <div className='flex items-baseline font-sans text-[#0F1111] border-b border-gray-100 pb-2'>
@@ -907,7 +890,7 @@ export default function PublicProductDetail({ product }: { product: Product }) {
         {/* Detailed Seller Item Description */}
         <section className='mt-12 border-t border-gray-200 pt-8'>
           <h2 className='text-xl sm:text-2xl font-bold text-[#0F1111] mb-4'>Product Description</h2>
-          <div className='bg-gray-50/60 p-6 rounded-lg border border-gray-200 text-sm sm:text-base font-normal text-[#0F1111] leading-relaxed break-words overflow-hidden max-w-full [&_*]:!font-normal [&_*]:!bg-transparent [&_*]:!color-inherit [&_p]:mb-3 [&_p]:leading-relaxed [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-3 [&_li]:mb-1.5'>
+          <div className='bg-gray-50/60 p-6 rounded-lg border border-gray-200 text-sm sm:text-base font-normal text-[#0F1111] leading-relaxed wrap-break-word overflow-hidden max-w-full **:font-normal! **:bg-transparent! [&_*]:!color-inherit [&_p]:mb-3 [&_p]:leading-relaxed [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-3 [&_li]:mb-1.5'>
             {product.detailedDescription ? (
               <div
                 dangerouslySetInnerHTML={{ __html: sanitizeDescriptionHtml(product.detailedDescription) }}

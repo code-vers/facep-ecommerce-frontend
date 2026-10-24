@@ -70,15 +70,17 @@ const aboutItems = [
 
 function ProductGallery() {
   const [activeImage, setActiveImage] = useState<string>(productImages[0].src);
+  const [imgError, setImgError] = useState(false);
 
   return (
     <div className='flex w-full flex-col gap-4 sm:gap-5 lg:gap-6'>
       <div className='relative aspect-square w-full overflow-hidden bg-white'>
         <Image
-          src={activeImage}
+          src={imgError ? '/placeholder.png' : activeImage}
           alt="Product image"
           fill
           unoptimized
+          onError={() => setImgError(true)}
           className='object-cover'
           sizes='(max-width: 1279px) 100vw, 700px'
         />

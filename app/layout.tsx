@@ -19,6 +19,8 @@ import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from 'sonner';
 import QueryProvider from '@/providers/QueryProvider';
+import { ProductModalProvider } from '@/contexts/ProductModalContext';
+import MobileProductModal from '@/components/product-modal/MobileProductModal';
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -61,7 +63,10 @@ export default function RootLayout({
         <QueryProvider>
           <AuthProvider>
             <AuthGuard>
-              <SiteChrome>{children}</SiteChrome>
+              <ProductModalProvider>
+                <SiteChrome>{children}</SiteChrome>
+                <MobileProductModal />
+              </ProductModalProvider>
             </AuthGuard>
           </AuthProvider>
         </QueryProvider>
