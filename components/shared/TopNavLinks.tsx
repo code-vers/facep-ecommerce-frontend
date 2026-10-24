@@ -1,50 +1,50 @@
 import Link from "next/link";
 
-const navItems = [
-  // "Today’s Deal",
-  "Sell",
-  "Customer Service",
+interface NavItem {
+  label: string;
+  href?: string;
+}
+
+const navItems: NavItem[] = [
+  { label: "All", href: "/products" },
+  { label: "Early Deals" },
+  { label: "Special Products" },
+  { label: "Coupons" },
+  { label: "Books" },
+  { label: "Order" },
+  { label: "Buy Again" },
+  { label: "Customer Service", href: "/customer-service" },
+  { label: "Sell", href: "/seller" },
 ];
 
 export default function TopNavLinks() {
   return (
-    <section className="w-full bg-[#2b323b] text-white">
+    <section className="w-full bg-[#2b323b] text-white select-none">
       <div className="mx-auto w-full max-w-[1760px] px-4 sm:px-6 md:px-8 lg:px-10 xl:px-16 2xl:px-20">
-        <nav className="flex h-9 sm:h-9.5 xl:h-10 items-center gap-4 sm:gap-6 xl:gap-8 overflow-x-auto whitespace-nowrap text-[13px] sm:text-[14px] leading-none font-semibold">
-          <Link
-            href="/products"
-            className="shrink-0 text-white hover:text-[#dec33a] transition-all"
-          >
-            All
-          </Link>
-
+        <nav
+          aria-label="Secondary navigation"
+          className="flex h-9 sm:h-9.5 xl:h-10 items-center gap-4 sm:gap-5 md:gap-6 xl:gap-8 overflow-x-auto whitespace-nowrap scroll-smooth scrollbar-none [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden text-[13px] sm:text-[14px] leading-none font-semibold"
+        >
           {navItems.map((item) => {
-            if (item === "Sell") {
+            if (item.href) {
               return (
-                <Link key={item} href="/seller" className="shrink-0 text-white hover:text-[#dec33a] transition-all">
-                  {item}
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  className="shrink-0 text-white hover:text-[#dec33a] transition-colors focus-visible:outline-none focus-visible:text-[#dec33a]"
+                >
+                  {item.label}
                 </Link>
               );
             }
-            if (item === "Customer Service") {
-              return (
-                <Link key={item} href="/customer-service" className="shrink-0 text-white hover:text-[#dec33a] transition-all">
-                  {item}
-                </Link>
-              );
-            }
-            /*
-            if (item === "Today’s Deal") {
-              return (
-                <Link key={item} href="/todays-deal" className="shrink-0 text-white hover:text-[#dec33a] transition-all">
-                  {item}
-                </Link>
-              );
-            }
-            */
+
             return (
-              <button key={item} type="button" className="shrink-0 text-white hover:text-[#dec33a] transition-all">
-                {item}
+              <button
+                key={item.label}
+                type="button"
+                className="shrink-0 text-white hover:text-[#dec33a] transition-colors cursor-pointer focus-visible:outline-none focus-visible:text-[#dec33a]"
+              >
+                {item.label}
               </button>
             );
           })}
