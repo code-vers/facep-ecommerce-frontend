@@ -6,7 +6,7 @@ import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import ProductCard from "@/components/shared/ProductCard";
 import { CarouselProduct } from "@/lib/homepage-data";
 import { cn } from "@/lib/utils";
-import { useProductModal } from "@/contexts/ProductModalContext";
+// import { useProductModal } from "@/contexts/ProductModalContext";
 
 interface ProductCarouselProps {
   title: string;
@@ -22,7 +22,7 @@ export default function ProductCarousel({
   className,
 }: ProductCarouselProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const { openProductModal } = useProductModal();
+  // const { openProductModal } = useProductModal();
 
   const scroll = (direction: "left" | "right") => {
     if (scrollRef.current) {
@@ -71,11 +71,11 @@ export default function ProductCarousel({
               <Link 
                 key={product.id} 
                 href={productHref}
-                onClick={(e) => {
-                  e.preventDefault();
-                  openProductModal(product);
-                }}
-                className="flex w-49.75 shrink-0 group focus-visible:outline-none cursor-pointer"
+                // onClick={(e) => {
+                //   e.preventDefault();
+                //   openProductModal(product);
+                // }}
+                className="flex w-49.75 shrink-0 group focus-visible:outline-none"
               >
                 <ProductCard
                   imageSrc={product.imageSrc}

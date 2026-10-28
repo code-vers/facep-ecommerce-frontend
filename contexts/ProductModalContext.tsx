@@ -5,7 +5,7 @@ import React, {
   useContext,
   useState,
   useCallback,
-  useEffect,
+  // useEffect,
   useTransition,
 } from 'react';
 import type { Product } from '@/lib/api/product';
@@ -163,6 +163,8 @@ export function ProductModalProvider({ children }: { children: React.ReactNode }
   }, []);
 
   // Global link interception: When user clicks any link to /products/[slug], open the modal
+  // (Commented out: disabled to restore previous product details page navigation)
+  /*
   useEffect(() => {
     const handleDocumentClick = (e: MouseEvent) => {
       // Don't intercept if modifier keys held (Ctrl, Cmd, Shift, Alt)
@@ -223,6 +225,7 @@ export function ProductModalProvider({ children }: { children: React.ReactNode }
       document.removeEventListener('click', handleDocumentClick, { capture: true });
     };
   }, [openProductModal]);
+  */
 
   return (
     <ProductModalContext.Provider

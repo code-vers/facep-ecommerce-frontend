@@ -19,8 +19,8 @@ import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from 'sonner';
 import QueryProvider from '@/providers/QueryProvider';
-import { ProductModalProvider } from '@/contexts/ProductModalContext';
-import MobileProductModal from '@/components/product-modal/MobileProductModal';
+// import { ProductModalProvider } from '@/contexts/ProductModalContext';
+// import MobileProductModal from '@/components/product-modal/MobileProductModal';
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -63,10 +63,11 @@ export default function RootLayout({
         <QueryProvider>
           <AuthProvider>
             <AuthGuard>
-              <ProductModalProvider>
+              {/* Mobile product modal quick-view (commented out to restore previous product details page) */}
+              {/* <ProductModalProvider> */}
                 <SiteChrome>{children}</SiteChrome>
-                <MobileProductModal />
-              </ProductModalProvider>
+                {/* <MobileProductModal /> */}
+              {/* </ProductModalProvider> */}
             </AuthGuard>
           </AuthProvider>
         </QueryProvider>

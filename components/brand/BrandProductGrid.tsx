@@ -5,7 +5,7 @@ import type { Product } from '@/lib/api/product';
 import type { UseQueryResult } from '@tanstack/react-query';
 import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import Link from 'next/link';
-import { useProductModal } from '@/contexts/ProductModalContext';
+// import { useProductModal } from '@/contexts/ProductModalContext';
 
 const apiOrigin = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1').replace(
   /\/api\/v1\/?$/,
@@ -51,7 +51,7 @@ export default function BrandProductGrid({
   currentPage = 1,
   onPageChange,
 }: BrandProductGridProps) {
-  const { openProductModal } = useProductModal();
+  // const { openProductModal } = useProductModal();
   const apiProducts = query.data?.data;
   const products =
     apiProducts && apiProducts.length > 0
@@ -113,10 +113,10 @@ export default function BrandProductGrid({
               <Link
                 key={product.id}
                 href={`/products/${product.slug}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  openProductModal(product);
-                }}
+                // onClick={(e) => {
+                //   e.preventDefault();
+                //   openProductModal(product);
+                // }}
                 className="flex h-full"
               >
                 <ProductCard
