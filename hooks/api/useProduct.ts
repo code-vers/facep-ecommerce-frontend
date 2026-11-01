@@ -14,6 +14,10 @@ import {
   updateProductPromotion,
   updateProductStatus,
   removeProductPromotion,
+  updateProductEarlyDeal,
+  batchUpdateEarlyDeals,
+  updateProductSpecialStatus,
+  batchUpdateSpecialProducts,
   type Product,
   type ProductQueryParams,
 } from '@/lib/api/product';
@@ -48,6 +52,64 @@ export const useAdminProducts = (params?: ProductQueryParams, enabled: boolean =
     queryFn: () => getAdminProducts(params),
     enabled,
   });
+
+export const useEarlyDeals = (params?: ProductQueryParams, enabled: boolean = true) =>
+  useQuery({
+    queryKey: ['products', 'early-deals', params],
+    queryFn: () => getProducts({ ...params, isEarlyDeal: true }),
+    enabled,
+  });
+
+export const useUpdateProductEarlyDeal = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, isEarlyDeal }: { id: string; isEarlyDeal: boolean }) =>
+      updateProductEarlyDeal({ id, isEarlyDeal }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+    },
+  });
+};
+
+export const useBatchUpdateEarlyDeals = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ productIds, isEarlyDeal }: { productIds: string[]; isEarlyDeal: boolean }) =>
+      batchUpdateEarlyDeals({ productIds, isEarlyDeal }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+    },
+  });
+};
+
+export const useSpecialProducts = (params?: ProductQueryParams, enabled: boolean = true) =>
+  useQuery({
+    queryKey: ['products', 'special-products', params],
+    queryFn: () => getProducts({ ...params, isSpecialProduct: true }),
+    enabled,
+  });
+
+export const useUpdateProductSpecialStatus = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, isSpecialProduct }: { id: string; isSpecialProduct: boolean }) =>
+      updateProductSpecialStatus({ id, isSpecialProduct }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+    },
+  });
+};
+
+export const useBatchUpdateSpecialProducts = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ productIds, isSpecialProduct }: { productIds: string[]; isSpecialProduct: boolean }) =>
+      batchUpdateSpecialProducts({ productIds, isSpecialProduct }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+    },
+  });
+};
 
 export const useProduct = (slug: string) =>
   useQuery({

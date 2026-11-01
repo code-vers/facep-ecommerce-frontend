@@ -41,6 +41,8 @@ export interface Product {
   vendor?: ProductVendor | null;
   isActive: boolean;
   publishedAt: string;
+  isEarlyDeal?: boolean;
+  isSpecialProduct?: boolean;
   brand?: string | null;
   productType?: string | null;
   shortDescription?: string | null;
@@ -111,6 +113,9 @@ export interface ProductQueryParams {
   sort?: string;
   vendor?: string;
   vendorId?: string;
+  vendorEmail?: string;
+  isEarlyDeal?: boolean;
+  isSpecialProduct?: boolean;
 }
 
 export interface ProductStats {
@@ -254,6 +259,62 @@ export interface TopCategoryShowcase {
 export const getTopCategoriesShowcase = async (): Promise<TopCategoryShowcase[]> => {
   const { data } = await apiClient.get<ApiResponse<TopCategoryShowcase[]>>(
     '/products/top-categories-showcase',
+  );
+  return data.data;
+};
+
+export const updateProductEarlyDeal = async ({
+  id,
+  isEarlyDeal,
+}: {
+  id: string;
+  isEarlyDeal: boolean;
+}): Promise<Product> => {
+  const { data } = await apiClient.patch<ApiResponse<Product>>(
+    `/products/${id}/early-deal`,
+    { isEarlyDeal }
+  );
+  return data.data;
+};
+
+export const batchUpdateEarlyDeals = async ({
+  productIds,
+  isEarlyDeal,
+}: {
+  productIds: string[];
+  isEarlyDeal: boolean;
+}): Promise<{ count: number; isEarlyDeal: boolean }> => {
+  const { data } = await apiClient.patch<ApiResponse<{ count: number; isEarlyDeal: boolean }>>(
+    '/products/early-deal/batch',
+    { productIds, isEarlyDeal }
+  );
+  return data.data;
+};
+
+export const updateProductSpecialStatus = async ({
+  id,
+  isSpecialProduct,
+}: {
+  id: string;
+  isSpecialProduct: boolean;
+}): Promise<Product> => {
+  const { data } = await apiClient.patch<ApiResponse<Product>>(
+    `/products/${id}/special-product`,
+    { isSpecialProduct }
+  );
+  return data.data;
+};
+
+export const batchUpdateSpecialProducts = async ({
+  productIds,
+  isSpecialProduct,
+}: {
+  productIds: string[];
+  isSpecialProduct: boolean;
+}): Promise<{ count: number; isSpecialProduct: boolean }> => {
+  const { data } = await apiClient.patch<ApiResponse<{ count: number; isSpecialProduct: boolean }>>(
+    '/products/special-product/batch',
+    { productIds, isSpecialProduct }
   );
   return data.data;
 };

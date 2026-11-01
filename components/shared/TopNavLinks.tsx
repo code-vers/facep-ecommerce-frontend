@@ -7,8 +7,8 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { label: "All", href: "/products" },
-  { label: "Early Deals" },
-  { label: "Special Products" },
+  { label: "Early Deals", href: "/early-deals" },
+  { label: "Special Products", href: "/special-products" },
   { label: "Coupons" },
   { label: "Books" },
   { label: "Order" },

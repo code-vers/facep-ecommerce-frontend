@@ -15,6 +15,8 @@ import SignUpBanner from "@/components/product/SignUpBanner";
 import { useHomepageCategoryGrids } from "@/hooks/api/useCategory";
 import {
   mapProductToCarousel,
+  useEarlyDeals,
+  useSpecialProducts,
   useRelatedToViewedProducts,
   useTopCategoriesShowcase,
 } from "@/hooks/api/useProduct";
@@ -37,6 +39,12 @@ export default function Home() {
     isLoading: isTopCategoriesLoading,
   } = useTopCategoriesShowcase();
   const hasTopCategoriesData = Boolean(topCategories && topCategories.length > 0);
+
+  const { data: earlyDealsData, isLoading: isEarlyDealsLoading } = useEarlyDeals({ limit: 12 });
+  const { data: specialProductsData, isLoading: isSpecialLoading } = useSpecialProducts({ limit: 12 });
+
+  const earlyDealsProducts = earlyDealsData?.data || [];
+  const specialProducts = specialProductsData?.data || [];
 
   const displayGrid1 = hasCategoryData ? grid1 : CATEGORY_GRIDS_1;
   const displayGrid2 = hasCategoryData ? grid2 : CATEGORY_GRIDS_2;
@@ -75,6 +83,28 @@ export default function Home() {
                 ))}
           </div>
         </section>
+
+        {/* ── Early Deals Carousel ── */}
+        {isEarlyDealsLoading ? (
+          <ProductCarouselSkeleton title="Early Deals" />
+        ) : earlyDealsProducts.length > 0 ? (
+          <ProductCarousel
+            title="Early Deals"
+            products={earlyDealsProducts.map(mapProductToCarousel)}
+            exploreHref="/early-deals"
+          />
+        ) : null}
+
+        {/* ── Special Products Carousel ── */}
+        {isSpecialLoading ? (
+          <ProductCarouselSkeleton title="Special Products" />
+        ) : specialProducts.length > 0 ? (
+          <ProductCarousel
+            title="Special Products"
+            products={specialProducts.map(mapProductToCarousel)}
+            exploreHref="/special-products"
+          />
+        ) : null}
 
         {/* ── 4. Carousel 1 — Related to items you've viewed ── */}
         {isViewedLoading && !hasViewedData ? (
