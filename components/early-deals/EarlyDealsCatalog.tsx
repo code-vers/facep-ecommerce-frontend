@@ -7,19 +7,14 @@ import {
   Sparkles,
   Flame,
   Search,
-  Filter,
   ChevronLeft,
   ChevronRight,
   ArrowRight,
   Tag,
-  Loader2,
   Clock,
-  ShieldCheck,
   Truck,
-  Percent,
   X,
   Star,
-  CheckCircle2,
 } from 'lucide-react';
 import ProductCard from '@/components/shared/ProductCard';
 import {
@@ -119,7 +114,7 @@ export default function EarlyDealsCatalog() {
       </nav>
 
       {/* ── 2. Human-Crafted Hero Section ── */}
-      <section className="relative w-full bg-gradient-to-br from-[#FFFDF2] via-[#FEF7D9] to-[#FCEEB7] border-b border-[#E8DFB8] overflow-hidden py-8 sm:py-10 md:py-12 lg:py-14">
+      <section className="relative w-full bg-linear-to-br from-[#FFFDF2] via-[#FEF7D9] to-[#FCEEB7] border-b border-[#E8DFB8] overflow-hidden py-8 sm:py-10 md:py-12 lg:py-14">
         {/* Subtle, refined background glow (no artificial dot patterns) */}
         <div className="absolute top-0 right-1/4 -translate-y-1/2 w-96 h-96 bg-[#DEC33A]/25 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-10 translate-y-1/3 w-80 h-80 bg-amber-200/30 rounded-full blur-2xl pointer-events-none" />
@@ -238,7 +233,7 @@ export default function EarlyDealsCatalog() {
             {/* Right Column: Tangible Merchandising Deal Spotlight Card */}
             <div className="lg:col-span-5 flex justify-center lg:justify-end">
               {spotlightProduct ? (
-                <div className="w-full max-w-[420px] bg-white border border-[#E5E5E6] rounded-xl shadow-lg p-5 flex flex-col gap-3.5 transition-all hover:shadow-xl relative">
+                <div className="w-full max-w-105 bg-white border border-[#E5E5E6] rounded-xl shadow-lg p-5 flex flex-col gap-3.5 transition-all hover:shadow-xl relative">
                   {/* Spotlight Top Label */}
                   <div className="flex items-center justify-between">
                     <span className="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-[#CC0C39] bg-red-50 border border-red-200 px-2.5 py-0.5 rounded-sm">
@@ -319,7 +314,7 @@ export default function EarlyDealsCatalog() {
                         <span className="text-[#CC0C39] font-bold">Limited Quantities</span>
                       </div>
                       <div className="w-full h-2 rounded-full bg-gray-100 overflow-hidden">
-                        <div className="h-full bg-gradient-to-r from-[#DEC33A] to-[#F09000] rounded-full w-[76%]" />
+                        <div className="h-full bg-linear-to-r from-[#DEC33A] to-[#F09000] rounded-full w-[76%]" />
                       </div>
                     </div>
 
@@ -334,7 +329,7 @@ export default function EarlyDealsCatalog() {
                   </div>
                 </div>
               ) : (
-                <div className="w-full max-w-[420px] bg-white border border-[#E5E5E6] rounded-xl shadow-md p-6 flex flex-col items-center justify-center text-center gap-3">
+                <div className="w-full max-w-105 bg-white border border-[#E5E5E6] rounded-xl shadow-md p-6 flex flex-col items-center justify-center text-center gap-3">
                   <div className="size-14 rounded-full bg-[#DEC33A]/20 flex items-center justify-center text-[#B4950A]">
                     <Sparkles size={24} />
                   </div>
@@ -351,7 +346,7 @@ export default function EarlyDealsCatalog() {
       </section>
 
       {/* ── 3. Category Carousel & Filter Bar ── */}
-      <section className="w-full bg-white border-b border-[#E5E5E6] py-3.5 sticky top-[56px] sm:top-[64px] z-20 shadow-2xs">
+      <section className="w-full bg-white border-b border-[#E5E5E6] py-3.5 sticky top-14 sm:top-16 z-20 shadow-2xs">
         <div className="mx-auto w-full max-w-[1760px] px-4 sm:px-6 md:px-8 lg:px-10 xl:px-16 2xl:px-20">
           <div className="flex items-center gap-2">
             <span className="text-xs font-bold text-gray-800 uppercase tracking-wider shrink-0 hidden md:inline">
@@ -468,7 +463,7 @@ export default function EarlyDealsCatalog() {
                 id="early-deals-price"
                 value={priceRange}
                 onChange={(e) => {
-                  setPriceRange(e.target.value as any);
+                  setPriceRange(e.target.value as never);
                   setCurrentPage(1);
                 }}
                 className="px-3 py-1.5 text-xs font-medium border border-[#E5E5E6] rounded-md bg-white focus:outline-none focus:border-black text-gray-800 cursor-pointer"
@@ -576,9 +571,9 @@ export default function EarlyDealsCatalog() {
               {Array.from({ length: 12 }).map((_, i) => (
                 <div
                   key={`skeleton-card-${i}`}
-                  className="bg-white border border-[#E5E5E6] rounded-[4px] p-2 sm:p-3 flex flex-col gap-3 animate-pulse"
+                  className="bg-white border border-[#E5E5E6] rounded-lg p-2 sm:p-3 flex flex-col gap-3 animate-pulse"
                 >
-                  <div className="w-full h-[180px] bg-gray-200 rounded-[2px]" />
+                  <div className="w-full h-45 bg-gray-200 rounded-xs" />
                   <div className="h-4 bg-gray-200 rounded w-3/4" />
                   <div className="h-4 bg-gray-200 rounded w-1/2" />
                   <div className="h-6 bg-gray-200 rounded w-1/3 mt-2" />
