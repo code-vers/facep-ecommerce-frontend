@@ -29,9 +29,19 @@ export interface CartItem {
   shippingCost?: number;
 }
 
+export interface AppliedCoupon {
+  code: string;
+  discountAmount: number;
+  title: string;
+  discountType: string;
+}
+
 interface CartStore {
   items: CartItem[];
   selectedItems: string[]; // Array of cartItemIds
+  appliedCoupon: AppliedCoupon | null;
+  applyCoupon: (coupon: AppliedCoupon | null) => void;
+  removeCoupon: () => void;
   addToCart: (item: CartItem) => void;
   removeFromCart: (cartItemId: string) => void;
   removeItems: (cartItemIds: string[]) => void;
@@ -48,6 +58,9 @@ export const useCartStore = create<CartStore>()(
     (set) => ({
       items: [],
       selectedItems: [],
+      appliedCoupon: null,
+      applyCoupon: (coupon) => set({ appliedCoupon: coupon }),
+      removeCoupon: () => set({ appliedCoupon: null }),
       addToCart: (item) =>
         set((state) => {
           const existingItemIndex = state.items.findIndex(
@@ -142,7 +155,7 @@ export const useCartStore = create<CartStore>()(
         set({ selectedItems: cartItemIds }),
       clearSelection: () =>
         set({ selectedItems: [] }),
-      clearCart: () => set({ items: [], selectedItems: [] }),
+      clearCart: () => set({ items: [], selectedItems: [], appliedCoupon: null }),
     }),
     {
       name: 'facep-cart-storage',

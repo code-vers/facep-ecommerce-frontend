@@ -51,7 +51,7 @@ interface CheckoutFormState {
  */
 function CheckoutForm({ session }: CheckoutFormProps) {
   const router = useRouter();
-  const { items, selectedItems } = useCartStore();
+  const { items, selectedItems, appliedCoupon } = useCartStore();
 
   // Compute selected items
   const selectedItemsData = items.filter((item) => selectedItems.includes(item.cartItemId));
@@ -152,6 +152,8 @@ function CheckoutForm({ session }: CheckoutFormProps) {
           vatGst: totalVatGst,
           importCharges: totalImportCharges,
           handlingFee: totalHandlingFee,
+          couponCode: appliedCoupon?.code,
+          couponDiscount,
           total
         })
       });
@@ -173,14 +175,18 @@ function CheckoutForm({ session }: CheckoutFormProps) {
 
   // Compute final pricing summary elements
   const subtotal = selectedItemsData.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-  const totalShipping = selectedItemsData.reduce((acc, item) => acc + ((item.shippingCost || 0) * item.quantity), 0);
+  const rawShipping = selectedItemsData.reduce((acc, item) => acc + ((item.shippingCost || 0) * item.quantity), 0);
+  const isFreeShipping = appliedCoupon?.discountType === 'FREE_SHIPPING';
+  const totalShipping = isFreeShipping ? 0 : rawShipping;
+
   const totalTax = selectedItemsData.reduce((acc, item) => acc + ((item.taxAmount || 0) * item.quantity), 0);
   const totalVatGst = selectedItemsData.reduce((acc, item) => acc + ((item.vatGst || 0) * item.quantity), 0);
   const totalImportCharges = selectedItemsData.reduce((acc, item) => acc + ((item.importCharges || 0) * item.quantity), 0);
   const totalHandlingFee = selectedItemsData.reduce((acc, item) => acc + ((item.handlingFee || 0) * item.quantity), 0);
 
   const extraFees = totalTax + totalVatGst + totalImportCharges + totalHandlingFee;
-  const total = subtotal + totalShipping + extraFees;
+  const couponDiscount = appliedCoupon ? Number(appliedCoupon.discountAmount) || 0 : 0;
+  const total = Math.max(0, subtotal + totalShipping + extraFees - couponDiscount);
 
   return (
     <main className='min-h-screen bg-white'>
@@ -238,6 +244,8 @@ function CheckoutForm({ session }: CheckoutFormProps) {
               subtotal={subtotal}
               totalShipping={totalShipping}
               extraFees={extraFees}
+              couponDiscount={couponDiscount}
+              couponCode={appliedCoupon?.code}
               total={total}
               onPlaceOrder={handlePlaceOrder}
               isSubmitting={isSubmitting}

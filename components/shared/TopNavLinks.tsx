@@ -9,7 +9,7 @@ const navItems: NavItem[] = [
   { label: "All", href: "/products" },
   { label: "Early Deals", href: "/early-deals" },
   { label: "Special Products", href: "/special-products" },
-  { label: "Coupons" },
+  { label: "Coupons", href: "/coupons" },
   { label: "Books" },
   { label: "Order" },
   { label: "Buy Again" },

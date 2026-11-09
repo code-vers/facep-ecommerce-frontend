@@ -15,6 +15,8 @@ interface CheckoutOrderSummaryProps {
   subtotal: number;
   totalShipping: number;
   extraFees: number;
+  couponDiscount?: number;
+  couponCode?: string;
   total: number;
   onPlaceOrder: () => void;
   isSubmitting: boolean;
@@ -46,6 +48,8 @@ export default function CheckoutOrderSummary({
   subtotal,
   totalShipping,
   extraFees,
+  couponDiscount = 0,
+  couponCode,
   total,
   onPlaceOrder,
   isSubmitting,
@@ -100,6 +104,12 @@ export default function CheckoutOrderSummary({
           <span>Shipping</span>
           <span className="font-bold">{totalShipping === 0 ? 'Free' : formatPrice(totalShipping)}</span>
         </div>
+        {couponDiscount > 0 && (
+          <div className="flex justify-between items-center text-[16px] text-[#229A4E] font-medium">
+            <span>Coupon ({couponCode || 'APPLIED'})</span>
+            <span className="font-bold">-{formatPrice(couponDiscount)}</span>
+          </div>
+        )}
         {extraFees > 0 && (
           <div className="flex justify-between items-center text-[16px] text-gray-700">
             <span>Extra Fees & Taxes</span>
