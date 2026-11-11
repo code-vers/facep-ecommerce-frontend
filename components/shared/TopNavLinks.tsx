@@ -11,8 +11,8 @@ const navItems: NavItem[] = [
   { label: "Special Products", href: "/special-products" },
   { label: "Coupons", href: "/coupons" },
   { label: "Books" },
-  { label: "Order" },
-  { label: "Buy Again" },
+  { label: "Orders", href: "/orders" },
+  { label: "Buy Again", href: "/buy-again" },
   { label: "Customer Service", href: "/customer-service" },
   { label: "Sell", href: "/seller" },
 ];
