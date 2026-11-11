@@ -10,7 +10,6 @@ const navItems: NavItem[] = [
   { label: "Early Deals", href: "/early-deals" },
   { label: "Special Products", href: "/special-products" },
   { label: "Coupons", href: "/coupons" },
-  { label: "Books" },
   { label: "Orders", href: "/orders" },
   { label: "Buy Again", href: "/buy-again" },
   { label: "Customer Service", href: "/customer-service" },

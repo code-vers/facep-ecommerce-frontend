@@ -35,10 +35,55 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Facep',
-  description: 'Facep storefront interface',
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
+  title: {
+    default: 'Many Products Many faces',
+    template: '%s | Many Products Many faces',
+  },
+  description:
+    'Many Products Many faces — Discover top deals, trending electronics, fashion, home essentials, and verified store brands.',
+  applicationName: 'Many Products Many faces',
+  keywords: [
+    'Many Products Many faces',
+    'Facep',
+    'E-commerce',
+    'Online Shopping',
+    'Early Deals',
+    'Special Products',
+    'Buy Again',
+    'Coupons',
+  ],
   icons: {
-    icon: '/logo.jpg',
+    icon: [
+      { url: '/logo.jpg', type: 'image/jpeg' },
+      { url: '/icon.png', type: 'image/png' },
+    ],
+    shortcut: '/logo.jpg',
+    apple: '/apple-icon.png',
+  },
+  openGraph: {
+    title: 'Many Products Many faces',
+    description:
+      'Many Products Many faces — Discover top deals, trending electronics, fashion, home essentials, and verified store brands.',
+    url: '/',
+    siteName: 'Many Products Many faces',
+    images: [
+      {
+        url: '/logo.jpg',
+        width: 1200,
+        height: 848,
+        alt: 'Many Products Many faces Logo',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Many Products Many faces',
+    description:
+      'Many Products Many faces — Discover top deals, trending electronics, fashion, home essentials, and verified store brands.',
+    images: ['/logo.jpg'],
   },
 };
 
