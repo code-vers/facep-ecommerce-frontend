@@ -278,7 +278,7 @@ function NavbarSearch() {
   };
 
   return (
-    <div ref={searchContainerRef} className="relative order-2 flex min-w-0 w-full lg:order-1 lg:max-w-190 lg:flex-1 xl:max-w-none">
+    <div ref={searchContainerRef} className="relative order-2 flex min-w-0 w-full lg:order-1 lg:flex-1">
       <form onSubmit={handleSubmit} className="flex min-w-0 w-full items-center">
         <button
           type="button"
@@ -454,7 +454,7 @@ export default function Navbar() {
 
   return (
     <header className="w-full bg-black text-white">
-      <div className="mx-auto flex w-full max-w-[1760px] flex-col gap-2.5 px-4 py-2 sm:px-6 sm:py-2.5 md:px-8 lg:flex-row lg:items-center lg:gap-6 lg:px-10 xl:px-16 2xl:px-20">
+      <div className="flex w-full flex-col gap-2.5 px-2.5 py-2 sm:px-3.5 sm:py-2.5 md:px-4 lg:flex-row lg:items-center lg:gap-4 xl:gap-6">
         <div className="flex items-center justify-between gap-4 lg:shrink-0">
           <Link href="/" className="flex shrink-0 items-center gap-2.5 transition-opacity hover:opacity-90" aria-label="Facep home">
             <div className="relative h-11 w-16 sm:h-12 sm:w-18 md:h-13 md:w-20 xl:h-14 xl:w-22 overflow-hidden rounded-md bg-white p-0.5 shadow-xs">

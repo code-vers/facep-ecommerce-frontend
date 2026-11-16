@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Menu } from "lucide-react";
 
 interface NavItem {
   label: string;
@@ -19,10 +20,10 @@ const navItems: NavItem[] = [
 export default function TopNavLinks() {
   return (
     <section className="w-full bg-[#2b323b] text-white select-none">
-      <div className="mx-auto w-full max-w-[1760px] px-4 sm:px-6 md:px-8 lg:px-10 xl:px-16 2xl:px-20">
+      <div className="w-full px-2.5 sm:px-3.5 md:px-4">
         <nav
           aria-label="Secondary navigation"
-          className="flex h-9 sm:h-9.5 xl:h-10 items-center gap-4 sm:gap-5 md:gap-6 xl:gap-8 overflow-x-auto whitespace-nowrap scroll-smooth scrollbar-none [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden text-[13px] sm:text-[14px] leading-none font-semibold"
+          className="flex h-10 sm:h-10.5 xl:h-11 items-center gap-4 sm:gap-5 md:gap-6 xl:gap-8 overflow-x-auto whitespace-nowrap scroll-smooth scrollbar-none [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden text-[14px] sm:text-[15px] xl:text-[16px] leading-none font-semibold"
         >
           {navItems.map((item) => {
             if (item.href) {
@@ -30,9 +31,12 @@ export default function TopNavLinks() {
                 <Link
                   key={item.label}
                   href={item.href}
-                  className="shrink-0 text-white hover:text-[#dec33a] transition-colors focus-visible:outline-none focus-visible:text-[#dec33a]"
+                  className="flex shrink-0 items-center gap-1.5 text-white hover:text-[#dec33a] transition-colors focus-visible:outline-none focus-visible:text-[#dec33a]"
                 >
-                  {item.label}
+                  {item.label === "All" && (
+                    <Menu size={18} className="shrink-0" strokeWidth={2.2} />
+                  )}
+                  <span>{item.label}</span>
                 </Link>
               );
             }
@@ -41,9 +45,12 @@ export default function TopNavLinks() {
               <button
                 key={item.label}
                 type="button"
-                className="shrink-0 text-white hover:text-[#dec33a] transition-colors cursor-pointer focus-visible:outline-none focus-visible:text-[#dec33a]"
+                className="flex shrink-0 items-center gap-1.5 text-white hover:text-[#dec33a] transition-colors cursor-pointer focus-visible:outline-none focus-visible:text-[#dec33a]"
               >
-                {item.label}
+                {item.label === "All" && (
+                  <Menu size={18} className="shrink-0" strokeWidth={2.2} />
+                )}
+                <span>{item.label}</span>
               </button>
             );
           })}
