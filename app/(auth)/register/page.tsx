@@ -97,7 +97,7 @@ export default function RegisterPage() {
               aria-label='Facep home'
             >
               {/* Big Logo */}
-              <div className='relative w-48 h-36 sm:w-60 sm:h-44 md:w-72 md:h-52 lg:w-80 lg:h-56 shrink-0 overflow-hidden p-3'>
+              <div className='relative w-56 h-20 sm:w-72 sm:h-25 md:w-80 md:h-28 lg:w-96 lg:h-33 shrink-0 overflow-hidden p-2'>
                 <Image
                   src='/logo.jpg'
                   alt='Facep logo'

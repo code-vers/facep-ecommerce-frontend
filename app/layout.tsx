@@ -70,8 +70,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: '/logo.jpg',
-        width: 1200,
-        height: 848,
+        width: 705,
+        height: 244,
         alt: 'Many Products Many faces Logo',
       },
     ],

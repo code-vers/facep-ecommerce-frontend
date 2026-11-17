@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 import { Plus, CheckCircle2, ChevronDown, X, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
 
 export default function SiteInformation() {
   const [formData, setFormData] = useState({
@@ -65,21 +66,21 @@ export default function SiteInformation() {
   };
 
   return (
-    <div className='flex w-full shrink-0 flex-col items-start gap-[32px] rounded-[4px] border border-[#E5E5E6] bg-white p-[24px] md:p-[32px] relative'>
+    <div className='flex w-full shrink-0 flex-col items-start gap-8 rounded-lg border border-[#E5E5E6] bg-white p-6 md:p-8 relative'>
       {/* Title */}
       <h2 className='text-[20px] font-semibold leading-[1.2] text-black'>Site Information</h2>
 
       {/* Form Sections */}
-      <div className='flex w-full flex-col gap-[24px]'>
+      <div className='flex w-full flex-col gap-6'>
         
         {/* Logo Section */}
-        <div className='flex flex-col gap-[8px]'>
+        <div className='flex flex-col gap-2'>
           <label className='text-[14px] font-normal text-black'>Logo</label>
-          <div className='flex items-center gap-[16px]'>
+          <div className='flex items-center gap-4'>
             {/* Mock Logo Box */}
-            <div className='relative flex h-[80px] w-[80px] shrink-0 items-center justify-center overflow-hidden rounded-[2px] bg-[#0A132B]'>
+            <div className='relative flex h-14 w-40 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white border border-gray-200 p-1'>
               {logoPreview ? (
-                <img src={logoPreview} alt="Logo preview" className="h-full w-full object-cover" />
+                <Image  height={56} width={160} src={logoPreview} alt="Logo preview" className="h-full w-full object-contain" />
               ) : (
                 <svg
                   width='48'
@@ -114,9 +115,9 @@ export default function SiteInformation() {
         </div>
 
         {/* Text Inputs Grid */}
-        <div className='grid w-full grid-cols-1 gap-[24px] md:grid-cols-2'>
+        <div className='grid w-full grid-cols-1 gap-6 md:grid-cols-2'>
           {/* Platform Name (Full Width) */}
-          <div className='flex flex-col gap-[8px] md:col-span-2'>
+          <div className='flex flex-col gap-2 md:col-span-2'>
             <label className='text-[14px] font-normal text-black'>Platform Name</label>
             <input
               type='text'
@@ -124,12 +125,12 @@ export default function SiteInformation() {
               value={formData.platformName}
               onChange={handleInputChange}
               placeholder='Platform Name'
-              className='h-[40px] w-full rounded-[2px] border border-[#E5E5E6] bg-white px-[12px] text-[14px] text-black placeholder:text-[#848995] focus-visible:border-[#165DD0] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#165DD0]'
+              className='h-10 w-full rounded-xs border border-[#E5E5E6] bg-white px-3 text-[14px] text-black placeholder:text-[#848995] focus-visible:border-[#165DD0] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#165DD0]'
             />
           </div>
 
           {/* Email */}
-          <div className='flex flex-col gap-[8px]'>
+          <div className='flex flex-col gap-2'>
             <label className='text-[14px] font-normal text-black'>Email</label>
             <input
               type='email'
@@ -137,12 +138,12 @@ export default function SiteInformation() {
               value={formData.email}
               onChange={handleInputChange}
               placeholder='alexander@domain.com'
-              className='h-[40px] w-full rounded-[2px] border border-[#E5E5E6] bg-white px-[12px] text-[14px] text-black placeholder:text-[#848995] focus-visible:border-[#165DD0] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#165DD0]'
+              className='h-10 w-full rounded-xs border border-[#E5E5E6] bg-white px-3 text-[14px] text-black placeholder:text-[#848995] focus-visible:border-[#165DD0] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#165DD0]'
             />
           </div>
 
           {/* Contact Number */}
-          <div className='flex flex-col gap-[8px]'>
+          <div className='flex flex-col gap-2'>
             <label className='text-[14px] font-normal text-black'>Contact Number</label>
             <input
               type='text'
@@ -150,12 +151,12 @@ export default function SiteInformation() {
               value={formData.contactNumber}
               onChange={handleInputChange}
               placeholder='+41 00 000 00 00'
-              className='h-[40px] w-full rounded-[2px] border border-[#E5E5E6] bg-white px-[12px] text-[14px] text-black placeholder:text-[#848995] focus-visible:border-[#165DD0] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#165DD0]'
+              className='h-10 w-full rounded-xs border border-[#E5E5E6] bg-white px-3 text-[14px] text-black placeholder:text-[#848995] focus-visible:border-[#165DD0] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#165DD0]'
             />
           </div>
 
           {/* Address */}
-          <div className='flex flex-col gap-[8px]'>
+          <div className='flex flex-col gap-2'>
             <label className='text-[14px] font-normal text-black'>Address</label>
             <input
               type='text'
@@ -163,12 +164,12 @@ export default function SiteInformation() {
               value={formData.address}
               onChange={handleInputChange}
               placeholder='123 Edelweiss Strasse, Zurich'
-              className='h-[40px] w-full rounded-[2px] border border-[#E5E5E6] bg-white px-[12px] text-[14px] text-black placeholder:text-[#848995] focus-visible:border-[#165DD0] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#165DD0]'
+              className='h-10 w-full rounded-xs border border-[#E5E5E6] bg-white px-3 text-[14px] text-black placeholder:text-[#848995] focus-visible:border-[#165DD0] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#165DD0]'
             />
           </div>
 
           {/* Working Hours */}
-          <div className='flex flex-col gap-[8px]'>
+          <div className='flex flex-col gap-2'>
             <label className='text-[14px] font-normal text-black'>Working Hours</label>
             <input
               type='text'
@@ -176,18 +177,18 @@ export default function SiteInformation() {
               value={formData.workingHours}
               onChange={handleInputChange}
               placeholder='9 am - 5 pm'
-              className='h-[40px] w-full rounded-[2px] border border-[#E5E5E6] bg-white px-[12px] text-[14px] text-black placeholder:text-[#848995] focus-visible:border-[#165DD0] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#165DD0]'
+              className='h-10 w-full rounded-xs border border-[#E5E5E6] bg-white px-3 text-[14px] text-black placeholder:text-[#848995] focus-visible:border-[#165DD0] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#165DD0]'
             />
           </div>
         </div>
 
         {/* Company Socials Section */}
-        <div className='mt-[8px] flex w-full flex-col gap-[16px]'>
+        <div className='mt-2 flex w-full flex-col gap-4'>
           <h3 className='text-[16px] font-semibold leading-[1.2] text-black'>
             Company Socials
           </h3>
           
-          <div className='flex w-full flex-col gap-[16px]'>
+          <div className='flex w-full flex-col gap-4'>
             <div className='flex items-center justify-between'>
               <label className='text-[14px] font-normal text-black'>Social Media Accounts</label>
               <button
@@ -200,14 +201,14 @@ export default function SiteInformation() {
               </button>
             </div>
 
-            {socials.map((social, index) => (
-              <div key={social.id} className='flex w-full flex-col sm:flex-row gap-[16px]'>
+            {socials.map((social) => (
+              <div key={social.id} className='flex w-full flex-col sm:flex-row gap-4'>
                 {/* Custom Dropdown */}
-                <div className='relative w-full sm:w-[240px] shrink-0'>
+                <div className='relative w-full sm:w-60 shrink-0'>
                   <button
                     type='button'
                     onClick={() => toggleDropdown(social.id)}
-                    className='flex h-[40px] w-full items-center justify-between rounded-[2px] border border-[#E5E5E6] bg-white px-[12px] text-[14px] text-[#848995] focus-visible:border-[#165DD0] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#165DD0]'
+                    className='flex h-10 w-full items-center justify-between rounded-xs border border-[#E5E5E6] bg-white px-3 text-[14px] text-[#848995] focus-visible:border-[#165DD0] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#165DD0]'
                   >
                     <span className={cn(social.platform !== 'Select Account Type' ? 'text-black' : '')}>
                       {social.platform}
@@ -217,15 +218,15 @@ export default function SiteInformation() {
                   
                   {/* Dropdown Menu */}
                   {social.isDropdownOpen && (
-                    <div className='absolute left-0 top-[calc(100%+4px)] z-10 w-full rounded-[2px] border border-[#E5E5E6] bg-white shadow-sm'>
-                      <div className='flex items-center justify-between px-[12px] py-[10px] border-b border-[#E5E5E6] text-[13px] text-[#848995]'>
+                    <div className='absolute left-0 top-[calc(100%+4px)] z-10 w-full rounded-xs border border-[#E5E5E6] bg-white shadow-sm'>
+                      <div className='flex items-center justify-between px-3 py-2.5 border-b border-[#E5E5E6] text-[13px] text-[#848995]'>
                         <span>Account</span>
                         <ChevronDown size={14} />
                       </div>
-                      <div className='flex flex-col py-[4px]'>
+                      <div className='flex flex-col py-1'>
                         <button
                           onClick={() => updateSocialPlatform(social.id, 'Facebook')}
-                          className='flex w-full items-center gap-[12px] px-[12px] py-[8px] hover:bg-gray-50 focus-visible:bg-gray-50 focus-visible:outline-none'
+                          className='flex w-full items-center gap-3 px-3 py-2 hover:bg-gray-50 focus-visible:bg-gray-50 focus-visible:outline-none'
                         >
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M22 12C22 6.48 17.52 2 12 2C6.48 2 2 6.48 2 12C2 16.84 5.44 20.87 10 21.8V15H7.5V12H10V9.5C10 7.03 11.47 5.63 13.82 5.63C14.9 5.63 16.03 5.82 16.03 5.82V8.25H14.78C13.55 8.25 13.17 9.01 13.17 9.79V12H15.94L15.5 15H13.17V21.8C17.72 20.87 21.16 16.84 22 12H22Z" fill="#1877F2"/>
@@ -234,7 +235,7 @@ export default function SiteInformation() {
                         </button>
                         <button
                           onClick={() => updateSocialPlatform(social.id, 'Instagram')}
-                          className='flex w-full items-center gap-[12px] px-[12px] py-[8px] hover:bg-gray-50 focus-visible:bg-gray-50 focus-visible:outline-none'
+                          className='flex w-full items-center gap-3 px-3 py-2 hover:bg-gray-50 focus-visible:bg-gray-50 focus-visible:outline-none'
                         >
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#E4405F]">
                             <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
@@ -245,12 +246,12 @@ export default function SiteInformation() {
                         </button>
                         <button
                           onClick={() => updateSocialPlatform(social.id, 'X')}
-                          className='flex w-full items-center gap-[12px] px-[12px] py-[8px] hover:bg-gray-50 focus-visible:bg-gray-50 focus-visible:outline-none'
+                          className='flex w-full items-center gap-3 px-3 py-2 hover:bg-gray-50 focus-visible:bg-gray-50 focus-visible:outline-none'
                         >
                           <svg width="14" height="14" viewBox="0 0 1200 1227" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z" fill="#14171A"/>
                           </svg>
-                          <span className='text-[14px] text-[#42454D] ml-[2px]'>X</span>
+                          <span className='text-[14px] text-[#42454D] ml-0.5'>X</span>
                         </button>
                       </div>
                     </div>
@@ -258,19 +259,19 @@ export default function SiteInformation() {
                 </div>
 
                 {/* Profile Link Input and Remove Button */}
-                <div className='flex w-full flex-1 gap-[8px]'>
+                <div className='flex w-full flex-1 gap-2'>
                   <input
                     type='text'
                     value={social.url}
                     onChange={(e) => updateSocialUrl(social.id, e.target.value)}
                     placeholder='Enter profile link'
-                    className='h-[40px] w-full flex-1 rounded-[2px] border border-[#E5E5E6] bg-white px-[12px] text-[14px] text-black placeholder:text-[#848995] focus-visible:border-[#165DD0] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#165DD0]'
+                    className='h-10 w-full flex-1 rounded-xs border border-[#E5E5E6] bg-white px-3 text-[14px] text-black placeholder:text-[#848995] focus-visible:border-[#165DD0] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#165DD0]'
                   />
                   {socials.length > 1 && (
                     <button
                       type="button"
                       onClick={() => removeSocialAccount(social.id)}
-                      className="flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-[2px] border border-[#E5E5E6] text-[#848995] hover:bg-red-50 hover:text-red-600 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-red-600"
+                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xs border border-[#E5E5E6] text-[#848995] hover:bg-red-50 hover:text-red-600 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-red-600"
                     >
                       <Trash2 size={18} />
                     </button>
@@ -282,10 +283,10 @@ export default function SiteInformation() {
         </div>
 
         {/* Save Changes Button */}
-        <div className='mt-[16px] flex w-full justify-end'>
+        <div className='mt-4 flex w-full justify-end'>
           <button 
             onClick={() => setIsSaveModalOpen(true)}
-            className='flex h-[40px] items-center gap-[8px] rounded-[2px] bg-[#F09000] px-[16px] transition-colors hover:bg-[#D98200] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F09000] focus-visible:ring-offset-1'
+            className='flex h-10 items-center gap-2 rounded-xs bg-[#F09000] px-4 transition-colors hover:bg-[#D98200] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F09000] focus-visible:ring-offset-1'
           >
             <span className='text-[14px] font-normal text-black'>Save Changes</span>
             <CheckCircle2 size={16} className='text-black' />
@@ -297,8 +298,8 @@ export default function SiteInformation() {
       {/* Save Confirmation Modal */}
       {isSaveModalOpen && (
         <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4'>
-          <div className='w-full max-w-[400px] rounded-[4px] border border-[#E5E5E6] bg-white p-[24px] shadow-xl'>
-            <div className='flex items-start justify-between mb-[16px]'>
+          <div className='w-full max-w-100 rounded-lg border border-[#E5E5E6] bg-white p-6 shadow-xl'>
+            <div className='flex items-start justify-between mb-4'>
               <h3 className='text-[18px] font-semibold text-black'>Save Changes</h3>
               <button 
                 onClick={() => setIsSaveModalOpen(false)} 
@@ -307,19 +308,19 @@ export default function SiteInformation() {
                 <X size={20} />
               </button>
             </div>
-            <p className='text-[14px] text-[#42454D] mb-[24px] leading-[1.5]'>
+            <p className='text-[14px] text-[#42454D] mb-6 leading-normal'>
               Are you sure you want to save these changes to the site information?
             </p>
-            <div className='flex justify-end gap-[12px]'>
+            <div className='flex justify-end gap-3'>
               <button 
                 onClick={() => setIsSaveModalOpen(false)}
-                className='rounded-[2px] border border-[#E5E5E6] px-[16px] py-[8px] text-[14px] font-medium text-[#42454D] hover:bg-gray-50 focus-visible:outline-none'
+                className='rounded-xs border border-[#E5E5E6] px-4 py-2 text-[14px] font-medium text-[#42454D] hover:bg-gray-50 focus-visible:outline-none'
               >
                 Cancel
               </button>
               <button 
                 onClick={handleSave}
-                className='rounded-[2px] bg-[#F09000] px-[16px] py-[8px] text-[14px] font-medium text-black hover:bg-[#D98200] focus-visible:outline-none'
+                className='rounded-xs bg-[#F09000] px-4 py-2 text-[14px] font-medium text-black hover:bg-[#D98200] focus-visible:outline-none'
               >
                 Confirm
               </button>
@@ -330,7 +331,7 @@ export default function SiteInformation() {
 
       {/* Toast Notification */}
       {toastMessage && (
-        <div className='fixed bottom-6 right-6 z-50 rounded-[4px] bg-black px-[16px] py-[12px] text-[14px] font-medium text-white shadow-lg'>
+        <div className='fixed bottom-6 right-6 z-50 rounded-lg bg-black px-4 py-3 text-[14px] font-medium text-white shadow-lg'>
           {toastMessage}
         </div>
       )}

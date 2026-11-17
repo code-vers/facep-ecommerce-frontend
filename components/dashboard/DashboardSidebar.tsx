@@ -76,12 +76,12 @@ export default function DashboardSidebar({ isMobile }: { isMobile?: boolean }) {
         className='flex h-20 shrink-0 items-center gap-3 border-b border-[#E5E5E6] px-6 py-4 transition-colors hover:bg-black/5'
         aria-label='Facep home'
       >
-        <div className='relative h-10 w-16 shrink-0 overflow-hidden rounded bg-black'>
+        <div className='relative h-9 w-26 shrink-0 overflow-hidden rounded bg-white p-1'>
           <Image
             src='/logo.jpg'
             alt='Facep logo'
             fill
-            className='object-cover'
+            className='object-contain'
           />
         </div>
         <div className='flex flex-col'>

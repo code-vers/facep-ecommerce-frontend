@@ -137,17 +137,14 @@ export default function Footer() {
         <div className="border-t border-[#686f7d]">
           <div className="mx-auto flex w-full max-w-[1760px] flex-col items-center justify-center gap-6 px-4 py-8 sm:px-6 md:px-8 lg:px-10 xl:flex-row xl:gap-16 xl:px-16 xl:py-9 2xl:px-20">
             <Link href="/" className="flex items-center gap-2.5 transition-opacity hover:opacity-90" aria-label="Facep home">
-              <div className="relative h-10 w-16 sm:h-12 sm:w-20 overflow-hidden rounded bg-black">
+              <div className="relative h-10 w-29 sm:h-11 sm:w-32 overflow-hidden rounded bg-white p-1">
                 <Image
                   src="/logo.jpg"
                   alt="Facep"
                   fill
-                  className="object-cover"
+                  className="object-contain"
                 />
               </div>
-              {/* <span className="font-[Arial] text-[24px] sm:text-[28px] xl:text-[30px] font-bold text-white tracking-tight">
-                Facep
-              </span> */}
             </Link>
 
             <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">

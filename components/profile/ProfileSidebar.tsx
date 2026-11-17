@@ -31,12 +31,12 @@ export default function ProfileSidebar({
   return (
     <div className="w-full lg:w-100 border border-[#e5e5e6] rounded bg-[#f2f2f3] p-6 flex flex-col gap-8 shrink-0 text-left">
       <div className="flex items-center gap-3 pb-5 border-b border-[#e5e5e6]">
-        <div className="relative h-10 w-16 overflow-hidden rounded bg-black shrink-0">
+        <div className="relative h-9 w-26 overflow-hidden rounded bg-white p-1 shrink-0">
           <Image
             src="/logo.jpg"
             alt="Facep logo"
             fill
-            className="object-cover"
+            className="object-contain"
           />
         </div>
         <div className="flex flex-col">
