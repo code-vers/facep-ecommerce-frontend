@@ -457,9 +457,9 @@ export default function Navbar() {
       <div className="flex w-full flex-col gap-2.5 px-2.5 py-2 sm:px-3.5 sm:py-2.5 md:px-4 lg:flex-row lg:items-center lg:gap-4 xl:gap-6">
         <div className="flex items-center justify-between gap-4 lg:shrink-0">
           <Link href="/" className="flex shrink-0 items-center gap-2.5 transition-opacity hover:opacity-90" aria-label="Facep home">
-            <div className="relative h-9.5 w-28 sm:h-10.5 sm:w-31 md:h-11.5 md:w-34 xl:h-12 xl:w-35 overflow-hidden rounded-md bg-white p-1 shadow-xs">
+            <div className="relative h-9.5 w-28 sm:h-10.5 sm:w-31 md:h-11.5 md:w-34 xl:h-12 xl:w-35 overflow-hidden rounded-md p-1 shadow-xs">
               <Image
-                src="/logo.jpg"
+                src="/logo.png"
                 alt="Facep"
                 fill
                 priority
