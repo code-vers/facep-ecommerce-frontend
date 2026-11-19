@@ -267,7 +267,7 @@ export const useRelatedToViewedProducts = (targetCount: number = 10) => {
   // 2. Always fetch newest products from catalog so the carousel is always fully populated with 10 products
   const recentQuery = useProducts({ limit: targetCount, sort: 'newest' });
 
-  const products: CarouselProduct[] = useMemo(() => {
+  const rawProducts: Product[] = useMemo(() => {
     const relatedList = relatedQuery.data ?? [];
     const recentList = recentQuery.data?.data ?? [];
 
@@ -290,8 +290,12 @@ export const useRelatedToViewedProducts = (targetCount: number = 10) => {
       }
     }
 
-    return combined.slice(0, targetCount).map(mapProductToCarousel);
+    return combined.slice(0, targetCount);
   }, [relatedQuery.data, recentQuery.data, targetCount]);
+
+  const products: CarouselProduct[] = useMemo(() => {
+    return rawProducts.map(mapProductToCarousel);
+  }, [rawProducts]);
 
   const isLoading = latestSlug
     ? relatedQuery.isLoading && recentQuery.isLoading
@@ -300,6 +304,7 @@ export const useRelatedToViewedProducts = (targetCount: number = 10) => {
 
   return {
     products,
+    rawProducts,
     isLoading,
     hasData,
     isPersonalized: (relatedQuery.data?.length ?? 0) > 0,

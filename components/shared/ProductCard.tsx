@@ -659,7 +659,13 @@ export default function ProductCard({
           {buttonVariant === 'explore-more' && (
             <button
               type='button'
-              onClick={onExploreMore}
+              onClick={(e) => {
+                if (onExploreMore) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onExploreMore();
+                }
+              }}
               className={cn(
                 'mt-1 flex items-center gap-1',
                 'text-[14px] font-normal leading-[1.3] text-[#165DD0]',
@@ -691,7 +697,21 @@ export default function ProductCard({
         {hasFullButton && (
           <button
             type='button'
-            onClick={buttonVariant === 'add-to-cart' ? onAddToCart : onSeeOptions}
+            onClick={(e) => {
+              if (buttonVariant === 'add-to-cart') {
+                if (onAddToCart) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onAddToCart();
+                }
+              } else if (buttonVariant === 'see-options') {
+                if (onSeeOptions) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onSeeOptions();
+                }
+              }
+            }}
             className={cn(
               'flex w-full items-center justify-center',
               // Figma: h 32px, radius 2px

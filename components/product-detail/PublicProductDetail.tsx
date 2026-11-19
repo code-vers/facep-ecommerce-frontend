@@ -170,10 +170,10 @@ export default function PublicProductDetail({ product }: { product: Product }) {
   const isWishlisted = Boolean(wishlistStatus?.isWishlisted);
 
   useEffect(() => {
-    if (product?.slug) {
-      recordProductView(product.slug);
+    if (product) {
+      recordProductView(product);
     }
-  }, [product?.slug]);
+  }, [product]);
 
   const related = useRelatedProducts(product.slug);
 

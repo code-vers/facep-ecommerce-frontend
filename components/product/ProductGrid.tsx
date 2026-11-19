@@ -2,6 +2,7 @@
 
 import ProductCard from '@/components/shared/ProductCard';
 import type { Product } from '@/lib/api/product';
+import { recordProductView } from '@/lib/view-history';
 import type { UseQueryResult } from '@tanstack/react-query';
 import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import Link from 'next/link';
@@ -84,10 +85,7 @@ export default function ProductGrid({ query }: ProductGridProps) {
               <Link
                 key={product.id}
                 href={`/products/${product.slug}`}
-                // onClick={(e) => {
-                //   e.preventDefault();
-                //   openProductModal(product);
-                // }}
+                onClick={() => recordProductView(product)}
                 className='flex h-full'
               >
                 <ProductCard
