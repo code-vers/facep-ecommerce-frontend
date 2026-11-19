@@ -57,7 +57,7 @@ const navItems: NavItem[] = [
   { label: "Orders", href: "/orders" },
   { label: "Buy Again", href: "/buy-again" },
   { label: "Browsing History", href: "/browsing-history" },
-  { label: "Gift Cards", href: "/gift-cards" },
+  // { label: "Gift Cards", href: "/gift-cards" },
   { label: "Toys & Games", href: "/toys-and-games" },
   { label: "Groceries", href: "/groceries" },
   { label: "Customer Service", href: "/customer-service" },
