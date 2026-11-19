@@ -9,10 +9,15 @@ interface NavItem {
 const navItems: NavItem[] = [
   { label: "All", href: "/products" },
   { label: "Early Deals", href: "/early-deals" },
+  { label: "Holiday Deals", href: "/holiday-deals" },
   { label: "Special Products", href: "/special-products" },
   { label: "Coupons", href: "/coupons" },
   { label: "Orders", href: "/orders" },
   { label: "Buy Again", href: "/buy-again" },
+  { label: "Browsing History", href: "/browsing-history" },
+  { label: "Gift Cards", href: "/gift-cards" },
+  { label: "Toys & Games", href: "/toys-and-games" },
+  { label: "Groceries", href: "/groceries" },
   { label: "Customer Service", href: "/customer-service" },
   { label: "Sell", href: "/seller" },
 ];
