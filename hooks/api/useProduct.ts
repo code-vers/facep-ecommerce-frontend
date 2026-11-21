@@ -18,6 +18,8 @@ import {
   batchUpdateEarlyDeals,
   updateProductSpecialStatus,
   batchUpdateSpecialProducts,
+  updateProductHolidayDealStatus,
+  batchUpdateHolidayDeals,
   type Product,
   type ProductQueryParams,
 } from '@/lib/api/product';
@@ -105,6 +107,35 @@ export const useBatchUpdateSpecialProducts = () => {
   return useMutation({
     mutationFn: ({ productIds, isSpecialProduct }: { productIds: string[]; isSpecialProduct: boolean }) =>
       batchUpdateSpecialProducts({ productIds, isSpecialProduct }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+    },
+  });
+};
+
+export const useHolidayDeals = (params?: ProductQueryParams, enabled: boolean = true) =>
+  useQuery({
+    queryKey: ['products', 'holiday-deals', params],
+    queryFn: () => getProducts({ ...params, isHolidayDeal: true }),
+    enabled,
+  });
+
+export const useUpdateProductHolidayDealStatus = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, isHolidayDeal }: { id: string; isHolidayDeal: boolean }) =>
+      updateProductHolidayDealStatus({ id, isHolidayDeal }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+    },
+  });
+};
+
+export const useBatchUpdateHolidayDeals = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ productIds, isHolidayDeal }: { productIds: string[]; isHolidayDeal: boolean }) =>
+      batchUpdateHolidayDeals({ productIds, isHolidayDeal }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
     },

@@ -43,6 +43,7 @@ export interface Product {
   publishedAt: string;
   isEarlyDeal?: boolean;
   isSpecialProduct?: boolean;
+  isHolidayDeal?: boolean;
   brand?: string | null;
   productType?: string | null;
   shortDescription?: string | null;
@@ -116,6 +117,7 @@ export interface ProductQueryParams {
   vendorEmail?: string;
   isEarlyDeal?: boolean;
   isSpecialProduct?: boolean;
+  isHolidayDeal?: boolean;
 }
 
 export interface ProductStats {
@@ -315,6 +317,34 @@ export const batchUpdateSpecialProducts = async ({
   const { data } = await apiClient.patch<ApiResponse<{ count: number; isSpecialProduct: boolean }>>(
     '/products/special-product/batch',
     { productIds, isSpecialProduct }
+  );
+  return data.data;
+};
+
+export const updateProductHolidayDealStatus = async ({
+  id,
+  isHolidayDeal,
+}: {
+  id: string;
+  isHolidayDeal: boolean;
+}): Promise<Product> => {
+  const { data } = await apiClient.patch<ApiResponse<Product>>(
+    `/products/${id}/holiday-deal`,
+    { isHolidayDeal }
+  );
+  return data.data;
+};
+
+export const batchUpdateHolidayDeals = async ({
+  productIds,
+  isHolidayDeal,
+}: {
+  productIds: string[];
+  isHolidayDeal: boolean;
+}): Promise<{ count: number; isHolidayDeal: boolean }> => {
+  const { data } = await apiClient.patch<ApiResponse<{ count: number; isHolidayDeal: boolean }>>(
+    '/products/holiday-deal/batch',
+    { productIds, isHolidayDeal }
   );
   return data.data;
 };

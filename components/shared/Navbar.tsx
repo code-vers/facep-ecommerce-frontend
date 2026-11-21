@@ -456,6 +456,13 @@ function AccountBlock() {
                     Early Deals
                   </Link>
                   <Link
+                    href="/holiday-deals"
+                    onClick={() => setIsOpen(false)}
+                    className="text-gray-700 hover:text-[#dec33a] hover:translate-x-0.5 transition-all py-0.5"
+                  >
+                    Holiday Deals
+                  </Link>
+                  <Link
                     href="/customer-service"
                     onClick={() => setIsOpen(false)}
                     className="text-gray-700 hover:text-[#dec33a] hover:translate-x-0.5 transition-all py-0.5"

@@ -16,6 +16,7 @@ import { useHomepageCategoryGrids } from "@/hooks/api/useCategory";
 import {
   mapProductToCarousel,
   useEarlyDeals,
+  useHolidayDeals,
   useSpecialProducts,
   useRelatedToViewedProducts,
   useTopCategoriesShowcase,
@@ -41,9 +42,11 @@ export default function Home() {
   const hasTopCategoriesData = Boolean(topCategories && topCategories.length > 0);
 
   const { data: earlyDealsData, isLoading: isEarlyDealsLoading } = useEarlyDeals({ limit: 12 });
+  const { data: holidayDealsData, isLoading: isHolidayDealsLoading } = useHolidayDeals({ limit: 12 });
   const { data: specialProductsData, isLoading: isSpecialLoading } = useSpecialProducts({ limit: 12 });
 
   const earlyDealsProducts = earlyDealsData?.data || [];
+  const holidayDealsProducts = holidayDealsData?.data || [];
   const specialProducts = specialProductsData?.data || [];
 
   const displayGrid1 = hasCategoryData ? grid1 : CATEGORY_GRIDS_1;
@@ -92,6 +95,17 @@ export default function Home() {
             title="Early Deals"
             products={earlyDealsProducts.map(mapProductToCarousel)}
             exploreHref="/early-deals"
+          />
+        ) : null}
+
+        {/* ── Holiday Deals Carousel ── */}
+        {isHolidayDealsLoading ? (
+          <ProductCarouselSkeleton title="Holiday Deals" />
+        ) : holidayDealsProducts.length > 0 ? (
+          <ProductCarousel
+            title="Holiday Deals"
+            products={holidayDealsProducts.map(mapProductToCarousel)}
+            exploreHref="/holiday-deals"
           />
         ) : null}
 
