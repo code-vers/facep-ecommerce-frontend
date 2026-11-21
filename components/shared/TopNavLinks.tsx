@@ -11,6 +11,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import ProductCard from "@/components/shared/ProductCard";
+import AllCategoriesDrawer from "@/components/shared/AllCategoriesDrawer";
 import { useBrowsingHistory } from "@/lib/view-history";
 import { useCartStore } from "@/contexts/CartContext";
 import type { Product } from "@/lib/api/product";
@@ -49,7 +50,7 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { label: "All", href: "/products" },
+  { label: "All" },
   { label: "Early Deals", href: "/early-deals" },
   { label: "Holiday Deals", href: "/holiday-deals" },
   { label: "Special Products", href: "/special-products" },
@@ -67,6 +68,7 @@ const navItems: NavItem[] = [
 export default function TopNavLinks() {
   const router = useRouter();
   const addToCart = useCartStore((state) => state.addToCart);
+  const [isCategoryDrawerOpen, setIsCategoryDrawerOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const closeTimerRef = useRef<NodeJS.Timeout | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -138,6 +140,22 @@ export default function TopNavLinks() {
           className="flex h-10 sm:h-10.5 xl:h-11 items-center gap-4 sm:gap-5 md:gap-6 xl:gap-8 overflow-x-auto whitespace-nowrap scroll-smooth scrollbar-none [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden text-[14px] sm:text-[15px] xl:text-[16px] leading-none font-semibold"
         >
           {navItems.map((item) => {
+            // Special handling for All categories drawer trigger
+            if (item.label === "All") {
+              return (
+                <button
+                  key={item.label}
+                  type="button"
+                  onClick={() => setIsCategoryDrawerOpen(true)}
+                  className="flex shrink-0 items-center gap-1.5 text-white hover:text-[#dec33a] transition-colors cursor-pointer focus-visible:outline-none focus-visible:text-[#dec33a]"
+                  aria-label="Open All Categories Menu"
+                >
+                  <Menu size={18} className="shrink-0" strokeWidth={2.2} />
+                  <span>{item.label}</span>
+                </button>
+              );
+            }
+
             // Special handling for Browsing History hover popover
             if (item.label === "Browsing History") {
               return (
@@ -353,6 +371,12 @@ export default function TopNavLinks() {
           </div>
         </div>
       )}
+
+      {/* ── All Categories Drawer ── */}
+      <AllCategoriesDrawer
+        isOpen={isCategoryDrawerOpen}
+        onClose={() => setIsCategoryDrawerOpen(false)}
+      />
     </section>
   );
 }

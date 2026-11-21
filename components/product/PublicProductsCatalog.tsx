@@ -101,6 +101,14 @@ export default function PublicProductsCatalog() {
     });
   }
 
+  if (params.subcategory) {
+    activeChips.push({
+      id: 'subcategory',
+      label: `Subcategory: ${params.subcategory}`,
+      remove: () => removeFilterParam(['subcategory']),
+    });
+  }
+
   if (params.vendor) {
     const venName =
       facets?.vendors.find(
