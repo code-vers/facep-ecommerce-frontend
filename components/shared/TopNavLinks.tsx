@@ -9,6 +9,8 @@ import {
   Sparkles,
   Package,
   RotateCcw,
+  Gamepad2,
+  Apple,
   ChevronLeft,
   ChevronRight,
   ChevronDown,
@@ -16,7 +18,11 @@ import {
 import ProductCard from "@/components/shared/ProductCard";
 import AllCategoriesDrawer from "@/components/shared/AllCategoriesDrawer";
 import { useBrowsingHistory } from "@/lib/view-history";
-import { useSpecialProducts } from "@/hooks/api/useProduct";
+import {
+  useSpecialProducts,
+  useToysAndGames,
+  useGroceries,
+} from "@/hooks/api/useProduct";
 import { useMyOrders } from "@/hooks/api/useOrder";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCartStore } from "@/contexts/CartContext";
@@ -80,22 +86,34 @@ export default function TopNavLinks() {
   const [isSpecialOpen, setIsSpecialOpen] = useState(false);
   const [isOrdersOpen, setIsOrdersOpen] = useState(false);
   const [isBuyAgainOpen, setIsBuyAgainOpen] = useState(false);
+  const [isToysOpen, setIsToysOpen] = useState(false);
+  const [isGroceriesOpen, setIsGroceriesOpen] = useState(false);
 
   const historyCloseTimerRef = useRef<NodeJS.Timeout | null>(null);
   const specialCloseTimerRef = useRef<NodeJS.Timeout | null>(null);
   const ordersCloseTimerRef = useRef<NodeJS.Timeout | null>(null);
   const buyAgainCloseTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const toysCloseTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const groceriesCloseTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const specialScrollRef = useRef<HTMLDivElement>(null);
   const ordersScrollRef = useRef<HTMLDivElement>(null);
   const buyAgainScrollRef = useRef<HTMLDivElement>(null);
+  const toysScrollRef = useRef<HTMLDivElement>(null);
+  const groceriesScrollRef = useRef<HTMLDivElement>(null);
 
   const { products: browsingProducts, isLoading: isBrowsingLoading, clearHistory } =
     useBrowsingHistory(10);
 
   const { data: specialData, isLoading: isSpecialLoading } = useSpecialProducts({ limit: 10 });
   const specialProducts = specialData?.data || [];
+
+  const { data: toysData, isLoading: isToysLoading } = useToysAndGames({ limit: 10 });
+  const toysProducts = toysData?.data || [];
+
+  const { data: groceriesData, isLoading: isGroceriesLoading } = useGroceries({ limit: 10 });
+  const groceriesProducts = groceriesData?.data || [];
 
   const { data: ordersData, isLoading: isOrdersLoading } = useMyOrders({ limit: 20 });
 
@@ -198,10 +216,14 @@ export default function TopNavLinks() {
     if (specialCloseTimerRef.current) clearTimeout(specialCloseTimerRef.current);
     if (ordersCloseTimerRef.current) clearTimeout(ordersCloseTimerRef.current);
     if (buyAgainCloseTimerRef.current) clearTimeout(buyAgainCloseTimerRef.current);
+    if (toysCloseTimerRef.current) clearTimeout(toysCloseTimerRef.current);
+    if (groceriesCloseTimerRef.current) clearTimeout(groceriesCloseTimerRef.current);
     historyCloseTimerRef.current = null;
     specialCloseTimerRef.current = null;
     ordersCloseTimerRef.current = null;
     buyAgainCloseTimerRef.current = null;
+    toysCloseTimerRef.current = null;
+    groceriesCloseTimerRef.current = null;
   };
 
   const handleHistoryMouseEnter = () => {
@@ -209,6 +231,8 @@ export default function TopNavLinks() {
     setIsSpecialOpen(false);
     setIsOrdersOpen(false);
     setIsBuyAgainOpen(false);
+    setIsToysOpen(false);
+    setIsGroceriesOpen(false);
     setIsHistoryOpen(true);
   };
 
@@ -224,6 +248,8 @@ export default function TopNavLinks() {
     setIsHistoryOpen(false);
     setIsOrdersOpen(false);
     setIsBuyAgainOpen(false);
+    setIsToysOpen(false);
+    setIsGroceriesOpen(false);
     setIsSpecialOpen(true);
   };
 
@@ -239,6 +265,8 @@ export default function TopNavLinks() {
     setIsHistoryOpen(false);
     setIsSpecialOpen(false);
     setIsBuyAgainOpen(false);
+    setIsToysOpen(false);
+    setIsGroceriesOpen(false);
     setIsOrdersOpen(true);
   };
 
@@ -254,6 +282,8 @@ export default function TopNavLinks() {
     setIsHistoryOpen(false);
     setIsSpecialOpen(false);
     setIsOrdersOpen(false);
+    setIsToysOpen(false);
+    setIsGroceriesOpen(false);
     setIsBuyAgainOpen(true);
   };
 
@@ -261,6 +291,40 @@ export default function TopNavLinks() {
     if (buyAgainCloseTimerRef.current) clearTimeout(buyAgainCloseTimerRef.current);
     buyAgainCloseTimerRef.current = setTimeout(() => {
       setIsBuyAgainOpen(false);
+    }, 200);
+  };
+
+  const handleToysMouseEnter = () => {
+    clearAllTimers();
+    setIsHistoryOpen(false);
+    setIsSpecialOpen(false);
+    setIsOrdersOpen(false);
+    setIsBuyAgainOpen(false);
+    setIsGroceriesOpen(false);
+    setIsToysOpen(true);
+  };
+
+  const handleToysMouseLeave = () => {
+    if (toysCloseTimerRef.current) clearTimeout(toysCloseTimerRef.current);
+    toysCloseTimerRef.current = setTimeout(() => {
+      setIsToysOpen(false);
+    }, 200);
+  };
+
+  const handleGroceriesMouseEnter = () => {
+    clearAllTimers();
+    setIsHistoryOpen(false);
+    setIsSpecialOpen(false);
+    setIsOrdersOpen(false);
+    setIsBuyAgainOpen(false);
+    setIsToysOpen(false);
+    setIsGroceriesOpen(true);
+  };
+
+  const handleGroceriesMouseLeave = () => {
+    if (groceriesCloseTimerRef.current) clearTimeout(groceriesCloseTimerRef.current);
+    groceriesCloseTimerRef.current = setTimeout(() => {
+      setIsGroceriesOpen(false);
     }, 200);
   };
 
@@ -289,6 +353,20 @@ export default function TopNavLinks() {
     if (buyAgainScrollRef.current) {
       const offset = direction === 'left' ? -350 : 350;
       buyAgainScrollRef.current.scrollBy({ left: offset, behavior: 'smooth' });
+    }
+  };
+
+  const scrollToysRow = (direction: 'left' | 'right') => {
+    if (toysScrollRef.current) {
+      const offset = direction === 'left' ? -350 : 350;
+      toysScrollRef.current.scrollBy({ left: offset, behavior: 'smooth' });
+    }
+  };
+
+  const scrollGroceriesRow = (direction: 'left' | 'right') => {
+    if (groceriesScrollRef.current) {
+      const offset = direction === 'left' ? -350 : 350;
+      groceriesScrollRef.current.scrollBy({ left: offset, behavior: 'smooth' });
     }
   };
 
@@ -426,6 +504,58 @@ export default function TopNavLinks() {
                       className={cn(
                         "transition-transform duration-200 opacity-80",
                         isHistoryOpen && "rotate-180 text-[#dec33a]"
+                      )}
+                    />
+                  </Link>
+                </div>
+              );
+            }
+
+            // Special handling for Toys & Games hover popover
+            if (item.label === "Toys & Games") {
+              return (
+                <div
+                  key={item.label}
+                  onMouseEnter={handleToysMouseEnter}
+                  onMouseLeave={handleToysMouseLeave}
+                  className="shrink-0 flex items-center h-full"
+                >
+                  <Link
+                    href={item.href || "/toys-and-games"}
+                    className="flex shrink-0 items-center gap-1 text-white hover:text-[#dec33a] transition-colors focus-visible:outline-none focus-visible:text-[#dec33a]"
+                  >
+                    <span>{item.label}</span>
+                    <ChevronDown
+                      size={14}
+                      className={cn(
+                        "transition-transform duration-200 opacity-80",
+                        isToysOpen && "rotate-180 text-[#dec33a]"
+                      )}
+                    />
+                  </Link>
+                </div>
+              );
+            }
+
+            // Special handling for Groceries hover popover
+            if (item.label === "Groceries") {
+              return (
+                <div
+                  key={item.label}
+                  onMouseEnter={handleGroceriesMouseEnter}
+                  onMouseLeave={handleGroceriesMouseLeave}
+                  className="shrink-0 flex items-center h-full"
+                >
+                  <Link
+                    href={item.href || "/groceries"}
+                    className="flex shrink-0 items-center gap-1 text-white hover:text-[#dec33a] transition-colors focus-visible:outline-none focus-visible:text-[#dec33a]"
+                  >
+                    <span>{item.label}</span>
+                    <ChevronDown
+                      size={14}
+                      className={cn(
+                        "transition-transform duration-200 opacity-80",
+                        isGroceriesOpen && "rotate-180 text-[#dec33a]"
                       )}
                     />
                   </Link>
@@ -1090,6 +1220,318 @@ export default function TopNavLinks() {
                   className="font-bold text-[#165dd0] hover:underline"
                 >
                   Visit Buy Again page →
+                </Link>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* ── 75% Width Toys & Games Window (10 Products in 1 Row) ── */}
+      {isToysOpen && (
+        <div
+          onMouseEnter={handleToysMouseEnter}
+          onMouseLeave={handleToysMouseLeave}
+          className="absolute left-1/2 -translate-x-1/2 top-full pt-1.5 z-50 w-[75vw] max-w-325 min-w-[320px] animate-in fade-in slide-in-from-top-1 duration-150 text-left"
+        >
+          {/* Main Card */}
+          <div className="w-full rounded-xl bg-white shadow-2xl ring-1 ring-black/10 border border-gray-200 p-4 sm:p-5 text-black">
+            
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-3 mb-3 border-b border-gray-100">
+              <div className="flex items-center gap-2.5">
+                <div className="size-8 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                  <Gamepad2 size={16} className="text-indigo-600" />
+                </div>
+                <div>
+                  <h3 className="text-[15px] font-bold text-gray-900 leading-tight">
+                    Featured Toys &amp; Games
+                  </h3>
+                  <p className="text-[12px] text-gray-500 font-normal">
+                    Top 10 trending toys, board games &amp; play essentials
+                  </p>
+                </div>
+              </div>
+
+              <Link
+                href="/toys-and-games"
+                onClick={() => setIsToysOpen(false)}
+                className="font-semibold text-[13px] text-[#165dd0] hover:underline flex items-center gap-1"
+              >
+                <span>See all toys &amp; games</span>
+                <ChevronRight size={14} />
+              </Link>
+            </div>
+
+            {/* 1 Row of 10 Products with Scroll Controls */}
+            <div className="relative group/row">
+              {/* Left Arrow Button */}
+              <button
+                type="button"
+                onClick={() => scrollToysRow('left')}
+                aria-label="Scroll left"
+                className="absolute -left-3 top-1/2 -translate-y-1/2 z-20 size-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all opacity-0 group-hover/row:opacity-100 cursor-pointer"
+              >
+                <ChevronLeft size={18} className="text-gray-700" />
+              </button>
+
+              {/* 1 Row of 10 Items */}
+              <div
+                ref={toysScrollRef}
+                className="flex items-stretch gap-3.5 overflow-x-auto scroll-smooth pb-2 pt-1 px-1 scrollbar-thin [-ms-overflow-style:none] [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full"
+              >
+                {isToysLoading ? (
+                  Array.from({ length: 10 }).map((_, i) => (
+                    <div
+                      key={`skel-toys-${i}`}
+                      className="w-46.25 sm:w-48.75 md:w-51.25 shrink-0 rounded-lg border border-[#E5E5E6] p-2.5 flex flex-col gap-2 animate-pulse bg-white"
+                    >
+                      <div className="w-full h-45 bg-gray-200 rounded-t-lg" />
+                      <div className="w-3/4 h-3.5 bg-gray-200 rounded mt-1" />
+                      <div className="w-1/2 h-3 bg-gray-200 rounded" />
+                      <div className="w-1/3 h-4 bg-gray-200 rounded" />
+                      <div className="w-full h-8 bg-gray-200 rounded-xs mt-3" />
+                    </div>
+                  ))
+                ) : (!toysProducts || toysProducts.length === 0) ? (
+                  <div className="w-full py-8 text-center text-gray-500 text-[13px] flex flex-col items-center justify-center gap-2">
+                    <Gamepad2 size={26} className="text-gray-300" />
+                    <span>No products currently featured in Toys &amp; Games.</span>
+                    <Link
+                      href="/products"
+                      onClick={() => setIsToysOpen(false)}
+                      className="text-[12px] font-bold text-[#165dd0] hover:underline"
+                    >
+                      Browse full catalog →
+                    </Link>
+                  </div>
+                ) : (
+                  toysProducts.map((product) => {
+                    const price = effectivePrice(product);
+                    const oldPriceNum = product.oldPrice ? Number(product.oldPrice) : null;
+                    const hasDiscount = Boolean(oldPriceNum && oldPriceNum > price);
+
+                    return (
+                      <div
+                        key={product.id}
+                        className="w-46.25 sm:w-48.75 md:w-51.25 shrink-0 flex flex-col"
+                      >
+                        <Link
+                          href={`/products/${product.slug}`}
+                          onClick={() => setIsToysOpen(false)}
+                          className="flex h-full w-full"
+                        >
+                          <ProductCard
+                            imageSrc={imageUrl(product.thumbnail)}
+                            imageAlt={product.name}
+                            title={product.name}
+                            price={formatPrice(price)}
+                            originalPrice={hasDiscount && oldPriceNum ? formatPrice(oldPriceNum) : undefined}
+                            badgeText={
+                              hasDiscount && oldPriceNum
+                                ? `${Math.round(((oldPriceNum - price) / oldPriceNum) * 100)}% off`
+                                : undefined
+                            }
+                            offerText={product.dealBadgeText || "Toys & Games"}
+                            shippingText={
+                              product.shippingFeeType === 'FREE'
+                                ? 'Free Shipping'
+                                : product.shippingCost
+                                  ? `${formatPrice(product.shippingCost)} Shipping`
+                                  : 'Shipping available'
+                            }
+                            buttonVariant={product.hasVariants ? 'see-options' : 'add-to-cart'}
+                            onAddToCart={() => handleAddToCart(product, price)}
+                          />
+                        </Link>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+
+              {/* Right Arrow Button */}
+              <button
+                type="button"
+                onClick={() => scrollToysRow('right')}
+                aria-label="Scroll right"
+                className="absolute -right-3 top-1/2 -translate-y-1/2 z-20 size-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all opacity-0 group-hover/row:opacity-100 cursor-pointer"
+              >
+                <ChevronRight size={18} className="text-gray-700" />
+              </button>
+            </div>
+
+            {/* Window Footer */}
+            <div className="mt-3 pt-2.5 border-t border-gray-100 flex flex-wrap items-center justify-between gap-2 text-[12px] text-gray-500">
+              <span>
+                {toysProducts.length > 0
+                  ? `Showing top ${toysProducts.length} featured toy${toysProducts.length === 1 ? '' : 's'} &amp; game${toysProducts.length === 1 ? '' : 's'}`
+                  : 'Curated toys &amp; entertainment'}
+              </span>
+              <div className="flex items-center gap-3">
+                <Link
+                  href="/toys-and-games"
+                  onClick={() => setIsToysOpen(false)}
+                  className="font-bold text-[#165dd0] hover:underline"
+                >
+                  Explore Toys &amp; Games catalog →
+                </Link>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* ── 75% Width Groceries Window (10 Products in 1 Row) ── */}
+      {isGroceriesOpen && (
+        <div
+          onMouseEnter={handleGroceriesMouseEnter}
+          onMouseLeave={handleGroceriesMouseLeave}
+          className="absolute left-1/2 -translate-x-1/2 top-full pt-1.5 z-50 w-[75vw] max-w-325 min-w-[320px] animate-in fade-in slide-in-from-top-1 duration-150 text-left"
+        >
+          {/* Main Card */}
+          <div className="w-full rounded-xl bg-white shadow-2xl ring-1 ring-black/10 border border-gray-200 p-4 sm:p-5 text-black">
+            
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-3 mb-3 border-b border-gray-100">
+              <div className="flex items-center gap-2.5">
+                <div className="size-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                  <Apple size={16} className="text-emerald-600" />
+                </div>
+                <div>
+                  <h3 className="text-[15px] font-bold text-gray-900 leading-tight">
+                    Featured Groceries &amp; Fresh Market
+                  </h3>
+                  <p className="text-[12px] text-gray-500 font-normal">
+                    Top 10 daily pantry staples, snacks &amp; fresh essentials
+                  </p>
+                </div>
+              </div>
+
+              <Link
+                href="/groceries"
+                onClick={() => setIsGroceriesOpen(false)}
+                className="font-semibold text-[13px] text-[#165dd0] hover:underline flex items-center gap-1"
+              >
+                <span>See all groceries</span>
+                <ChevronRight size={14} />
+              </Link>
+            </div>
+
+            {/* 1 Row of 10 Products with Scroll Controls */}
+            <div className="relative group/row">
+              {/* Left Arrow Button */}
+              <button
+                type="button"
+                onClick={() => scrollGroceriesRow('left')}
+                aria-label="Scroll left"
+                className="absolute -left-3 top-1/2 -translate-y-1/2 z-20 size-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all opacity-0 group-hover/row:opacity-100 cursor-pointer"
+              >
+                <ChevronLeft size={18} className="text-gray-700" />
+              </button>
+
+              {/* 1 Row of 10 Items */}
+              <div
+                ref={groceriesScrollRef}
+                className="flex items-stretch gap-3.5 overflow-x-auto scroll-smooth pb-2 pt-1 px-1 scrollbar-thin [-ms-overflow-style:none] [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full"
+              >
+                {isGroceriesLoading ? (
+                  Array.from({ length: 10 }).map((_, i) => (
+                    <div
+                      key={`skel-groceries-${i}`}
+                      className="w-46.25 sm:w-48.75 md:w-51.25 shrink-0 rounded-lg border border-[#E5E5E6] p-2.5 flex flex-col gap-2 animate-pulse bg-white"
+                    >
+                      <div className="w-full h-45 bg-gray-200 rounded-t-lg" />
+                      <div className="w-3/4 h-3.5 bg-gray-200 rounded mt-1" />
+                      <div className="w-1/2 h-3 bg-gray-200 rounded" />
+                      <div className="w-1/3 h-4 bg-gray-200 rounded" />
+                      <div className="w-full h-8 bg-gray-200 rounded-xs mt-3" />
+                    </div>
+                  ))
+                ) : (!groceriesProducts || groceriesProducts.length === 0) ? (
+                  <div className="w-full py-8 text-center text-gray-500 text-[13px] flex flex-col items-center justify-center gap-2">
+                    <Apple size={26} className="text-gray-300" />
+                    <span>No products currently featured in Groceries.</span>
+                    <Link
+                      href="/products"
+                      onClick={() => setIsGroceriesOpen(false)}
+                      className="text-[12px] font-bold text-[#165dd0] hover:underline"
+                    >
+                      Browse full catalog →
+                    </Link>
+                  </div>
+                ) : (
+                  groceriesProducts.map((product) => {
+                    const price = effectivePrice(product);
+                    const oldPriceNum = product.oldPrice ? Number(product.oldPrice) : null;
+                    const hasDiscount = Boolean(oldPriceNum && oldPriceNum > price);
+
+                    return (
+                      <div
+                        key={product.id}
+                        className="w-46.25 sm:w-48.75 md:w-51.25 shrink-0 flex flex-col"
+                      >
+                        <Link
+                          href={`/products/${product.slug}`}
+                          onClick={() => setIsGroceriesOpen(false)}
+                          className="flex h-full w-full"
+                        >
+                          <ProductCard
+                            imageSrc={imageUrl(product.thumbnail)}
+                            imageAlt={product.name}
+                            title={product.name}
+                            price={formatPrice(price)}
+                            originalPrice={hasDiscount && oldPriceNum ? formatPrice(oldPriceNum) : undefined}
+                            badgeText={
+                              hasDiscount && oldPriceNum
+                                ? `${Math.round(((oldPriceNum - price) / oldPriceNum) * 100)}% off`
+                                : undefined
+                            }
+                            offerText={product.dealBadgeText || "Groceries"}
+                            shippingText={
+                              product.shippingFeeType === 'FREE'
+                                ? 'Free Shipping'
+                                : product.shippingCost
+                                  ? `${formatPrice(product.shippingCost)} Shipping`
+                                  : 'Shipping available'
+                            }
+                            buttonVariant={product.hasVariants ? 'see-options' : 'add-to-cart'}
+                            onAddToCart={() => handleAddToCart(product, price)}
+                          />
+                        </Link>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+
+              {/* Right Arrow Button */}
+              <button
+                type="button"
+                onClick={() => scrollGroceriesRow('right')}
+                aria-label="Scroll right"
+                className="absolute -right-3 top-1/2 -translate-y-1/2 z-20 size-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all opacity-0 group-hover/row:opacity-100 cursor-pointer"
+              >
+                <ChevronRight size={18} className="text-gray-700" />
+              </button>
+            </div>
+
+            {/* Window Footer */}
+            <div className="mt-3 pt-2.5 border-t border-gray-100 flex flex-wrap items-center justify-between gap-2 text-[12px] text-gray-500">
+              <span>
+                {groceriesProducts.length > 0
+                  ? `Showing top ${groceriesProducts.length} featured grocery item${groceriesProducts.length === 1 ? '' : 's'}`
+                  : 'Pantry staples &amp; kitchen essentials'}
+              </span>
+              <div className="flex items-center gap-3">
+                <Link
+                  href="/groceries"
+                  onClick={() => setIsGroceriesOpen(false)}
+                  className="font-bold text-[#165dd0] hover:underline"
+                >
+                  Explore Groceries catalog →
                 </Link>
               </div>
             </div>

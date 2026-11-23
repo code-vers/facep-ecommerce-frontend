@@ -44,6 +44,8 @@ export interface Product {
   isEarlyDeal?: boolean;
   isSpecialProduct?: boolean;
   isHolidayDeal?: boolean;
+  isToysAndGames?: boolean;
+  isGrocery?: boolean;
   brand?: string | null;
   productType?: string | null;
   shortDescription?: string | null;
@@ -118,6 +120,8 @@ export interface ProductQueryParams {
   isEarlyDeal?: boolean;
   isSpecialProduct?: boolean;
   isHolidayDeal?: boolean;
+  isToysAndGames?: boolean;
+  isGrocery?: boolean;
 }
 
 export interface ProductStats {
@@ -345,6 +349,62 @@ export const batchUpdateHolidayDeals = async ({
   const { data } = await apiClient.patch<ApiResponse<{ count: number; isHolidayDeal: boolean }>>(
     '/products/holiday-deal/batch',
     { productIds, isHolidayDeal }
+  );
+  return data.data;
+};
+
+export const updateProductToysAndGamesStatus = async ({
+  id,
+  isToysAndGames,
+}: {
+  id: string;
+  isToysAndGames: boolean;
+}): Promise<Product> => {
+  const { data } = await apiClient.patch<ApiResponse<Product>>(
+    `/products/${id}/toys-and-games`,
+    { isToysAndGames }
+  );
+  return data.data;
+};
+
+export const batchUpdateToysAndGames = async ({
+  productIds,
+  isToysAndGames,
+}: {
+  productIds: string[];
+  isToysAndGames: boolean;
+}): Promise<{ count: number; isToysAndGames: boolean }> => {
+  const { data } = await apiClient.patch<ApiResponse<{ count: number; isToysAndGames: boolean }>>(
+    '/products/toys-and-games/batch',
+    { productIds, isToysAndGames }
+  );
+  return data.data;
+};
+
+export const updateProductGroceryStatus = async ({
+  id,
+  isGrocery,
+}: {
+  id: string;
+  isGrocery: boolean;
+}): Promise<Product> => {
+  const { data } = await apiClient.patch<ApiResponse<Product>>(
+    `/products/${id}/grocery`,
+    { isGrocery }
+  );
+  return data.data;
+};
+
+export const batchUpdateGroceries = async ({
+  productIds,
+  isGrocery,
+}: {
+  productIds: string[];
+  isGrocery: boolean;
+}): Promise<{ count: number; isGrocery: boolean }> => {
+  const { data } = await apiClient.patch<ApiResponse<{ count: number; isGrocery: boolean }>>(
+    '/products/grocery/batch',
+    { productIds, isGrocery }
   );
   return data.data;
 };

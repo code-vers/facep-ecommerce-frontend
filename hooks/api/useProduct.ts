@@ -20,6 +20,10 @@ import {
   batchUpdateSpecialProducts,
   updateProductHolidayDealStatus,
   batchUpdateHolidayDeals,
+  updateProductToysAndGamesStatus,
+  batchUpdateToysAndGames,
+  updateProductGroceryStatus,
+  batchUpdateGroceries,
   type Product,
   type ProductQueryParams,
 } from '@/lib/api/product';
@@ -136,6 +140,64 @@ export const useBatchUpdateHolidayDeals = () => {
   return useMutation({
     mutationFn: ({ productIds, isHolidayDeal }: { productIds: string[]; isHolidayDeal: boolean }) =>
       batchUpdateHolidayDeals({ productIds, isHolidayDeal }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+    },
+  });
+};
+
+export const useToysAndGames = (params?: ProductQueryParams, enabled: boolean = true) =>
+  useQuery({
+    queryKey: ['products', 'toys-and-games', params],
+    queryFn: () => getProducts({ ...params, isToysAndGames: true }),
+    enabled,
+  });
+
+export const useUpdateProductToysAndGamesStatus = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, isToysAndGames }: { id: string; isToysAndGames: boolean }) =>
+      updateProductToysAndGamesStatus({ id, isToysAndGames }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+    },
+  });
+};
+
+export const useBatchUpdateToysAndGames = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ productIds, isToysAndGames }: { productIds: string[]; isToysAndGames: boolean }) =>
+      batchUpdateToysAndGames({ productIds, isToysAndGames }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+    },
+  });
+};
+
+export const useGroceries = (params?: ProductQueryParams, enabled: boolean = true) =>
+  useQuery({
+    queryKey: ['products', 'groceries', params],
+    queryFn: () => getProducts({ ...params, isGrocery: true }),
+    enabled,
+  });
+
+export const useUpdateProductGroceryStatus = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, isGrocery }: { id: string; isGrocery: boolean }) =>
+      updateProductGroceryStatus({ id, isGrocery }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+    },
+  });
+};
+
+export const useBatchUpdateGroceries = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ productIds, isGrocery }: { productIds: string[]; isGrocery: boolean }) =>
+      batchUpdateGroceries({ productIds, isGrocery }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
     },
