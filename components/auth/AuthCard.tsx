@@ -46,9 +46,9 @@ export default function AuthCard({ children }: AuthCardProps) {
           className="flex items-center gap-4 sm:gap-5 transition-opacity hover:opacity-90"
           aria-label="Facep home"
         >
-          <div className="relative h-12 w-35 sm:h-14 sm:w-40 shrink-0 overflow-hidden rounded-md bg-white p-1 shadow-xs">
+          <div className="relative h-20 w-35 sm:h-24 sm:w-40 shrink-0 overflow-hidden rounded-md bg-white p-1 shadow-xs">
             <Image
-              src="/logo.jpg"
+              src="/logo2.jpg"
               alt="Facep logo"
               fill
               priority

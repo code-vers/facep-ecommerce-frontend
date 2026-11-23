@@ -87,7 +87,7 @@ export default function LoginPage() {
               {/* Big Logo */}
               <div className='relative w-56 h-20 sm:w-72 sm:h-25 md:w-80 md:h-28 lg:w-96 lg:h-33 shrink-0 overflow-hidden p-2'>
                 <Image
-                  src='/logo.jpg'
+                  src='/logo2.jpg'
                   alt='Facep logo'
                   fill
                   priority
