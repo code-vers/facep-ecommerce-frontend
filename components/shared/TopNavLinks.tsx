@@ -1,12 +1,14 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   Menu,
   History,
   Sparkles,
+  Package,
+  RotateCcw,
   ChevronLeft,
   ChevronRight,
   ChevronDown,
@@ -15,6 +17,8 @@ import ProductCard from "@/components/shared/ProductCard";
 import AllCategoriesDrawer from "@/components/shared/AllCategoriesDrawer";
 import { useBrowsingHistory } from "@/lib/view-history";
 import { useSpecialProducts } from "@/hooks/api/useProduct";
+import { useMyOrders } from "@/hooks/api/useOrder";
+import { useAuth } from "@/contexts/AuthContext";
 import { useCartStore } from "@/contexts/CartContext";
 import type { Product } from "@/lib/api/product";
 import { toast } from "sonner";
@@ -69,21 +73,106 @@ const navItems: NavItem[] = [
 
 export default function TopNavLinks() {
   const router = useRouter();
+  const { session } = useAuth();
   const addToCart = useCartStore((state) => state.addToCart);
   const [isCategoryDrawerOpen, setIsCategoryDrawerOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isSpecialOpen, setIsSpecialOpen] = useState(false);
+  const [isOrdersOpen, setIsOrdersOpen] = useState(false);
+  const [isBuyAgainOpen, setIsBuyAgainOpen] = useState(false);
 
   const historyCloseTimerRef = useRef<NodeJS.Timeout | null>(null);
   const specialCloseTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const ordersCloseTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const buyAgainCloseTimerRef = useRef<NodeJS.Timeout | null>(null);
+
   const scrollRef = useRef<HTMLDivElement>(null);
   const specialScrollRef = useRef<HTMLDivElement>(null);
+  const ordersScrollRef = useRef<HTMLDivElement>(null);
+  const buyAgainScrollRef = useRef<HTMLDivElement>(null);
 
   const { products: browsingProducts, isLoading: isBrowsingLoading, clearHistory } =
     useBrowsingHistory(10);
 
   const { data: specialData, isLoading: isSpecialLoading } = useSpecialProducts({ limit: 10 });
   const specialProducts = specialData?.data || [];
+
+  const { data: ordersData, isLoading: isOrdersLoading } = useMyOrders({ limit: 20 });
+
+  // Extract up to 10 ordered items for Orders popover
+  const recentOrderItems = useMemo(() => {
+    const list: {
+      id: string;
+      productId: string;
+      name: string;
+      slug: string;
+      price: number;
+      image: string;
+      orderNumber: string;
+      status: string;
+      vendorName: string;
+    }[] = [];
+
+    (ordersData?.orders || []).forEach((order) => {
+      (order.items || []).forEach((item) => {
+        if (list.length < 10) {
+          list.push({
+            id: `${order.id}-${item.id}`,
+            productId: item.productId,
+            name: item.productName,
+            slug: item.slug,
+            price: Number(item.price),
+            image: item.image || '',
+            orderNumber: order.orderNumber,
+            status: order.status,
+            vendorName: item.vendorName || 'Facep Store',
+          });
+        }
+      });
+    });
+
+    return list;
+  }, [ordersData]);
+
+  // Extract up to 10 unique products for Buy Again popover
+  const buyAgainItems = useMemo(() => {
+    const map = new Map<
+      string,
+      {
+        id: string;
+        productId: string;
+        name: string;
+        slug: string;
+        price: number;
+        image: string;
+        vendorName: string;
+        timesPurchased: number;
+      }
+    >();
+
+    (ordersData?.orders || []).forEach((order) => {
+      (order.items || []).forEach((item) => {
+        const key = item.productId || item.slug || item.id;
+        if (map.has(key)) {
+          const ex = map.get(key)!;
+          ex.timesPurchased += 1;
+        } else if (map.size < 10) {
+          map.set(key, {
+            id: key,
+            productId: item.productId,
+            name: item.productName,
+            slug: item.slug,
+            price: Number(item.price),
+            image: item.image || '',
+            vendorName: item.vendorName || 'Facep Store',
+            timesPurchased: 1,
+          });
+        }
+      });
+    });
+
+    return Array.from(map.values());
+  }, [ordersData]);
 
   const handleAddToCart = (product: Product, price: number) => {
     addToCart({
@@ -104,47 +193,74 @@ export default function TopNavLinks() {
     });
   };
 
+  const clearAllTimers = () => {
+    if (historyCloseTimerRef.current) clearTimeout(historyCloseTimerRef.current);
+    if (specialCloseTimerRef.current) clearTimeout(specialCloseTimerRef.current);
+    if (ordersCloseTimerRef.current) clearTimeout(ordersCloseTimerRef.current);
+    if (buyAgainCloseTimerRef.current) clearTimeout(buyAgainCloseTimerRef.current);
+    historyCloseTimerRef.current = null;
+    specialCloseTimerRef.current = null;
+    ordersCloseTimerRef.current = null;
+    buyAgainCloseTimerRef.current = null;
+  };
+
   const handleHistoryMouseEnter = () => {
-    if (historyCloseTimerRef.current) {
-      clearTimeout(historyCloseTimerRef.current);
-      historyCloseTimerRef.current = null;
-    }
-    if (specialCloseTimerRef.current) {
-      clearTimeout(specialCloseTimerRef.current);
-      specialCloseTimerRef.current = null;
-    }
+    clearAllTimers();
     setIsSpecialOpen(false);
+    setIsOrdersOpen(false);
+    setIsBuyAgainOpen(false);
     setIsHistoryOpen(true);
   };
 
   const handleHistoryMouseLeave = () => {
-    if (historyCloseTimerRef.current) {
-      clearTimeout(historyCloseTimerRef.current);
-    }
+    if (historyCloseTimerRef.current) clearTimeout(historyCloseTimerRef.current);
     historyCloseTimerRef.current = setTimeout(() => {
       setIsHistoryOpen(false);
     }, 200);
   };
 
   const handleSpecialMouseEnter = () => {
-    if (specialCloseTimerRef.current) {
-      clearTimeout(specialCloseTimerRef.current);
-      specialCloseTimerRef.current = null;
-    }
-    if (historyCloseTimerRef.current) {
-      clearTimeout(historyCloseTimerRef.current);
-      historyCloseTimerRef.current = null;
-    }
+    clearAllTimers();
     setIsHistoryOpen(false);
+    setIsOrdersOpen(false);
+    setIsBuyAgainOpen(false);
     setIsSpecialOpen(true);
   };
 
   const handleSpecialMouseLeave = () => {
-    if (specialCloseTimerRef.current) {
-      clearTimeout(specialCloseTimerRef.current);
-    }
+    if (specialCloseTimerRef.current) clearTimeout(specialCloseTimerRef.current);
     specialCloseTimerRef.current = setTimeout(() => {
       setIsSpecialOpen(false);
+    }, 200);
+  };
+
+  const handleOrdersMouseEnter = () => {
+    clearAllTimers();
+    setIsHistoryOpen(false);
+    setIsSpecialOpen(false);
+    setIsBuyAgainOpen(false);
+    setIsOrdersOpen(true);
+  };
+
+  const handleOrdersMouseLeave = () => {
+    if (ordersCloseTimerRef.current) clearTimeout(ordersCloseTimerRef.current);
+    ordersCloseTimerRef.current = setTimeout(() => {
+      setIsOrdersOpen(false);
+    }, 200);
+  };
+
+  const handleBuyAgainMouseEnter = () => {
+    clearAllTimers();
+    setIsHistoryOpen(false);
+    setIsSpecialOpen(false);
+    setIsOrdersOpen(false);
+    setIsBuyAgainOpen(true);
+  };
+
+  const handleBuyAgainMouseLeave = () => {
+    if (buyAgainCloseTimerRef.current) clearTimeout(buyAgainCloseTimerRef.current);
+    buyAgainCloseTimerRef.current = setTimeout(() => {
+      setIsBuyAgainOpen(false);
     }, 200);
   };
 
@@ -162,6 +278,20 @@ export default function TopNavLinks() {
     }
   };
 
+  const scrollOrdersRow = (direction: 'left' | 'right') => {
+    if (ordersScrollRef.current) {
+      const offset = direction === 'left' ? -350 : 350;
+      ordersScrollRef.current.scrollBy({ left: offset, behavior: 'smooth' });
+    }
+  };
+
+  const scrollBuyAgainRow = (direction: 'left' | 'right') => {
+    if (buyAgainScrollRef.current) {
+      const offset = direction === 'left' ? -350 : 350;
+      buyAgainScrollRef.current.scrollBy({ left: offset, behavior: 'smooth' });
+    }
+  };
+
   const handleClearHistory = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -171,8 +301,7 @@ export default function TopNavLinks() {
 
   useEffect(() => {
     return () => {
-      if (historyCloseTimerRef.current) clearTimeout(historyCloseTimerRef.current);
-      if (specialCloseTimerRef.current) clearTimeout(specialCloseTimerRef.current);
+      clearAllTimers();
     };
   }, []);
 
@@ -219,6 +348,58 @@ export default function TopNavLinks() {
                       className={cn(
                         "transition-transform duration-200 opacity-80",
                         isSpecialOpen && "rotate-180 text-[#dec33a]"
+                      )}
+                    />
+                  </Link>
+                </div>
+              );
+            }
+
+            // Special handling for Orders hover popover
+            if (item.label === "Orders") {
+              return (
+                <div
+                  key={item.label}
+                  onMouseEnter={handleOrdersMouseEnter}
+                  onMouseLeave={handleOrdersMouseLeave}
+                  className="shrink-0 flex items-center h-full"
+                >
+                  <Link
+                    href={item.href || "/orders"}
+                    className="flex shrink-0 items-center gap-1 text-white hover:text-[#dec33a] transition-colors focus-visible:outline-none focus-visible:text-[#dec33a]"
+                  >
+                    <span>{item.label}</span>
+                    <ChevronDown
+                      size={14}
+                      className={cn(
+                        "transition-transform duration-200 opacity-80",
+                        isOrdersOpen && "rotate-180 text-[#dec33a]"
+                      )}
+                    />
+                  </Link>
+                </div>
+              );
+            }
+
+            // Special handling for Buy Again hover popover
+            if (item.label === "Buy Again") {
+              return (
+                <div
+                  key={item.label}
+                  onMouseEnter={handleBuyAgainMouseEnter}
+                  onMouseLeave={handleBuyAgainMouseLeave}
+                  className="shrink-0 flex items-center h-full"
+                >
+                  <Link
+                    href={item.href || "/buy-again"}
+                    className="flex shrink-0 items-center gap-1 text-white hover:text-[#dec33a] transition-colors focus-visible:outline-none focus-visible:text-[#dec33a]"
+                  >
+                    <span>{item.label}</span>
+                    <ChevronDown
+                      size={14}
+                      className={cn(
+                        "transition-transform duration-200 opacity-80",
+                        isBuyAgainOpen && "rotate-180 text-[#dec33a]"
                       )}
                     />
                   </Link>
@@ -581,6 +762,334 @@ export default function TopNavLinks() {
                   className="font-bold text-[#165dd0] hover:underline"
                 >
                   Explore all special products →
+                </Link>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* ── 75% Width Orders Window (10 Products in 1 Row) ── */}
+      {isOrdersOpen && (
+        <div
+          onMouseEnter={handleOrdersMouseEnter}
+          onMouseLeave={handleOrdersMouseLeave}
+          className="absolute left-1/2 -translate-x-1/2 top-full pt-1.5 z-50 w-[75vw] max-w-325 min-w-[320px] animate-in fade-in slide-in-from-top-1 duration-150 text-left"
+        >
+          {/* Main Card */}
+          <div className="w-full rounded-xl bg-white shadow-2xl ring-1 ring-black/10 border border-gray-200 p-4 sm:p-5 text-black">
+            
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-3 mb-3 border-b border-gray-100">
+              <div className="flex items-center gap-2.5">
+                <div className="size-8 rounded-full bg-[#dec33a]/20 text-[#2b323b] flex items-center justify-center">
+                  <Package size={16} className="text-[#9e8316]" />
+                </div>
+                <div>
+                  <h3 className="text-[15px] font-bold text-gray-900 leading-tight">
+                    Your Orders
+                  </h3>
+                  <p className="text-[12px] text-gray-500 font-normal">
+                    Recent purchases, tracking &amp; order history
+                  </p>
+                </div>
+              </div>
+
+              <Link
+                href="/orders"
+                onClick={() => setIsOrdersOpen(false)}
+                className="font-semibold text-[13px] text-[#165dd0] hover:underline flex items-center gap-1"
+              >
+                <span>View all orders</span>
+                <ChevronRight size={14} />
+              </Link>
+            </div>
+
+            {!session?.user?.id ? (
+              /* Guest State */
+              <div className="w-full py-9 flex flex-col items-center justify-center text-center gap-2">
+                <div className="size-12 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 mb-1">
+                  <Package size={24} />
+                </div>
+                <h4 className="text-[15px] font-bold text-gray-900">Sign in to track orders &amp; shipments</h4>
+                <p className="text-[12px] text-gray-500 max-w-sm">
+                  Check delivery progress, view order receipts, or return items from your account.
+                </p>
+                <Link
+                  href="/login"
+                  onClick={() => setIsOrdersOpen(false)}
+                  className="mt-2 px-5 py-2 bg-[#dec33a] hover:bg-[#c9b034] text-black font-bold text-[13px] rounded-xs shadow-xs transition-colors"
+                >
+                  Sign In to Facep
+                </Link>
+              </div>
+            ) : (
+              /* 1 Row of 10 Products with Scroll Controls */
+              <div className="relative group/row">
+                {/* Left Arrow Button */}
+                <button
+                  type="button"
+                  onClick={() => scrollOrdersRow('left')}
+                  aria-label="Scroll left"
+                  className="absolute -left-3 top-1/2 -translate-y-1/2 z-20 size-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all opacity-0 group-hover/row:opacity-100 cursor-pointer"
+                >
+                  <ChevronLeft size={18} className="text-gray-700" />
+                </button>
+
+                {/* 1 Row of 10 Items */}
+                <div
+                  ref={ordersScrollRef}
+                  className="flex items-stretch gap-3.5 overflow-x-auto scroll-smooth pb-2 pt-1 px-1 scrollbar-thin [-ms-overflow-style:none] [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full"
+                >
+                  {isOrdersLoading ? (
+                    Array.from({ length: 10 }).map((_, i) => (
+                      <div
+                        key={`skel-orders-${i}`}
+                        className="w-46.25 sm:w-48.75 md:w-51.25 shrink-0 rounded-lg border border-[#E5E5E6] p-2.5 flex flex-col gap-2 animate-pulse bg-white"
+                      >
+                        <div className="w-full h-45 bg-gray-200 rounded-t-lg" />
+                        <div className="w-3/4 h-3.5 bg-gray-200 rounded mt-1" />
+                        <div className="w-1/2 h-3 bg-gray-200 rounded" />
+                        <div className="w-1/3 h-4 bg-gray-200 rounded" />
+                        <div className="w-full h-8 bg-gray-200 rounded-xs mt-3" />
+                      </div>
+                    ))
+                  ) : (!recentOrderItems || recentOrderItems.length === 0) ? (
+                    <div className="w-full py-8 text-center text-gray-500 text-[13px] flex flex-col items-center justify-center gap-2">
+                      <Package size={26} className="text-gray-300" />
+                      <span>No orders placed yet. Explore top deals and start shopping!</span>
+                      <Link
+                        href="/products"
+                        onClick={() => setIsOrdersOpen(false)}
+                        className="text-[12px] font-bold text-[#165dd0] hover:underline"
+                      >
+                        Start Shopping →
+                      </Link>
+                    </div>
+                  ) : (
+                    recentOrderItems.map((item) => (
+                      <div
+                        key={item.id}
+                        className="w-46.25 sm:w-48.75 md:w-51.25 shrink-0 flex flex-col"
+                      >
+                        <Link
+                          href={`/products/${item.slug}`}
+                          onClick={() => setIsOrdersOpen(false)}
+                          className="flex h-full w-full"
+                        >
+                          <ProductCard
+                            imageSrc={imageUrl(item.image)}
+                            imageAlt={item.name}
+                            title={item.name}
+                            price={formatPrice(item.price)}
+                            badgeText={`#${item.orderNumber}`}
+                            offerText={item.status ? `Status: ${item.status.replace(/_/g, ' ')}` : undefined}
+                            buttonVariant="see-options"
+                            onAddToCart={() => router.push(`/products/${item.slug}`)}
+                          />
+                        </Link>
+                      </div>
+                    ))
+                  )}
+                </div>
+
+                {/* Right Arrow Button */}
+                <button
+                  type="button"
+                  onClick={() => scrollOrdersRow('right')}
+                  aria-label="Scroll right"
+                  className="absolute -right-3 top-1/2 -translate-y-1/2 z-20 size-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all opacity-0 group-hover/row:opacity-100 cursor-pointer"
+                >
+                  <ChevronRight size={18} className="text-gray-700" />
+                </button>
+              </div>
+            )}
+
+            {/* Window Footer */}
+            <div className="mt-3 pt-2.5 border-t border-gray-100 flex flex-wrap items-center justify-between gap-2 text-[12px] text-gray-500">
+              <span>
+                {recentOrderItems.length > 0
+                  ? `Showing ${recentOrderItems.length} recent ordered item${recentOrderItems.length === 1 ? '' : 's'}`
+                  : 'Track your packages with ease'}
+              </span>
+              <div className="flex items-center gap-3">
+                <Link
+                  href="/orders"
+                  onClick={() => setIsOrdersOpen(false)}
+                  className="font-bold text-[#165dd0] hover:underline"
+                >
+                  Manage all orders &amp; invoices →
+                </Link>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* ── 75% Width Buy Again Window (10 Products in 1 Row) ── */}
+      {isBuyAgainOpen && (
+        <div
+          onMouseEnter={handleBuyAgainMouseEnter}
+          onMouseLeave={handleBuyAgainMouseLeave}
+          className="absolute left-1/2 -translate-x-1/2 top-full pt-1.5 z-50 w-[75vw] max-w-325 min-w-[320px] animate-in fade-in slide-in-from-top-1 duration-150 text-left"
+        >
+          {/* Main Card */}
+          <div className="w-full rounded-xl bg-white shadow-2xl ring-1 ring-black/10 border border-gray-200 p-4 sm:p-5 text-black">
+            
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-3 mb-3 border-b border-gray-100">
+              <div className="flex items-center gap-2.5">
+                <div className="size-8 rounded-full bg-[#dec33a]/20 text-[#2b323b] flex items-center justify-center">
+                  <RotateCcw size={16} className="text-[#9e8316]" />
+                </div>
+                <div>
+                  <h3 className="text-[15px] font-bold text-gray-900 leading-tight">
+                    Buy Again
+                  </h3>
+                  <p className="text-[12px] text-gray-500 font-normal">
+                    Reorder your favorite items with 1 click
+                  </p>
+                </div>
+              </div>
+
+              <Link
+                href="/buy-again"
+                onClick={() => setIsBuyAgainOpen(false)}
+                className="font-semibold text-[13px] text-[#165dd0] hover:underline flex items-center gap-1"
+              >
+                <span>View all past purchases</span>
+                <ChevronRight size={14} />
+              </Link>
+            </div>
+
+            {!session?.user?.id ? (
+              /* Guest State */
+              <div className="w-full py-9 flex flex-col items-center justify-center text-center gap-2">
+                <div className="size-12 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 mb-1">
+                  <RotateCcw size={24} />
+                </div>
+                <h4 className="text-[15px] font-bold text-gray-900">Sign in to buy again</h4>
+                <p className="text-[12px] text-gray-500 max-w-sm">
+                  Quickly reorder everyday staples and past purchases with 1 click.
+                </p>
+                <Link
+                  href="/login"
+                  onClick={() => setIsBuyAgainOpen(false)}
+                  className="mt-2 px-5 py-2 bg-[#dec33a] hover:bg-[#c9b034] text-black font-bold text-[13px] rounded-xs shadow-xs transition-colors"
+                >
+                  Sign In to Facep
+                </Link>
+              </div>
+            ) : (
+              /* 1 Row of 10 Products with Scroll Controls */
+              <div className="relative group/row">
+                {/* Left Arrow Button */}
+                <button
+                  type="button"
+                  onClick={() => scrollBuyAgainRow('left')}
+                  aria-label="Scroll left"
+                  className="absolute -left-3 top-1/2 -translate-y-1/2 z-20 size-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all opacity-0 group-hover/row:opacity-100 cursor-pointer"
+                >
+                  <ChevronLeft size={18} className="text-gray-700" />
+                </button>
+
+                {/* 1 Row of 10 Items */}
+                <div
+                  ref={buyAgainScrollRef}
+                  className="flex items-stretch gap-3.5 overflow-x-auto scroll-smooth pb-2 pt-1 px-1 scrollbar-thin [-ms-overflow-style:none] [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full"
+                >
+                  {isOrdersLoading ? (
+                    Array.from({ length: 10 }).map((_, i) => (
+                      <div
+                        key={`skel-buyagain-${i}`}
+                        className="w-46.25 sm:w-48.75 md:w-51.25 shrink-0 rounded-lg border border-[#E5E5E6] p-2.5 flex flex-col gap-2 animate-pulse bg-white"
+                      >
+                        <div className="w-full h-45 bg-gray-200 rounded-t-lg" />
+                        <div className="w-3/4 h-3.5 bg-gray-200 rounded mt-1" />
+                        <div className="w-1/2 h-3 bg-gray-200 rounded" />
+                        <div className="w-1/3 h-4 bg-gray-200 rounded" />
+                        <div className="w-full h-8 bg-gray-200 rounded-xs mt-3" />
+                      </div>
+                    ))
+                  ) : (!buyAgainItems || buyAgainItems.length === 0) ? (
+                    <div className="w-full py-8 text-center text-gray-500 text-[13px] flex flex-col items-center justify-center gap-2">
+                      <RotateCcw size={26} className="text-gray-300" />
+                      <span>No previous purchases to reorder yet.</span>
+                      <Link
+                        href="/products"
+                        onClick={() => setIsBuyAgainOpen(false)}
+                        className="text-[12px] font-bold text-[#165dd0] hover:underline"
+                      >
+                        Browse all products →
+                      </Link>
+                    </div>
+                  ) : (
+                    buyAgainItems.map((item) => (
+                      <div
+                        key={item.id}
+                        className="w-46.25 sm:w-48.75 md:w-51.25 shrink-0 flex flex-col"
+                      >
+                        <Link
+                          href={`/products/${item.slug}`}
+                          onClick={() => setIsBuyAgainOpen(false)}
+                          className="flex h-full w-full"
+                        >
+                          <ProductCard
+                            imageSrc={imageUrl(item.image)}
+                            imageAlt={item.name}
+                            title={item.name}
+                            price={formatPrice(item.price)}
+                            badgeText={item.timesPurchased > 1 ? `Ordered ${item.timesPurchased}x` : 'Purchased'}
+                            offerText="Buy Again"
+                            buttonVariant="add-to-cart"
+                            onAddToCart={() =>
+                              handleAddToCart(
+                                {
+                                  id: item.productId,
+                                  name: item.name,
+                                  slug: item.slug,
+                                  basePrice: item.price,
+                                  thumbnail: item.image,
+                                  vendor: { storefront: { storeName: item.vendorName } },
+                                } as any,
+                                item.price
+                              )
+                            }
+                          />
+                        </Link>
+                      </div>
+                    ))
+                  )}
+                </div>
+
+                {/* Right Arrow Button */}
+                <button
+                  type="button"
+                  onClick={() => scrollBuyAgainRow('right')}
+                  aria-label="Scroll right"
+                  className="absolute -right-3 top-1/2 -translate-y-1/2 z-20 size-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all opacity-0 group-hover/row:opacity-100 cursor-pointer"
+                >
+                  <ChevronRight size={18} className="text-gray-700" />
+                </button>
+              </div>
+            )}
+
+            {/* Window Footer */}
+            <div className="mt-3 pt-2.5 border-t border-gray-100 flex flex-wrap items-center justify-between gap-2 text-[12px] text-gray-500">
+              <span>
+                {buyAgainItems.length > 0
+                  ? `Showing ${buyAgainItems.length} item${buyAgainItems.length === 1 ? '' : 's'} available to reorder`
+                  : 'Fast 1-click reordering'}
+              </span>
+              <div className="flex items-center gap-3">
+                <Link
+                  href="/buy-again"
+                  onClick={() => setIsBuyAgainOpen(false)}
+                  className="font-bold text-[#165dd0] hover:underline"
+                >
+                  Visit Buy Again page →
                 </Link>
               </div>
             </div>
