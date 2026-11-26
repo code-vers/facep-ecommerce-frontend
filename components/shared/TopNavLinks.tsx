@@ -11,6 +11,8 @@ import {
   RotateCcw,
   Gamepad2,
   Apple,
+  Zap,
+  Gift,
   ChevronLeft,
   ChevronRight,
   ChevronDown,
@@ -19,6 +21,8 @@ import ProductCard from "@/components/shared/ProductCard";
 import AllCategoriesDrawer from "@/components/shared/AllCategoriesDrawer";
 import { useBrowsingHistory } from "@/lib/view-history";
 import {
+  useEarlyDeals,
+  useHolidayDeals,
   useSpecialProducts,
   useToysAndGames,
   useGroceries,
@@ -82,6 +86,8 @@ export default function TopNavLinks() {
   const { session } = useAuth();
   const addToCart = useCartStore((state) => state.addToCart);
   const [isCategoryDrawerOpen, setIsCategoryDrawerOpen] = useState(false);
+  const [isEarlyOpen, setIsEarlyOpen] = useState(false);
+  const [isHolidayOpen, setIsHolidayOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isSpecialOpen, setIsSpecialOpen] = useState(false);
   const [isOrdersOpen, setIsOrdersOpen] = useState(false);
@@ -89,6 +95,8 @@ export default function TopNavLinks() {
   const [isToysOpen, setIsToysOpen] = useState(false);
   const [isGroceriesOpen, setIsGroceriesOpen] = useState(false);
 
+  const earlyCloseTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const holidayCloseTimerRef = useRef<NodeJS.Timeout | null>(null);
   const historyCloseTimerRef = useRef<NodeJS.Timeout | null>(null);
   const specialCloseTimerRef = useRef<NodeJS.Timeout | null>(null);
   const ordersCloseTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -96,6 +104,8 @@ export default function TopNavLinks() {
   const toysCloseTimerRef = useRef<NodeJS.Timeout | null>(null);
   const groceriesCloseTimerRef = useRef<NodeJS.Timeout | null>(null);
 
+  const earlyScrollRef = useRef<HTMLDivElement>(null);
+  const holidayScrollRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const specialScrollRef = useRef<HTMLDivElement>(null);
   const ordersScrollRef = useRef<HTMLDivElement>(null);
@@ -105,6 +115,12 @@ export default function TopNavLinks() {
 
   const { products: browsingProducts, isLoading: isBrowsingLoading, clearHistory } =
     useBrowsingHistory(10);
+
+  const { data: earlyData, isLoading: isEarlyLoading } = useEarlyDeals({ limit: 10 });
+  const earlyProducts = earlyData?.data || [];
+
+  const { data: holidayData, isLoading: isHolidayLoading } = useHolidayDeals({ limit: 10 });
+  const holidayProducts = holidayData?.data || [];
 
   const { data: specialData, isLoading: isSpecialLoading } = useSpecialProducts({ limit: 10 });
   const specialProducts = specialData?.data || [];
@@ -212,12 +228,16 @@ export default function TopNavLinks() {
   };
 
   const clearAllTimers = () => {
+    if (earlyCloseTimerRef.current) clearTimeout(earlyCloseTimerRef.current);
+    if (holidayCloseTimerRef.current) clearTimeout(holidayCloseTimerRef.current);
     if (historyCloseTimerRef.current) clearTimeout(historyCloseTimerRef.current);
     if (specialCloseTimerRef.current) clearTimeout(specialCloseTimerRef.current);
     if (ordersCloseTimerRef.current) clearTimeout(ordersCloseTimerRef.current);
     if (buyAgainCloseTimerRef.current) clearTimeout(buyAgainCloseTimerRef.current);
     if (toysCloseTimerRef.current) clearTimeout(toysCloseTimerRef.current);
     if (groceriesCloseTimerRef.current) clearTimeout(groceriesCloseTimerRef.current);
+    earlyCloseTimerRef.current = null;
+    holidayCloseTimerRef.current = null;
     historyCloseTimerRef.current = null;
     specialCloseTimerRef.current = null;
     ordersCloseTimerRef.current = null;
@@ -226,8 +246,48 @@ export default function TopNavLinks() {
     groceriesCloseTimerRef.current = null;
   };
 
+  const handleEarlyMouseEnter = () => {
+    clearAllTimers();
+    setIsHolidayOpen(false);
+    setIsSpecialOpen(false);
+    setIsOrdersOpen(false);
+    setIsBuyAgainOpen(false);
+    setIsHistoryOpen(false);
+    setIsToysOpen(false);
+    setIsGroceriesOpen(false);
+    setIsEarlyOpen(true);
+  };
+
+  const handleEarlyMouseLeave = () => {
+    if (earlyCloseTimerRef.current) clearTimeout(earlyCloseTimerRef.current);
+    earlyCloseTimerRef.current = setTimeout(() => {
+      setIsEarlyOpen(false);
+    }, 200);
+  };
+
+  const handleHolidayMouseEnter = () => {
+    clearAllTimers();
+    setIsEarlyOpen(false);
+    setIsSpecialOpen(false);
+    setIsOrdersOpen(false);
+    setIsBuyAgainOpen(false);
+    setIsHistoryOpen(false);
+    setIsToysOpen(false);
+    setIsGroceriesOpen(false);
+    setIsHolidayOpen(true);
+  };
+
+  const handleHolidayMouseLeave = () => {
+    if (holidayCloseTimerRef.current) clearTimeout(holidayCloseTimerRef.current);
+    holidayCloseTimerRef.current = setTimeout(() => {
+      setIsHolidayOpen(false);
+    }, 200);
+  };
+
   const handleHistoryMouseEnter = () => {
     clearAllTimers();
+    setIsEarlyOpen(false);
+    setIsHolidayOpen(false);
     setIsSpecialOpen(false);
     setIsOrdersOpen(false);
     setIsBuyAgainOpen(false);
@@ -245,6 +305,8 @@ export default function TopNavLinks() {
 
   const handleSpecialMouseEnter = () => {
     clearAllTimers();
+    setIsEarlyOpen(false);
+    setIsHolidayOpen(false);
     setIsHistoryOpen(false);
     setIsOrdersOpen(false);
     setIsBuyAgainOpen(false);
@@ -262,6 +324,8 @@ export default function TopNavLinks() {
 
   const handleOrdersMouseEnter = () => {
     clearAllTimers();
+    setIsEarlyOpen(false);
+    setIsHolidayOpen(false);
     setIsHistoryOpen(false);
     setIsSpecialOpen(false);
     setIsBuyAgainOpen(false);
@@ -279,6 +343,8 @@ export default function TopNavLinks() {
 
   const handleBuyAgainMouseEnter = () => {
     clearAllTimers();
+    setIsEarlyOpen(false);
+    setIsHolidayOpen(false);
     setIsHistoryOpen(false);
     setIsSpecialOpen(false);
     setIsOrdersOpen(false);
@@ -296,6 +362,8 @@ export default function TopNavLinks() {
 
   const handleToysMouseEnter = () => {
     clearAllTimers();
+    setIsEarlyOpen(false);
+    setIsHolidayOpen(false);
     setIsHistoryOpen(false);
     setIsSpecialOpen(false);
     setIsOrdersOpen(false);
@@ -313,6 +381,8 @@ export default function TopNavLinks() {
 
   const handleGroceriesMouseEnter = () => {
     clearAllTimers();
+    setIsEarlyOpen(false);
+    setIsHolidayOpen(false);
     setIsHistoryOpen(false);
     setIsSpecialOpen(false);
     setIsOrdersOpen(false);
@@ -326,6 +396,20 @@ export default function TopNavLinks() {
     groceriesCloseTimerRef.current = setTimeout(() => {
       setIsGroceriesOpen(false);
     }, 200);
+  };
+
+  const scrollEarlyRow = (direction: 'left' | 'right') => {
+    if (earlyScrollRef.current) {
+      const offset = direction === 'left' ? -350 : 350;
+      earlyScrollRef.current.scrollBy({ left: offset, behavior: 'smooth' });
+    }
+  };
+
+  const scrollHolidayRow = (direction: 'left' | 'right') => {
+    if (holidayScrollRef.current) {
+      const offset = direction === 'left' ? -350 : 350;
+      holidayScrollRef.current.scrollBy({ left: offset, behavior: 'smooth' });
+    }
   };
 
   const scrollRow = (direction: 'left' | 'right') => {
@@ -404,6 +488,58 @@ export default function TopNavLinks() {
                   <Menu size={18} className="shrink-0" strokeWidth={2.2} />
                   <span>{item.label}</span>
                 </button>
+              );
+            }
+
+            // Special handling for Early Deals hover popover
+            if (item.label === "Early Deals") {
+              return (
+                <div
+                  key={item.label}
+                  onMouseEnter={handleEarlyMouseEnter}
+                  onMouseLeave={handleEarlyMouseLeave}
+                  className="shrink-0 flex items-center h-full"
+                >
+                  <Link
+                    href={item.href || "/early-deals"}
+                    className="flex shrink-0 items-center gap-1 text-white hover:text-[#dec33a] transition-colors focus-visible:outline-none focus-visible:text-[#dec33a]"
+                  >
+                    <span>{item.label}</span>
+                    <ChevronDown
+                      size={14}
+                      className={cn(
+                        "transition-transform duration-200 opacity-80",
+                        isEarlyOpen && "rotate-180 text-[#dec33a]"
+                      )}
+                    />
+                  </Link>
+                </div>
+              );
+            }
+
+            // Special handling for Holiday Deals hover popover
+            if (item.label === "Holiday Deals") {
+              return (
+                <div
+                  key={item.label}
+                  onMouseEnter={handleHolidayMouseEnter}
+                  onMouseLeave={handleHolidayMouseLeave}
+                  className="shrink-0 flex items-center h-full"
+                >
+                  <Link
+                    href={item.href || "/holiday-deals"}
+                    className="flex shrink-0 items-center gap-1 text-white hover:text-[#dec33a] transition-colors focus-visible:outline-none focus-visible:text-[#dec33a]"
+                  >
+                    <span>{item.label}</span>
+                    <ChevronDown
+                      size={14}
+                      className={cn(
+                        "transition-transform duration-200 opacity-80",
+                        isHolidayOpen && "rotate-180 text-[#dec33a]"
+                      )}
+                    />
+                  </Link>
+                </div>
               );
             }
 
@@ -594,15 +730,327 @@ export default function TopNavLinks() {
         </nav>
       </div>
 
-      {/* ── 75% Width Browsing History Window (10 Products in 1 Row) ── */}
+      {/* ── Full Width Early Deals Window (10 Products in 1 Row) ── */}
+      {isEarlyOpen && (
+        <div
+          onMouseEnter={handleEarlyMouseEnter}
+          onMouseLeave={handleEarlyMouseLeave}
+          className="absolute left-0 right-0 top-full z-50 w-full animate-in fade-in slide-in-from-top-1 duration-150 text-left"
+        >
+          {/* Main Card */}
+          <div className="w-full bg-white shadow-2xl border-b border-gray-200 px-4 sm:px-6 md:px-8 py-4 sm:py-5 text-black">
+            
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-3 mb-3 border-b border-gray-100">
+              <div className="flex items-center gap-2.5">
+                <div className="size-8 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center">
+                  <Zap size={16} className="text-amber-600 fill-amber-500" />
+                </div>
+                <div>
+                  <h3 className="text-[15px] font-bold text-gray-900 leading-tight">
+                    Early Access Deals &amp; Discounts
+                  </h3>
+                  <p className="text-[12px] text-gray-500 font-normal">
+                    Top 10 early deals with limited-time promotional pricing
+                  </p>
+                </div>
+              </div>
+
+              <Link
+                href="/early-deals"
+                onClick={() => setIsEarlyOpen(false)}
+                className="font-semibold text-[13px] text-[#165dd0] hover:underline flex items-center gap-1"
+              >
+                <span>See all early deals</span>
+                <ChevronRight size={14} />
+              </Link>
+            </div>
+
+            {/* 1 Row of 10 Products with Scroll Controls */}
+            <div className="relative group/row">
+              {/* Left Arrow Button */}
+              <button
+                type="button"
+                onClick={() => scrollEarlyRow('left')}
+                aria-label="Scroll left"
+                className="absolute left-1 sm:left-2 top-1/2 -translate-y-1/2 z-20 size-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all opacity-0 group-hover/row:opacity-100 cursor-pointer"
+              >
+                <ChevronLeft size={18} className="text-gray-700" />
+              </button>
+
+              {/* 1 Row of 10 Items */}
+              <div
+                ref={earlyScrollRef}
+                className="flex items-stretch gap-3.5 overflow-x-auto scroll-smooth pb-2 pt-1 px-1 scrollbar-thin [-ms-overflow-style:none] [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full"
+              >
+                {isEarlyLoading ? (
+                  Array.from({ length: 10 }).map((_, i) => (
+                    <div
+                      key={`skel-early-${i}`}
+                      className="w-46.25 sm:w-48.75 md:w-51.25 shrink-0 rounded-lg border border-[#E5E5E6] p-2.5 flex flex-col gap-2 animate-pulse bg-white"
+                    >
+                      <div className="w-full h-45 bg-gray-200 rounded-t-lg" />
+                      <div className="w-3/4 h-3.5 bg-gray-200 rounded mt-1" />
+                      <div className="w-1/2 h-3 bg-gray-200 rounded" />
+                      <div className="w-1/3 h-4 bg-gray-200 rounded" />
+                      <div className="w-full h-8 bg-gray-200 rounded-xs mt-3" />
+                    </div>
+                  ))
+                ) : (!earlyProducts || earlyProducts.length === 0) ? (
+                  <div className="w-full py-8 text-center text-gray-500 text-[13px] flex flex-col items-center justify-center gap-2">
+                    <Zap size={26} className="text-gray-300" />
+                    <span>No products currently featured in Early Deals.</span>
+                    <Link
+                      href="/products"
+                      onClick={() => setIsEarlyOpen(false)}
+                      className="text-[12px] font-bold text-[#165dd0] hover:underline"
+                    >
+                      Browse full catalog →
+                    </Link>
+                  </div>
+                ) : (
+                  earlyProducts.map((product) => {
+                    const price = effectivePrice(product);
+                    const oldPriceNum = product.oldPrice ? Number(product.oldPrice) : null;
+                    const hasDiscount = Boolean(oldPriceNum && oldPriceNum > price);
+
+                    return (
+                      <div
+                        key={product.id}
+                        className="w-46.25 sm:w-48.75 md:w-51.25 shrink-0 flex flex-col"
+                      >
+                        <Link
+                          href={`/products/${product.slug}`}
+                          onClick={() => setIsEarlyOpen(false)}
+                          className="flex h-full w-full"
+                        >
+                          <ProductCard
+                            imageSrc={imageUrl(product.thumbnail)}
+                            imageAlt={product.name}
+                            title={product.name}
+                            price={formatPrice(price)}
+                            originalPrice={hasDiscount && oldPriceNum ? formatPrice(oldPriceNum) : undefined}
+                            badgeText={
+                              hasDiscount && oldPriceNum
+                                ? `${Math.round(((oldPriceNum - price) / oldPriceNum) * 100)}% off`
+                                : undefined
+                            }
+                            offerText={product.dealBadgeText || "Early Deal"}
+                            shippingText={
+                              product.shippingFeeType === 'FREE'
+                                ? 'Free Shipping'
+                                : product.shippingCost
+                                  ? `${formatPrice(product.shippingCost)} Shipping`
+                                  : 'Shipping available'
+                            }
+                            buttonVariant={product.hasVariants ? 'see-options' : 'add-to-cart'}
+                            onAddToCart={() => handleAddToCart(product, price)}
+                          />
+                        </Link>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+
+              {/* Right Arrow Button */}
+              <button
+                type="button"
+                onClick={() => scrollEarlyRow('right')}
+                aria-label="Scroll right"
+                className="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 z-20 size-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all opacity-0 group-hover/row:opacity-100 cursor-pointer"
+              >
+                <ChevronRight size={18} className="text-gray-700" />
+              </button>
+            </div>
+
+            {/* Window Footer */}
+            <div className="mt-3 pt-2.5 border-t border-gray-100 flex flex-wrap items-center justify-between gap-2 text-[12px] text-gray-500">
+              <span>
+                {earlyProducts.length > 0
+                  ? `Showing top ${earlyProducts.length} early deal${earlyProducts.length === 1 ? '' : 's'}`
+                  : 'Exclusive early promotional pricing'}
+              </span>
+              <div className="flex items-center gap-3">
+                <Link
+                  href="/early-deals"
+                  onClick={() => setIsEarlyOpen(false)}
+                  className="font-bold text-[#165dd0] hover:underline"
+                >
+                  Explore Early Deals catalog →
+                </Link>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* ── Full Width Holiday Deals Window (10 Products in 1 Row) ── */}
+      {isHolidayOpen && (
+        <div
+          onMouseEnter={handleHolidayMouseEnter}
+          onMouseLeave={handleHolidayMouseLeave}
+          className="absolute left-0 right-0 top-full z-50 w-full animate-in fade-in slide-in-from-top-1 duration-150 text-left"
+        >
+          {/* Main Card */}
+          <div className="w-full bg-white shadow-2xl border-b border-gray-200 px-4 sm:px-6 md:px-8 py-4 sm:py-5 text-black">
+            
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-3 mb-3 border-b border-gray-100">
+              <div className="flex items-center gap-2.5">
+                <div className="size-8 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center">
+                  <Gift size={16} className="text-rose-600" />
+                </div>
+                <div>
+                  <h3 className="text-[15px] font-bold text-gray-900 leading-tight">
+                    Holiday Deals &amp; Festive Specials
+                  </h3>
+                  <p className="text-[12px] text-gray-500 font-normal">
+                    Top 10 holiday gifts, seasonal bundles &amp; celebrations
+                  </p>
+                </div>
+              </div>
+
+              <Link
+                href="/holiday-deals"
+                onClick={() => setIsHolidayOpen(false)}
+                className="font-semibold text-[13px] text-[#165dd0] hover:underline flex items-center gap-1"
+              >
+                <span>See all holiday deals</span>
+                <ChevronRight size={14} />
+              </Link>
+            </div>
+
+            {/* 1 Row of 10 Products with Scroll Controls */}
+            <div className="relative group/row">
+              {/* Left Arrow Button */}
+              <button
+                type="button"
+                onClick={() => scrollHolidayRow('left')}
+                aria-label="Scroll left"
+                className="absolute left-1 sm:left-2 top-1/2 -translate-y-1/2 z-20 size-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all opacity-0 group-hover/row:opacity-100 cursor-pointer"
+              >
+                <ChevronLeft size={18} className="text-gray-700" />
+              </button>
+
+              {/* 1 Row of 10 Items */}
+              <div
+                ref={holidayScrollRef}
+                className="flex items-stretch gap-3.5 overflow-x-auto scroll-smooth pb-2 pt-1 px-1 scrollbar-thin [-ms-overflow-style:none] [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full"
+              >
+                {isHolidayLoading ? (
+                  Array.from({ length: 10 }).map((_, i) => (
+                    <div
+                      key={`skel-holiday-${i}`}
+                      className="w-46.25 sm:w-48.75 md:w-51.25 shrink-0 rounded-lg border border-[#E5E5E6] p-2.5 flex flex-col gap-2 animate-pulse bg-white"
+                    >
+                      <div className="w-full h-45 bg-gray-200 rounded-t-lg" />
+                      <div className="w-3/4 h-3.5 bg-gray-200 rounded mt-1" />
+                      <div className="w-1/2 h-3 bg-gray-200 rounded" />
+                      <div className="w-1/3 h-4 bg-gray-200 rounded" />
+                      <div className="w-full h-8 bg-gray-200 rounded-xs mt-3" />
+                    </div>
+                  ))
+                ) : (!holidayProducts || holidayProducts.length === 0) ? (
+                  <div className="w-full py-8 text-center text-gray-500 text-[13px] flex flex-col items-center justify-center gap-2">
+                    <Gift size={26} className="text-gray-300" />
+                    <span>No products currently featured in Holiday Deals.</span>
+                    <Link
+                      href="/products"
+                      onClick={() => setIsHolidayOpen(false)}
+                      className="text-[12px] font-bold text-[#165dd0] hover:underline"
+                    >
+                      Browse full catalog →
+                    </Link>
+                  </div>
+                ) : (
+                  holidayProducts.map((product) => {
+                    const price = effectivePrice(product);
+                    const oldPriceNum = product.oldPrice ? Number(product.oldPrice) : null;
+                    const hasDiscount = Boolean(oldPriceNum && oldPriceNum > price);
+
+                    return (
+                      <div
+                        key={product.id}
+                        className="w-46.25 sm:w-48.75 md:w-51.25 shrink-0 flex flex-col"
+                      >
+                        <Link
+                          href={`/products/${product.slug}`}
+                          onClick={() => setIsHolidayOpen(false)}
+                          className="flex h-full w-full"
+                        >
+                          <ProductCard
+                            imageSrc={imageUrl(product.thumbnail)}
+                            imageAlt={product.name}
+                            title={product.name}
+                            price={formatPrice(price)}
+                            originalPrice={hasDiscount && oldPriceNum ? formatPrice(oldPriceNum) : undefined}
+                            badgeText={
+                              hasDiscount && oldPriceNum
+                                ? `${Math.round(((oldPriceNum - price) / oldPriceNum) * 100)}% off`
+                                : undefined
+                            }
+                            offerText={product.dealBadgeText || "Holiday Deal"}
+                            shippingText={
+                              product.shippingFeeType === 'FREE'
+                                ? 'Free Shipping'
+                                : product.shippingCost
+                                  ? `${formatPrice(product.shippingCost)} Shipping`
+                                  : 'Shipping available'
+                            }
+                            buttonVariant={product.hasVariants ? 'see-options' : 'add-to-cart'}
+                            onAddToCart={() => handleAddToCart(product, price)}
+                          />
+                        </Link>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+
+              {/* Right Arrow Button */}
+              <button
+                type="button"
+                onClick={() => scrollHolidayRow('right')}
+                aria-label="Scroll right"
+                className="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 z-20 size-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all opacity-0 group-hover/row:opacity-100 cursor-pointer"
+              >
+                <ChevronRight size={18} className="text-gray-700" />
+              </button>
+            </div>
+
+            {/* Window Footer */}
+            <div className="mt-3 pt-2.5 border-t border-gray-100 flex flex-wrap items-center justify-between gap-2 text-[12px] text-gray-500">
+              <span>
+                {holidayProducts.length > 0
+                  ? `Showing top ${holidayProducts.length} holiday deal${holidayProducts.length === 1 ? '' : 's'}`
+                  : 'Festive season discounts & gifts'}
+              </span>
+              <div className="flex items-center gap-3">
+                <Link
+                  href="/holiday-deals"
+                  onClick={() => setIsHolidayOpen(false)}
+                  className="font-bold text-[#165dd0] hover:underline"
+                >
+                  Explore Holiday Deals catalog →
+                </Link>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* ── Full Width Browsing History Window (10 Products in 1 Row) ── */}
       {isHistoryOpen && (
         <div
           onMouseEnter={handleHistoryMouseEnter}
           onMouseLeave={handleHistoryMouseLeave}
-          className="absolute left-1/2 -translate-x-1/2 top-full pt-1.5 z-50 w-[75vw] max-w-325 min-w-[320px] animate-in fade-in slide-in-from-top-1 duration-150 text-left"
+          className="absolute left-0 right-0 top-full z-50 w-full animate-in fade-in slide-in-from-top-1 duration-150 text-left"
         >
           {/* Main Card */}
-          <div className="w-full rounded-xl bg-white shadow-2xl ring-1 ring-black/10 border border-gray-200 p-4 sm:p-5 text-black">
+          <div className="w-full bg-white shadow-2xl border-b border-gray-200 px-4 sm:px-6 md:px-8 py-4 sm:py-5 text-black">
             
             {/* Header */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-3 mb-3 border-b border-gray-100">
@@ -637,7 +1085,7 @@ export default function TopNavLinks() {
                 type="button"
                 onClick={() => scrollRow('left')}
                 aria-label="Scroll left"
-                className="absolute -left-3 top-1/2 -translate-y-1/2 z-20 size-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all opacity-0 group-hover/row:opacity-100 cursor-pointer"
+                className="absolute left-1 sm:left-2 top-1/2 -translate-y-1/2 z-20 size-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all opacity-0 group-hover/row:opacity-100 cursor-pointer"
               >
                 <ChevronLeft size={18} className="text-gray-700" />
               </button>
@@ -713,7 +1161,7 @@ export default function TopNavLinks() {
                 type="button"
                 onClick={() => scrollRow('right')}
                 aria-label="Scroll right"
-                className="absolute -right-3 top-1/2 -translate-y-1/2 z-20 size-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all opacity-0 group-hover/row:opacity-100 cursor-pointer"
+                className="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 z-20 size-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all opacity-0 group-hover/row:opacity-100 cursor-pointer"
               >
                 <ChevronRight size={18} className="text-gray-700" />
               </button>
@@ -753,15 +1201,15 @@ export default function TopNavLinks() {
         </div>
       )}
 
-      {/* ── 75% Width Special Products Window (10 Products in 1 Row) ── */}
+      {/* ── Full Width Special Products Window (10 Products in 1 Row) ── */}
       {isSpecialOpen && (
         <div
           onMouseEnter={handleSpecialMouseEnter}
           onMouseLeave={handleSpecialMouseLeave}
-          className="absolute left-1/2 -translate-x-1/2 top-full pt-1.5 z-50 w-[75vw] max-w-325 min-w-[320px] animate-in fade-in slide-in-from-top-1 duration-150 text-left"
+          className="absolute left-0 right-0 top-full z-50 w-full animate-in fade-in slide-in-from-top-1 duration-150 text-left"
         >
           {/* Main Card */}
-          <div className="w-full rounded-xl bg-white shadow-2xl ring-1 ring-black/10 border border-gray-200 p-4 sm:p-5 text-black">
+          <div className="w-full bg-white shadow-2xl border-b border-gray-200 px-4 sm:px-6 md:px-8 py-4 sm:py-5 text-black">
             
             {/* Header */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-3 mb-3 border-b border-gray-100">
@@ -796,7 +1244,7 @@ export default function TopNavLinks() {
                 type="button"
                 onClick={() => scrollSpecialRow('left')}
                 aria-label="Scroll left"
-                className="absolute -left-3 top-1/2 -translate-y-1/2 z-20 size-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all opacity-0 group-hover/row:opacity-100 cursor-pointer"
+                className="absolute left-1 sm:left-2 top-1/2 -translate-y-1/2 z-20 size-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all opacity-0 group-hover/row:opacity-100 cursor-pointer"
               >
                 <ChevronLeft size={18} className="text-gray-700" />
               </button>
@@ -872,7 +1320,7 @@ export default function TopNavLinks() {
                 type="button"
                 onClick={() => scrollSpecialRow('right')}
                 aria-label="Scroll right"
-                className="absolute -right-3 top-1/2 -translate-y-1/2 z-20 size-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all opacity-0 group-hover/row:opacity-100 cursor-pointer"
+                className="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 z-20 size-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all opacity-0 group-hover/row:opacity-100 cursor-pointer"
               >
                 <ChevronRight size={18} className="text-gray-700" />
               </button>
@@ -900,15 +1348,15 @@ export default function TopNavLinks() {
         </div>
       )}
 
-      {/* ── 75% Width Orders Window (10 Products in 1 Row) ── */}
+      {/* ── Full Width Orders Window (10 Products in 1 Row) ── */}
       {isOrdersOpen && (
         <div
           onMouseEnter={handleOrdersMouseEnter}
           onMouseLeave={handleOrdersMouseLeave}
-          className="absolute left-1/2 -translate-x-1/2 top-full pt-1.5 z-50 w-[75vw] max-w-325 min-w-[320px] animate-in fade-in slide-in-from-top-1 duration-150 text-left"
+          className="absolute left-0 right-0 top-full z-50 w-full animate-in fade-in slide-in-from-top-1 duration-150 text-left"
         >
           {/* Main Card */}
-          <div className="w-full rounded-xl bg-white shadow-2xl ring-1 ring-black/10 border border-gray-200 p-4 sm:p-5 text-black">
+          <div className="w-full bg-white shadow-2xl border-b border-gray-200 px-4 sm:px-6 md:px-8 py-4 sm:py-5 text-black">
             
             {/* Header */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-3 mb-3 border-b border-gray-100">
@@ -962,7 +1410,7 @@ export default function TopNavLinks() {
                   type="button"
                   onClick={() => scrollOrdersRow('left')}
                   aria-label="Scroll left"
-                  className="absolute -left-3 top-1/2 -translate-y-1/2 z-20 size-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all opacity-0 group-hover/row:opacity-100 cursor-pointer"
+                  className="absolute left-1 sm:left-2 top-1/2 -translate-y-1/2 z-20 size-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all opacity-0 group-hover/row:opacity-100 cursor-pointer"
                 >
                   <ChevronLeft size={18} className="text-gray-700" />
                 </button>
@@ -1029,7 +1477,7 @@ export default function TopNavLinks() {
                   type="button"
                   onClick={() => scrollOrdersRow('right')}
                   aria-label="Scroll right"
-                  className="absolute -right-3 top-1/2 -translate-y-1/2 z-20 size-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all opacity-0 group-hover/row:opacity-100 cursor-pointer"
+                  className="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 z-20 size-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all opacity-0 group-hover/row:opacity-100 cursor-pointer"
                 >
                   <ChevronRight size={18} className="text-gray-700" />
                 </button>
@@ -1058,15 +1506,15 @@ export default function TopNavLinks() {
         </div>
       )}
 
-      {/* ── 75% Width Buy Again Window (10 Products in 1 Row) ── */}
+      {/* ── Full Width Buy Again Window (10 Products in 1 Row) ── */}
       {isBuyAgainOpen && (
         <div
           onMouseEnter={handleBuyAgainMouseEnter}
           onMouseLeave={handleBuyAgainMouseLeave}
-          className="absolute left-1/2 -translate-x-1/2 top-full pt-1.5 z-50 w-[75vw] max-w-325 min-w-[320px] animate-in fade-in slide-in-from-top-1 duration-150 text-left"
+          className="absolute left-0 right-0 top-full z-50 w-full animate-in fade-in slide-in-from-top-1 duration-150 text-left"
         >
           {/* Main Card */}
-          <div className="w-full rounded-xl bg-white shadow-2xl ring-1 ring-black/10 border border-gray-200 p-4 sm:p-5 text-black">
+          <div className="w-full bg-white shadow-2xl border-b border-gray-200 px-4 sm:px-6 md:px-8 py-4 sm:py-5 text-black">
             
             {/* Header */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-3 mb-3 border-b border-gray-100">
@@ -1120,7 +1568,7 @@ export default function TopNavLinks() {
                   type="button"
                   onClick={() => scrollBuyAgainRow('left')}
                   aria-label="Scroll left"
-                  className="absolute -left-3 top-1/2 -translate-y-1/2 z-20 size-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all opacity-0 group-hover/row:opacity-100 cursor-pointer"
+                  className="absolute left-1 sm:left-2 top-1/2 -translate-y-1/2 z-20 size-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all opacity-0 group-hover/row:opacity-100 cursor-pointer"
                 >
                   <ChevronLeft size={18} className="text-gray-700" />
                 </button>
@@ -1199,7 +1647,7 @@ export default function TopNavLinks() {
                   type="button"
                   onClick={() => scrollBuyAgainRow('right')}
                   aria-label="Scroll right"
-                  className="absolute -right-3 top-1/2 -translate-y-1/2 z-20 size-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all opacity-0 group-hover/row:opacity-100 cursor-pointer"
+                  className="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 z-20 size-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all opacity-0 group-hover/row:opacity-100 cursor-pointer"
                 >
                   <ChevronRight size={18} className="text-gray-700" />
                 </button>
@@ -1228,15 +1676,15 @@ export default function TopNavLinks() {
         </div>
       )}
 
-      {/* ── 75% Width Toys & Games Window (10 Products in 1 Row) ── */}
+      {/* ── Full Width Toys & Games Window (10 Products in 1 Row) ── */}
       {isToysOpen && (
         <div
           onMouseEnter={handleToysMouseEnter}
           onMouseLeave={handleToysMouseLeave}
-          className="absolute left-1/2 -translate-x-1/2 top-full pt-1.5 z-50 w-[75vw] max-w-325 min-w-[320px] animate-in fade-in slide-in-from-top-1 duration-150 text-left"
+          className="absolute left-0 right-0 top-full z-50 w-full animate-in fade-in slide-in-from-top-1 duration-150 text-left"
         >
           {/* Main Card */}
-          <div className="w-full rounded-xl bg-white shadow-2xl ring-1 ring-black/10 border border-gray-200 p-4 sm:p-5 text-black">
+          <div className="w-full bg-white shadow-2xl border-b border-gray-200 px-4 sm:px-6 md:px-8 py-4 sm:py-5 text-black">
             
             {/* Header */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-3 mb-3 border-b border-gray-100">
@@ -1271,7 +1719,7 @@ export default function TopNavLinks() {
                 type="button"
                 onClick={() => scrollToysRow('left')}
                 aria-label="Scroll left"
-                className="absolute -left-3 top-1/2 -translate-y-1/2 z-20 size-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all opacity-0 group-hover/row:opacity-100 cursor-pointer"
+                className="absolute left-1 sm:left-2 top-1/2 -translate-y-1/2 z-20 size-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all opacity-0 group-hover/row:opacity-100 cursor-pointer"
               >
                 <ChevronLeft size={18} className="text-gray-700" />
               </button>
@@ -1356,7 +1804,7 @@ export default function TopNavLinks() {
                 type="button"
                 onClick={() => scrollToysRow('right')}
                 aria-label="Scroll right"
-                className="absolute -right-3 top-1/2 -translate-y-1/2 z-20 size-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all opacity-0 group-hover/row:opacity-100 cursor-pointer"
+                className="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 z-20 size-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all opacity-0 group-hover/row:opacity-100 cursor-pointer"
               >
                 <ChevronRight size={18} className="text-gray-700" />
               </button>
@@ -1384,15 +1832,15 @@ export default function TopNavLinks() {
         </div>
       )}
 
-      {/* ── 75% Width Groceries Window (10 Products in 1 Row) ── */}
+      {/* ── Full Width Groceries Window (10 Products in 1 Row) ── */}
       {isGroceriesOpen && (
         <div
           onMouseEnter={handleGroceriesMouseEnter}
           onMouseLeave={handleGroceriesMouseLeave}
-          className="absolute left-1/2 -translate-x-1/2 top-full pt-1.5 z-50 w-[75vw] max-w-325 min-w-[320px] animate-in fade-in slide-in-from-top-1 duration-150 text-left"
+          className="absolute left-0 right-0 top-full z-50 w-full animate-in fade-in slide-in-from-top-1 duration-150 text-left"
         >
           {/* Main Card */}
-          <div className="w-full rounded-xl bg-white shadow-2xl ring-1 ring-black/10 border border-gray-200 p-4 sm:p-5 text-black">
+          <div className="w-full bg-white shadow-2xl border-b border-gray-200 px-4 sm:px-6 md:px-8 py-4 sm:py-5 text-black">
             
             {/* Header */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-3 mb-3 border-b border-gray-100">
@@ -1427,7 +1875,7 @@ export default function TopNavLinks() {
                 type="button"
                 onClick={() => scrollGroceriesRow('left')}
                 aria-label="Scroll left"
-                className="absolute -left-3 top-1/2 -translate-y-1/2 z-20 size-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all opacity-0 group-hover/row:opacity-100 cursor-pointer"
+                className="absolute left-1 sm:left-2 top-1/2 -translate-y-1/2 z-20 size-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all opacity-0 group-hover/row:opacity-100 cursor-pointer"
               >
                 <ChevronLeft size={18} className="text-gray-700" />
               </button>
@@ -1512,7 +1960,7 @@ export default function TopNavLinks() {
                 type="button"
                 onClick={() => scrollGroceriesRow('right')}
                 aria-label="Scroll right"
-                className="absolute -right-3 top-1/2 -translate-y-1/2 z-20 size-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all opacity-0 group-hover/row:opacity-100 cursor-pointer"
+                className="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 z-20 size-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all opacity-0 group-hover/row:opacity-100 cursor-pointer"
               >
                 <ChevronRight size={18} className="text-gray-700" />
               </button>
